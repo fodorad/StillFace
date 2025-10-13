@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
+[project]
+name = "StillFace"
+version = "0.0.1"
+description = "Still Face experiment"
+keywords = ["audio", "video", "still face experiment"]
+authors = [
+  { name = "fodorad", email = "fodorad201@gmail.com" },
+]
+readme = {"file" = "README.md", "content-type" = "text/markdown"}
+requires-python = ">=3.11"
+dynamic = ["dependencies"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+]
+
+[project.urls]
+Documentation = "https://github.com/fodorad/StillFace#readme"
+Issues = "https://github.com/fodorad/StillFace/issues"
+Source = "https://github.com/fodorad/StillFace"
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]

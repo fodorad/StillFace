@@ -1,3 +1,6 @@
+# data
+data/ELTE-PPK_StillFace
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

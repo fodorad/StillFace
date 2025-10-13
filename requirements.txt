@@ -1,0 +1,6 @@
+scipy
+soundfile
+opencv-python
+tqdm
+avst
+pandas
