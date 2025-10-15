@@ -1,9 +1,9 @@
 import pandas as pd
 
-input_file = 'data/ELTE-PPK_StillFace/metadata.csv'
+input_file = 'data/ELTE-PPK_StillFace/metadata_database.xlsx'
 output_file = 'data/ELTE-PPK_StillFace/missing_files_report.csv'
 
-df = pd.read_csv(input_file, keep_default_na=True, na_values=[''])
+df = pd.read_excel(input_file, keep_default_na=True, na_values=[''])
 
 columns_to_check = [
     ('mother', 'camera'),

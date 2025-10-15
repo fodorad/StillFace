@@ -2,6 +2,11 @@ import os
 import argparse
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
+import pandas as pd
+from StillFace.sync_and_cut.visualize import create_stacked_videos
+
+
+DB_DIR = Path('data/ELTE-PPK_StillFace')
 
 
 def cut_video(input_video: Path, output_video: Path, start_time: str, end_time: str) -> bool:
@@ -21,6 +26,10 @@ def cut_video(input_video: Path, output_video: Path, start_time: str, end_time: 
         print(f"Warning: Input video not found: {input_video}")
         return False
     
+    if output_video.exists():
+        print(f"Warning: Output video already exists: {output_video}")
+        return True
+    
     # Convert MM:SS to seconds for duration calculation
     def mmss_to_seconds(mmss: str) -> float:
         parts = mmss.split(':')
@@ -33,6 +42,15 @@ def cut_video(input_video: Path, output_video: Path, start_time: str, end_time: 
     start_seconds = mmss_to_seconds(start_time)
     end_seconds = mmss_to_seconds(end_time)
     duration = end_seconds - start_seconds
+
+    # check input video mp4 length in seconds
+    input_video_length = os.popen(f"ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 {input_video}").read()
+    input_video_length = float(input_video_length)
+
+    # check that start_seconds are within input video length
+    if start_seconds > input_video_length:
+        print(f"Warning: Start time {start_seconds} is outside of input video length {input_video_length}")
+        return False
     
     # Ensure output directory exists
     output_video.parent.mkdir(parents=True, exist_ok=True)
@@ -47,42 +65,6 @@ def cut_video(input_video: Path, output_video: Path, start_time: str, end_time: 
     )
     
     print(f"Cutting {input_video.name} -> {output_video.name} ({start_time} to {end_time})")
-    result = os.system(cmd)
-    
-    return result == 0
-
-
-def stack_videos_vertical(video1: Path, video2: Path, output_video: Path, audio_source: int = 0) -> bool:
-    """
-    Stack two videos vertically using ffmpeg.
-    
-    Args:
-        video1: Path to first video (top)
-        video2: Path to second video (bottom)
-        output_video: Path to output stacked video
-        audio_source: Which video's audio to use (0 for video1, 1 for video2)
-    
-    Returns:
-        True if successful, False otherwise
-    """
-    if not video1.exists() or not video2.exists():
-        print(f"Warning: Cannot stack - missing video(s): {video1.name}, {video2.name}")
-        return False
-    
-    # Ensure output directory exists
-    output_video.parent.mkdir(parents=True, exist_ok=True)
-    
-    # FFmpeg command to stack videos vertically with selected audio
-    cmd = (
-        f"ffmpeg -hide_banner -loglevel error -y "
-        f"-i {video1} -i {video2} "
-        f"-filter_complex '[0:v][1:v]vstack=inputs=2[v]' "
-        f"-map '[v]' -map {audio_source}:a "
-        f"{output_video}"
-    )
-    
-    audio_from = "video2" if audio_source == 1 else "video1"
-    print(f"Stacking {video1.name} + {video2.name} -> {output_video.name} (audio from {audio_from})")
     result = os.system(cmd)
     
     return result == 0
@@ -141,172 +123,113 @@ def cut_all_phases(
     return cut_videos
 
 
-def stack_videos_2x2(
-    video_paths: Dict[str, Optional[Path]],
-    output_video: Path,
-    audio_source: str = "baby"
-) -> bool:
-    """
-    Stack videos in 2x2 grid: mother (top-left), window (top-right), baby (bottom-left), door (bottom-right).
-    Missing videos are replaced with black frames.
-    
-    Args:
-        video_paths: Dict with keys "mother", "window", "baby", "door" mapping to video paths (or None)
-        output_video: Path to output stacked video
-        audio_source: Which video's audio to use ("mother", "baby", "window", or "door")
-    
-    Returns:
-        True if successful, False otherwise
-    """
-    # Ensure output directory exists
-    output_video.parent.mkdir(parents=True, exist_ok=True)
-    
-    # Get reference video for dimensions and duration (prefer baby, then mother, then any available)
-    ref_video = None
-    for name in ["baby", "mother", "window", "door"]:
-        if video_paths.get(name) and video_paths[name].exists():
-            ref_video = video_paths[name]
-            break
-    
-    if ref_video is None:
-        print("Warning: No videos available for 2x2 stacking")
-        return False
-    
-    # Build filter complex for 2x2 grid
-    # Order: [0]=mother, [1]=window, [2]=baby, [3]=door
-    inputs = []
-    input_labels = []
-    audio_map_idx = None
-    
-    for idx, name in enumerate(["mother", "window", "baby", "door"]):
-        if video_paths.get(name) and video_paths[name].exists():
-            inputs.append(f"-i {video_paths[name]}")
-            input_labels.append(f"[{idx}:v]")
-            if name == audio_source:
-                audio_map_idx = idx
-        else:
-            # Create black video matching reference
-            inputs.append(f"-f lavfi -i color=black:size=1920x1080:rate=60:duration=300")
-            input_labels.append(f"[{idx}:v]")
-    
-    # If audio source not found, use first available video with audio
-    if audio_map_idx is None:
-        for idx, name in enumerate(["baby", "mother", "window", "door"]):
-            if video_paths.get(name) and video_paths[name].exists():
-                audio_map_idx = idx
-                break
-    
-    # Build filter: stack top row (mother, window), bottom row (baby, door), then stack vertically
-    filter_complex = (
-        f"{''.join(input_labels[:2])}hstack=inputs=2[top];"
-        f"{''.join(input_labels[2:])}hstack=inputs=2[bottom];"
-        f"[top][bottom]vstack=inputs=2[v]"
-    )
-    
-    cmd = (
-        f"ffmpeg -hide_banner -loglevel error -y "
-        f"{' '.join(inputs)} "
-        f"-filter_complex '{filter_complex}' "
-        f"-map '[v]' "
-    )
-    
-    if audio_map_idx is not None:
-        cmd += f"-map {audio_map_idx}:a "
-    
-    cmd += f"-shortest {output_video}"
-    
-    print(f"Creating 2x2 grid -> {output_video.name} (audio from {audio_source})")
-    result = os.system(cmd)
-    
-    return result == 0
-
-
-def create_stacked_videos(
-    cut_videos: Dict[str, Dict[str, Path]],
-    output_dir: Path
-):
-    """
-    Create stacked videos for each phase:
-    1. mother-baby horizontal stack
-    2. 2x2 grid: mother (top-left), window (top-right), baby (bottom-left), door (bottom-right)
-    
-    Args:
-        cut_videos: Dict mapping video_name -> phase -> output_path
-        output_dir: Directory to save stacked videos
-    """
-    phases = ["baseline", "play", "stillface", "reunion"]
-    
-    for phase in phases:
-        # 1. Create mother-baby horizontal stack
-        if ("mother" in cut_videos and phase in cut_videos["mother"] and
-            "baby" in cut_videos and phase in cut_videos["baby"]):
-            
-            mother_path = cut_videos["mother"][phase]
-            baby_path = cut_videos["baby"][phase]
-            output_video = output_dir / 'visualize' / f"mother-baby_{phase}.mp4"
-            
-            # Use baby's audio for mother-baby (mother on top, baby on bottom)
-            stack_videos_vertical(mother_path, baby_path, output_video, audio_source=1)
-        else:
-            print(f"Skipping mother-baby for {phase} - video(s) not available")
-        
-        # 2. Create 2x2 grid
-        video_paths = {}
-        for name in ["mother", "window", "baby", "door"]:
-            if name in cut_videos and phase in cut_videos[name]:
-                video_paths[name] = cut_videos[name][phase]
-            else:
-                video_paths[name] = None
-        
-        output_video_2x2 = output_dir / 'visualize' / f"session_{phase}.mp4"
-        stack_videos_2x2(video_paths, output_video_2x2, audio_source="baby")
-
-
 def cut(
-    synced_dir: Path,
+    db_dir: Path,
+    session_id: str,
     baseline_timestamps: str,
     play_timestamps: str,
     stillface_timestamps: str,
     reunion_timestamps: str,
-    output_dir: Path
+    visualize: bool = False
 ):
     """
     Main function to cut videos by phase and create stacked versions.
     
     Args:
-        synced_dir: Directory containing synced videos
+        db_dir: Directory containing synced videos
         timestamp_file: File containing phase timestamps
         output_dir: Directory to save cut and stacked videos
     """
     # Create output directory
+    output_dir = db_dir / "Sessions" / session_id / "processed"
     output_dir.mkdir(parents=True, exist_ok=True)
+    visualize_dir = db_dir / "Sessions" / session_id / "visualize"
+    visualize_dir.mkdir(parents=True, exist_ok=True)
+    synced_dir = db_dir / "Sessions" / session_id / "synced"
     
     # Cut all videos into phases
     print("\n=== Cutting videos by phase ===")
     cut_videos = cut_all_phases(synced_dir, baseline_timestamps, play_timestamps, stillface_timestamps, reunion_timestamps, output_dir)
     
-    # Create stacked videos
-    print("\n=== Creating stacked videos ===")
-    create_stacked_videos(cut_videos, output_dir)
+    if visualize:
+        # Create stacked videos
+        print("\n=== Creating stacked videos ===")
+        create_stacked_videos(cut_videos, visualize_dir)
     
     print(f"\n=== Done! Output saved to: {output_dir} ===")
 
 
+def cut_all(
+    db_dir: Path,
+    metadata_path: Path,
+    visualize: bool = False
+):
+    if not metadata_path.exists():
+        raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
+    
+    if metadata_path.suffix == ".xlsx":
+        metadata = pd.read_excel(metadata_path)
+    elif metadata_path.suffix == ".csv":
+        metadata = pd.read_csv(metadata_path)
+    else:
+        raise ValueError(f"Unsupported file format: {metadata_path.suffix}")
+    
+    for index, row in metadata.iterrows():
+
+        if row['Auto'] == 'n': continue
+        
+        baseline_timestamps = f'{row["baseline_start_(MM:SS)"]}-{row["baseline_end_(MM:SS)"]}'
+        play_timestamps = f'{row["play_start_(MM:SS)"]}-{row["play_end_(MM:SS)"]}'
+        stillface_timestamps = f'{row["stillface_start_(MM:SS)"]}-{row["stillface_end_(MM:SS)"]}'
+        reunion_timestamps = f'{row["reunion_start_(MM:SS)"]}-{row["reunion_end_(MM:SS)"]}'
+
+        try:
+            cut(
+                db_dir=db_dir,
+                session_id=str(row['ID']),
+                baseline_timestamps=baseline_timestamps,
+                play_timestamps=play_timestamps,
+                stillface_timestamps=stillface_timestamps,
+                reunion_timestamps=reunion_timestamps,
+                visualize=visualize
+            )
+        except Exception as e:
+            with open(DB_DIR / "failed_cut_sessions.txt", "a") as f:
+                f.write(str(row['ID']) + "\n")
+            continue
+
+        with open(DB_DIR / "cut_sessions.txt", "a") as f:
+            f.write(str(row['ID']) + "\n")
+
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Cut synced videos into phases and create stacked versions")
-    parser.add_argument("--synced_dir", type=Path, required=True, help="Directory containing synced videos")
-    parser.add_argument("--baseline_timestamps", type=str, required=True, help="Baseline timestamps")
-    parser.add_argument("--play_timestamps", type=str, required=True, help="Play timestamps")
-    parser.add_argument("--stillface_timestamps", type=str, required=True, help="Stillface timestamps")
-    parser.add_argument("--reunion_timestamps", type=str, required=True, help="Reunion timestamps")
-    parser.add_argument("--out_dir", type=Path, default='.', help="Output directory")
+    parser.add_argument("--db_dir", type=Path, default=DB_DIR, help="Database directory")
+    parser.add_argument("--metadata_path", type=Path, default=DB_DIR / "metadata.csv", help="Metadata file path")
+    parser.add_argument("--session_id", type=str, default=None, help="Session ID")
+    parser.add_argument("--visualize", action="store_true", help="Create visualization videos")
     args = parser.parse_args()
     
-    cut(
-        synced_dir=args.synced_dir,
-        baseline_timestamps=args.baseline_timestamps,
-        play_timestamps=args.play_timestamps,
-        stillface_timestamps=args.stillface_timestamps,
-        reunion_timestamps=args.reunion_timestamps,
-        output_dir=args.out_dir
-    )
+    if args.session_id is not None:
+        metadata = pd.read_csv(args.metadata_path)
+        df = metadata[metadata['ID'] == int(args.session_id)]
+        baseline_timestamps = f'{df["baseline_start_(MM:SS)"].iloc[0]}-{df["baseline_end_(MM:SS)"].iloc[0]}'
+        play_timestamps = f'{df["play_start_(MM:SS)"].iloc[0]}-{df["play_end_(MM:SS)"].iloc[0]}'
+        stillface_timestamps = f'{df["stillface_start_(MM:SS)"].iloc[0]}-{df["stillface_end_(MM:SS)"].iloc[0]}'
+        reunion_timestamps = f'{df["reunion_start_(MM:SS)"].iloc[0]}-{df["reunion_end_(MM:SS)"].iloc[0]}'
+        cut(
+            db_dir=args.db_dir,
+            session_id=args.session_id,
+            baseline_timestamps=baseline_timestamps,
+            play_timestamps=play_timestamps,
+            stillface_timestamps=stillface_timestamps,
+            reunion_timestamps=reunion_timestamps,
+            visualize=True
+        )
+    elif Path(args.metadata_path).exists():
+        cut_all(
+            db_dir=args.db_dir,
+            metadata_path=args.metadata_path,
+            visualize=True
+        )

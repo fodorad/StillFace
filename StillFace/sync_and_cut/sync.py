@@ -276,13 +276,13 @@ def sync_all(
     if not metadata_path.exists():
         raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
     
-    metadata = pd.read_csv(metadata_path)
+    metadata = pd.read_excel(metadata_path)
     
     for index, row in metadata.iterrows():
 
         if is_synced(str(row['ID'])): continue
         if row['Auto'] == 'n': continue
-        if row['mother'] == 'n' and row['baby'] == 'n': continue
+        if not pd.isna(row['offset_mother-baby_(ms)']): continue
 
         try:
             _, ms_offset_mb = sync(
@@ -302,20 +302,20 @@ def sync_all(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sync video files for StillFace sessions")
     parser.add_argument("--db_dir", type=Path, default=DB_DIR, help="Database directory")
-    parser.add_argument("--metadata_path", type=Path, default=DB_DIR / "metadata.csv", help="Metadata file path")
+    parser.add_argument("--metadata_path", type=Path, default=DB_DIR / "metadata_database.xlsx", help="Metadata file path")
     parser.add_argument("--session_id", type=str, default=None, help="Session ID")
     parser.add_argument("--visualize", action="store_true", help="Create visualization videos")
     args = parser.parse_args()
     
-    if Path(args.metadata_path).exists():
-        sync_all(
-            db_dir=args.db_dir,
-            metadata_path=args.metadata_path,
-            visualize=args.visualize
-        )
-    elif args.session_id is not None:
+    if args.session_id is not None:
         sync(
             db_dir=args.db_dir,
             session_id=args.session_id,
+            visualize=args.visualize
+        )
+    elif Path(args.metadata_path).exists():
+        sync_all(
+            db_dir=args.db_dir,
+            metadata_path=args.metadata_path,
             visualize=args.visualize
         )
