@@ -30,6 +30,10 @@ def cut_video(input_video: Path, output_video: Path, start_time: str, end_time: 
         print(f"Warning: Output video already exists: {output_video}")
         return True
     
+    if start_time == "nan" or end_time == "nan":
+        print(f"Warning: Start or end time is missing: {start_time} to {end_time}")
+        return False
+    
     # Convert MM:SS to seconds for duration calculation
     def mmss_to_seconds(mmss: str) -> float:
         parts = mmss.split(':')

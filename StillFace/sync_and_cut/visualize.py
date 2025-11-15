@@ -3,6 +3,7 @@ import argparse
 from pathlib import Path
 from typing import Dict, Optional
 import subprocess
+import cv2
 
 
 DB_DIR = Path('data/ELTE-PPK_StillFace')
@@ -221,12 +222,46 @@ def find_cut_videos(db_dir: Path, session_id: str) -> Dict[str, Dict[str, Path]]
     return cut_videos
 
 
+def generate_thumbnails(dir_base: Path, session_id: str = None):
+    root_dir = dir_base / 'Sessions'
+    session_ids = sorted([elem.name for elem in root_dir.glob('*')]) if session_id is None else [session_id]
+    overview_dir = dir_base / 'Thumbnails'
+    overview_dir.mkdir(parents=True, exist_ok=True)
+    
+    for session_id in session_ids:
+        video_path = root_dir / session_id / 'visualize' / 'session_stillface.mp4'
+
+        if video_path.exists():
+            cap = cv2.VideoCapture(str(video_path))
+            if not cap.isOpened():
+                print(f'Failed to open video for session {session_id}')
+                continue
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            cap.set(cv2.CAP_PROP_POS_FRAMES, cap.get(cv2.CAP_PROP_FRAME_COUNT) // 2)
+            ret, frame = cap.read()
+            cap.release()
+
+            if ret:
+                save_path = root_dir / session_id / 'thumbnail.png'
+                cv2.imwrite(str(save_path), frame)
+                overview_path = overview_dir / f'{session_id}.png'
+                cv2.imwrite(str(overview_path), frame)
+                print(f'[INFO] Saved thumbnail for session {session_id}')
+            else:
+                print(f'[ERROR] Failed to read frame for session {session_id}')
+        else:
+            print(f'[ERROR] Video not found for session {session_id}')
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create stacked videos for each phase")
+    parser.add_argument("--mode", type=str, default="thumbnail", help="Mode (stack, thumbnail)")
     parser.add_argument("--db_dir", type=Path, default=DB_DIR, help="Database directory")
-    parser.add_argument("--session_id", type=str, default="555820", help="Session ID")
+    parser.add_argument("--session_id", type=str, default=None, help="Session ID")
     args = parser.parse_args()
     
-    cut_videos = find_cut_videos(args.db_dir, args.session_id)
-    create_stacked_videos(cut_videos, args.db_dir / "Sessions" / args.session_id / "visualize")
+    if args.mode == "stack":
+        cut_videos = find_cut_videos(args.db_dir, args.session_id)
+        create_stacked_videos(cut_videos, args.db_dir / "Sessions" / args.session_id / "visualize")
+    elif args.mode == "thumbnail":
+        generate_thumbnails(args.db_dir, args.session_id)
