@@ -2,6 +2,7 @@ import os
 import argparse
 from pathlib import Path
 from typing import Dict, Optional
+from tqdm import tqdm
 import subprocess
 import cv2
 
@@ -228,7 +229,7 @@ def generate_thumbnails(dir_base: Path, session_id: str = None):
     overview_dir = dir_base / 'Thumbnails'
     overview_dir.mkdir(parents=True, exist_ok=True)
     
-    for session_id in session_ids:
+    for session_id in tqdm(session_ids, total=len(session_ids), desc='Generating thumbnails'):
         video_path = root_dir / session_id / 'visualize' / 'session_stillface.mp4'
 
         if video_path.exists():
@@ -236,7 +237,6 @@ def generate_thumbnails(dir_base: Path, session_id: str = None):
             if not cap.isOpened():
                 print(f'Failed to open video for session {session_id}')
                 continue
-            fps = cap.get(cv2.CAP_PROP_FPS)
             cap.set(cv2.CAP_PROP_POS_FRAMES, cap.get(cv2.CAP_PROP_FRAME_COUNT) // 2)
             ret, frame = cap.read()
             cap.release()
@@ -246,7 +246,7 @@ def generate_thumbnails(dir_base: Path, session_id: str = None):
                 cv2.imwrite(str(save_path), frame)
                 overview_path = overview_dir / f'{session_id}.png'
                 cv2.imwrite(str(overview_path), frame)
-                print(f'[INFO] Saved thumbnail for session {session_id}')
+                # print(f'[INFO] Saved thumbnail for session {session_id}')
             else:
                 print(f'[ERROR] Failed to read frame for session {session_id}')
         else:

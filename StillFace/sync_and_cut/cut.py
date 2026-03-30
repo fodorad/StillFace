@@ -1,5 +1,6 @@
 import os
 import argparse
+from tqdm import tqdm
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 import pandas as pd
@@ -178,7 +179,7 @@ def cut_all(
     else:
         raise ValueError(f"Unsupported file format: {metadata_path.suffix}")
     
-    for index, row in metadata.iterrows():
+    for index, row in tqdm(metadata.iterrows(), total=len(metadata), desc="Cutting videos"):
 
         if row['Auto'] == 'n': continue
         
@@ -210,13 +211,18 @@ def cut_all(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Cut synced videos into phases and create stacked versions")
     parser.add_argument("--db_dir", type=Path, default=DB_DIR, help="Database directory")
-    parser.add_argument("--metadata_path", type=Path, default=DB_DIR / "metadata.csv", help="Metadata file path")
+    parser.add_argument("--metadata_path", type=Path, default=DB_DIR / "metadata_database.xlsx", help="Metadata file path")
     parser.add_argument("--session_id", type=str, default=None, help="Session ID")
     parser.add_argument("--visualize", action="store_true", help="Create visualization videos")
     args = parser.parse_args()
     
     if args.session_id is not None:
-        metadata = pd.read_csv(args.metadata_path)
+        if args.metadata_path.suffix == ".xlsx":
+            metadata = pd.read_excel(args.metadata_path)
+        elif args.metadata_path.suffix == ".csv":
+            metadata = pd.read_csv(args.metadata_path)
+        else:
+            raise ValueError(f"Unsupported file format: {args.metadata_path.suffix}")
         df = metadata[metadata['ID'] == int(args.session_id)]
         baseline_timestamps = f'{df["baseline_start_(MM:SS)"].iloc[0]}-{df["baseline_end_(MM:SS)"].iloc[0]}'
         play_timestamps = f'{df["play_start_(MM:SS)"].iloc[0]}-{df["play_end_(MM:SS)"].iloc[0]}'

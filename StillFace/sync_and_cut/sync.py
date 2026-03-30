@@ -1,5 +1,6 @@
 import os
 import shutil
+from tqdm import tqdm
 import argparse
 from pathlib import Path
 from typing import Optional, Dict, Tuple
@@ -13,7 +14,7 @@ CAMERA_NAMES = ['mother', 'baby', 'window', 'door']
 PHASES = ['baseline', 'play', 'stillface', 'reunion']
 
 
-def convert_to_60fps(input_path: Path, output_path: Path) -> Path:
+def convert_to_60fps(input_path: Path, output_path: Path, verbose: bool = False) -> Path:
     """Convert video to 60 FPS MP4 format."""
     if output_path.exists():
         return output_path
@@ -21,7 +22,7 @@ def convert_to_60fps(input_path: Path, output_path: Path) -> Path:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     cmd = f"ffmpeg -hide_banner -loglevel error -y -i {input_path} -r 60 {output_path}"
     os.system(cmd)
-    print(f"Converted to 60 FPS: {output_path}")
+    if verbose: print(f"Converted to 60 FPS: {output_path}")
     return output_path
 
 
@@ -92,7 +93,8 @@ def sync_mother_baby(
     session_dir: Path,
     mother_path: Optional[Path],
     baby_path: Optional[Path],
-    visualize: bool = False
+    visualize: bool = False,
+    verbose: bool = False
 ) -> Tuple[Dict[str, Optional[Path]], Optional[int]]:
     """
     Sync mother and baby videos.
@@ -112,27 +114,30 @@ def sync_mother_baby(
 
     # Case 1: Both available - sync them
     if mother_path is not None and baby_path is not None:
-        print("Syncing mother and baby videos...")
-        ms_offset = sync_videos(
-            video1_path=mother_path,
-            video2_path=baby_path,
-            output1_path=synced_mother,
-            output2_path=synced_baby,
-            synced_session_path=synced_session_mb if visualize else None,
-        )
+        if verbose: print("Syncing mother and baby videos...")
+        if not synced_mother.exists() or not synced_baby.exists():
+            ms_offset = sync_videos(
+                video1_path=mother_path,
+                video2_path=baby_path,
+                output1_path=synced_mother,
+                output2_path=synced_baby,
+                synced_session_path=synced_session_mb if visualize else None,
+            )
         result['mother'] = synced_mother
         result['baby'] = synced_baby
 
     # Case 2: Only baby available - copy it
     elif baby_path is not None:
-        print("Copying baby video (no mother video available)...")
-        shutil.copy(baby_path, synced_baby)
+        if verbose: print("Copying baby video (no mother video available)...")
+        if not synced_baby.exists():
+            shutil.copy(baby_path, synced_baby)
         result['baby'] = synced_baby
     
     # Case 3: Only mother available - copy it
     elif mother_path is not None:
-        print("Copying mother video (no baby video available)...")
-        shutil.copy(mother_path, synced_mother)
+        if verbose: print("Copying mother video (no baby video available)...")
+        if not synced_mother.exists():
+            shutil.copy(mother_path, synced_mother)
         result['mother'] = synced_mother
     
     return result, ms_offset
@@ -143,7 +148,8 @@ def sync_auxiliary_camera(
     cam_name: str,
     cam_path: Path,
     reference_path: Optional[Path],
-    visualize: bool = False
+    visualize: bool = False,
+    verbose: bool = False
 ) -> Tuple[Optional[Path], Optional[int]]:
     """
     Sync auxiliary camera (window or door) to reference video.
@@ -161,17 +167,19 @@ def sync_auxiliary_camera(
 
     if reference_path is None or cam_path == reference_path:
         # No reference available, just copy
-        print(f"Copying {cam_name} video (no reference available)...")
-        shutil.copy(cam_path, synced_cam)
+        if verbose: print(f"Copying {cam_name} video (no reference available)...")
+        if not synced_cam.exists():
+            shutil.copy(cam_path, synced_cam)
         return synced_cam, ms_offset
     
-    print(f"\nSyncing {cam_name} to reference video...")
-    ms_offset = sync_to_reference(
-        video1_path=reference_path,
-        video2_path=cam_path,
-        output2_path=synced_cam,
-        synced_session_path=synced_session if visualize else None,
-    )
+    if verbose: print(f"\nSyncing {cam_name} to reference video...")
+    if not synced_cam.exists():
+        ms_offset = sync_to_reference(
+            video1_path=reference_path,
+            video2_path=cam_path,
+            output2_path=synced_cam,
+            synced_session_path=synced_session if visualize else None,
+        )
     
     return synced_cam, ms_offset
 
@@ -179,7 +187,8 @@ def sync_auxiliary_camera(
 def sync(
     db_dir: Path,
     session_id: str,
-    visualize: bool = False
+    visualize: bool = False,
+    verbose: bool = False
 ) -> Tuple[Dict[str, Optional[Path]], Optional[int]]:
     """
     Sync all available camera videos for a session.
@@ -213,7 +222,8 @@ def sync(
         session_dir,
         cameras['mother'],
         cameras['baby'],
-        visualize
+        visualize,
+        verbose
     )
     
     # Step 4: Determine reference video for auxiliary cameras
@@ -233,7 +243,8 @@ def sync(
             'window',
             cameras['window'],
             reference,
-            visualize
+            visualize,
+            verbose
         )
 
         # Update reference if window is the first available
@@ -247,48 +258,45 @@ def sync(
             'door',
             cameras['door'],
             reference,
-            visualize
+            visualize,
+            verbose
         )
     
-    print(f"\n=== Sync complete for session: {session_id} ===")
     synced_available = [name for name, path in synced.items() if path is not None]
     print(f"Synced cameras: {', '.join(synced_available)}")
 
+    print(f"\n=== Sync complete for session: {session_id} ===")
     return synced, ms_offset_mb
-
-
-def is_synced(session_id: str) -> bool:
-    synced_sessions_path = DB_DIR / "synced_sessions.txt"
-    if not synced_sessions_path.exists():
-        return False
-    with open(synced_sessions_path, "r") as f:
-        for line in f:
-            if line.startswith(str(session_id)):
-                return True
-    return False
 
 
 def sync_all(
     db_dir: Path,
     metadata_path: Path,
-    visualize: bool = False
+    visualize: bool = False,
+    verbose: bool = False
 ):
     if not metadata_path.exists():
         raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
     
-    metadata = pd.read_excel(metadata_path)
+    if metadata_path.suffix == ".csv":
+        metadata = pd.read_csv(metadata_path)
+    elif metadata_path.suffix == ".xlsx":
+        metadata = pd.read_excel(metadata_path)
+    else:
+        raise ValueError(f"Unsupported metadata file format: {metadata_path.suffix}")
     
-    for index, row in metadata.iterrows():
+    for index, row in tqdm(metadata.iterrows(), total=len(metadata), desc="Syncing sessions"):
 
-        if is_synced(str(row['ID'])): continue
         if row['Auto'] == 'n': continue
+        if row['Finalized'] == 'y': continue
         if not pd.isna(row['offset_mother-baby_(ms)']): continue
 
         try:
             _, ms_offset_mb = sync(
                 db_dir=db_dir,
                 session_id=str(row['ID']),
-                visualize=visualize
+                visualize=visualize,
+                verbose=verbose
             )
         except Exception as e:
             with open(DB_DIR / "failed_sessions.txt", "a") as f:
@@ -305,17 +313,20 @@ if __name__ == "__main__":
     parser.add_argument("--metadata_path", type=Path, default=DB_DIR / "metadata_database.xlsx", help="Metadata file path")
     parser.add_argument("--session_id", type=str, default=None, help="Session ID")
     parser.add_argument("--visualize", action="store_true", help="Create visualization videos")
+    parser.add_argument("--verbose", action="store_true", help="Verbose output")
     args = parser.parse_args()
-    
+
     if args.session_id is not None:
         sync(
             db_dir=args.db_dir,
             session_id=args.session_id,
-            visualize=args.visualize
+            visualize=args.visualize,
+            verbose=args.verbose
         )
     elif Path(args.metadata_path).exists():
         sync_all(
             db_dir=args.db_dir,
             metadata_path=args.metadata_path,
-            visualize=args.visualize
+            visualize=args.visualize,
+            verbose=args.verbose
         )
