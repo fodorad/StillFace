@@ -43,6 +43,10 @@ Module Contents
 
    Predicts where the given heads look.
 
+   .. attribute:: variant
+
+      Name of the model variant in use, recorded in the run record.
+
 
    .. py:method:: estimate(frames: numpy.ndarray, boxes: collections.abc.Sequence[collections.abc.Sequence[stillface.features.gaze.heads.HeadBox | None]]) -> GazeEstimate
 

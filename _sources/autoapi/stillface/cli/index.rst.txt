@@ -8,7 +8,8 @@ stillface.cli
    Command line interface.
 
    ``stillface prepare <sync|cut|thumbnails|check-missing>`` runs the data preparation,
-   ``stillface features heads`` the head and role pilot of the gaze extraction.
+   ``stillface features heads`` the head and role pilot of the gaze extraction and
+   ``stillface features gaze`` the gaze extraction itself.
 
 
 
@@ -41,13 +42,15 @@ Module Contents
    :returns: The configured parser.
 
 
-.. py:function:: main(argv: collections.abc.Sequence[str] | None = None, head_tracker_factory: collections.abc.Callable[[], stillface.features.gaze.heads.HeadTracker] = _exordium_head_tracker) -> int
+.. py:function:: main(argv: collections.abc.Sequence[str] | None = None, head_tracker_factory: collections.abc.Callable[[], stillface.features.gaze.heads.HeadTracker] = _exordium_head_tracker, gaze_estimator_factory: collections.abc.Callable[[str], stillface.features.gaze.estimator.GazeEstimator] = _gaze_estimator) -> int
 
    Run the command line interface.
 
    :param argv: Arguments, ``sys.argv[1:]`` if None.
    :param head_tracker_factory: Builds the head tracker for ``features heads``; replaceable so
                                 the command can run without exordium models.
+   :param gaze_estimator_factory: Builds the gaze estimator for a model variant, for
+                                  ``features gaze``; replaceable for the same reason.
 
    :returns: Process exit code.
 

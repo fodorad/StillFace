@@ -219,8 +219,10 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/heads/index.html">stillface.features.gaze.heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pilot/index.html">stillface.features.gaze.pilot</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/roles/index.html">stillface.features.gaze.roles</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/runner/index.html">stillface.features.gaze.runner</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/io/index.html">stillface.features.io</a></li>
@@ -275,7 +277,6 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetPaths</span>
@@ -284,16 +285,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">GazeConfig</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.heads</span><span class="w"> </span><span class="kn">import</span> <span class="n">HeadTracker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.prepare</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClipHeads</span><span class="p">,</span> <span class="n">prepare_clip</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.roles</span><span class="w"> </span><span class="kn">import</span> <span class="n">camera_persons</span><span class="p">,</span> <span class="n">load_role_overrides</span><span class="p">,</span> <span class="n">missing_reason</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_finished</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.overlay</span><span class="w"> </span><span class="kn">import</span> <span class="n">OverlayItem</span><span class="p">,</span> <span class="n">render_overlay</span><span class="p">,</span> <span class="n">render_overlay_grid</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.run_record</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">RunRecord</span><span class="p">,</span>
-    <span class="n">current_git_sha</span><span class="p">,</span>
-    <span class="n">installed_version</span><span class="p">,</span>
-    <span class="n">write_run_record</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.timeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimelineRow</span><span class="p">,</span> <span class="n">write_timeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.roles</span><span class="w"> </span><span class="kn">import</span> <span class="n">RoleOverrides</span><span class="p">,</span> <span class="n">camera_persons</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClipOutput</span><span class="p">,</span> <span class="n">run_session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.overlay</span><span class="w"> </span><span class="kn">import</span> <span class="n">OverlayItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.run_record</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunRecord</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.timeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimelineRow</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -333,7 +329,7 @@
                     <span class="n">inout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                     <span class="n">partner_mass</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                     <span class="n">gaze_class</span><span class="o">=</span><span class="s2">""</span> <span class="k">if</span> <span class="n">found</span> <span class="k">else</span> <span class="n">NK</span><span class="p">,</span>
-                    <span class="n">reason</span><span class="o">=</span><span class="s2">""</span> <span class="k">if</span> <span class="n">found</span> <span class="k">else</span> <span class="n">missing_reason</span><span class="p">(</span><span class="n">camera</span><span class="p">,</span> <span class="n">person</span><span class="p">),</span>
+                    <span class="n">reason</span><span class="o">=</span><span class="s2">""</span> <span class="k">if</span> <span class="n">found</span> <span class="k">else</span> <span class="n">prepared</span><span class="o">.</span><span class="n">reason_missing</span><span class="p">(</span><span class="n">camera</span><span class="p">,</span> <span class="n">person</span><span class="p">),</span>
                 <span class="p">)</span>
             <span class="p">)</span>
     <span class="k">return</span> <span class="n">rows</span></div>
@@ -359,7 +355,7 @@
                 <span class="n">person</span><span class="p">,</span>
                 <span class="n">head</span><span class="p">,</span>
                 <span class="kc">None</span><span class="p">,</span>
-                <span class="s2">""</span> <span class="k">if</span> <span class="n">head</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"NK:</span><span class="si">{</span><span class="n">missing_reason</span><span class="p">(</span><span class="n">camera</span><span class="p">,</span><span class="w"> </span><span class="n">person</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="s2">""</span> <span class="k">if</span> <span class="n">head</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"NK:</span><span class="si">{</span><span class="n">prepared</span><span class="o">.</span><span class="n">reason_missing</span><span class="p">(</span><span class="n">camera</span><span class="p">,</span><span class="w"> </span><span class="n">person</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">camera_persons</span><span class="p">(</span><span class="n">camera</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">head</span> <span class="ow">in</span> <span class="p">[</span><span class="n">prepared</span><span class="o">.</span><span class="n">heads</span><span class="p">[</span><span class="n">person</span><span class="p">][</span><span class="n">position</span><span class="p">]]</span>
@@ -383,8 +379,9 @@
 <span class="w">    </span><span class="sd">"""Run the head pilot on the clips of one session.</span>
 
 <span class="sd">    Per clip a timeline CSV and (optionally) an overlay clip are written; per phase a</span>
-<span class="sd">    stacked overlay grid. Existing outputs are kept unless ``overwrite``. A failing clip is</span>
-<span class="sd">    recorded in the run record and does not stop the others.</span>
+<span class="sd">    stacked overlay grid. See :func:`~stillface.features.gaze.runner.run_session` for the</span>
+<span class="sd">    resume and failure behaviour. Pinned roles are read from the session's ``roles.json``</span>
+<span class="sd">    in the gaze feature folder.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        paths: Dataset locations.</span>
@@ -399,55 +396,19 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        The run record, also written to ``run.json`` in the pilot folder.</span>
 <span class="sd">    """</span>
-    <span class="n">out_dir</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">features_dir</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="n">PILOT_FEATURE</span><span class="p">)</span>
-    <span class="n">overrides</span> <span class="o">=</span> <span class="n">load_role_overrides</span><span class="p">(</span><span class="n">out_dir</span> <span class="o">/</span> <span class="s2">"roles.json"</span><span class="p">)</span>
-    <span class="n">available</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">available_phase_clips</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span>
-    <span class="n">record</span> <span class="o">=</span> <span class="n">RunRecord</span><span class="p">(</span>
-        <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
-        <span class="n">model_variant</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
-        <span class="n">config</span><span class="o">=</span><span class="n">asdict</span><span class="p">(</span><span class="n">config</span><span class="p">),</span>
-        <span class="n">exordium_version</span><span class="o">=</span><span class="n">installed_version</span><span class="p">(</span><span class="s2">"exordium"</span><span class="p">),</span>
-        <span class="n">stillface_version</span><span class="o">=</span><span class="n">installed_version</span><span class="p">(</span><span class="s2">"stillface"</span><span class="p">),</span>
-        <span class="n">git_sha</span><span class="o">=</span><span class="n">current_git_sha</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">),</span>
-    <span class="p">)</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="n">camera</span><span class="p">,</span> <span class="n">phase</span><span class="p">),</span> <span class="n">clip</span> <span class="ow">in</span> <span class="n">available</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">camera</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cameras</span> <span class="ow">or</span> <span class="n">phase</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">phases</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">camera</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">"</span>
-        <span class="n">csv_path</span> <span class="o">=</span> <span class="n">out_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.csv"</span>
-        <span class="n">overlay_path</span> <span class="o">=</span> <span class="n">out_dir</span> <span class="o">/</span> <span class="s2">"overlay"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.mp4"</span>
-        <span class="k">if</span> <span class="n">is_finished</span><span class="p">(</span><span class="n">csv_path</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
-            <span class="ow">not</span> <span class="n">overlay</span> <span class="ow">or</span> <span class="n">is_finished</span><span class="p">(</span><span class="n">overlay_path</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span>
-        <span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Skipping finished </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-            <span class="n">record</span><span class="o">.</span><span class="n">clips</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clip</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-            <span class="k">continue</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">prepared</span> <span class="o">=</span> <span class="n">prepare_clip</span><span class="p">(</span><span class="n">clip</span><span class="p">,</span> <span class="n">camera</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">tracker</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">overrides</span><span class="o">=</span><span class="n">overrides</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_finished</span><span class="p">(</span><span class="n">csv_path</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">):</span>
-                <span class="n">write_timeline</span><span class="p">(</span><span class="n">head_rows</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="n">camera</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">prepared</span><span class="p">),</span> <span class="n">csv_path</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">overlay</span><span class="p">:</span>
-                <span class="n">render_overlay</span><span class="p">(</span><span class="n">clip</span><span class="p">,</span> <span class="n">head_overlay_items</span><span class="p">(</span><span class="n">camera</span><span class="p">,</span> <span class="n">prepared</span><span class="p">),</span> <span class="n">overlay_path</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">"Head pilot failed for </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-            <span class="n">record</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"failed"</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="k">continue</span>
-        <span class="n">record</span><span class="o">.</span><span class="n">clips</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clip</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">flag</span> <span class="ow">in</span> <span class="n">prepared</span><span class="o">.</span><span class="n">assignment</span><span class="o">.</span><span class="n">flags</span><span class="p">:</span>
-            <span class="n">record</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="n">clip</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">camera</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overrides</span><span class="p">:</span> <span class="n">RoleOverrides</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClipOutput</span><span class="p">:</span>
+        <span class="n">prepared</span> <span class="o">=</span> <span class="n">prepare_clip</span><span class="p">(</span><span class="n">clip</span><span class="p">,</span> <span class="n">camera</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">tracker</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">overrides</span><span class="o">=</span><span class="n">overrides</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ClipOutput</span><span class="p">(</span>
+            <span class="n">head_rows</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="n">camera</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">prepared</span><span class="p">),</span>
+            <span class="n">head_overlay_items</span><span class="p">(</span><span class="n">camera</span><span class="p">,</span> <span class="n">prepared</span><span class="p">),</span>
+            <span class="n">prepared</span><span class="o">.</span><span class="n">assignment</span><span class="o">.</span><span class="n">flags</span><span class="p">,</span>
+        <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">overlay</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">phases</span><span class="p">:</span>
-            <span class="n">overlays</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">camera</span><span class="p">:</span> <span class="n">out_dir</span> <span class="o">/</span> <span class="s2">"overlay"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">camera</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.mp4"</span>
-                <span class="k">for</span> <span class="n">camera</span> <span class="ow">in</span> <span class="n">cameras</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">out_dir</span> <span class="o">/</span> <span class="s2">"overlay"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">camera</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.mp4"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
-            <span class="p">}</span>
-            <span class="n">render_overlay_grid</span><span class="p">(</span><span class="n">overlays</span><span class="p">,</span> <span class="n">out_dir</span> <span class="o">/</span> <span class="s2">"overlay"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"session_</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.mp4"</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span>
-
-    <span class="n">write_run_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">out_dir</span> <span class="o">/</span> <span class="s2">"run.json"</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">record</span></div>
+    <span class="k">return</span> <span class="n">run_session</span><span class="p">(</span>
+        <span class="n">paths</span><span class="p">,</span> <span class="n">session_id</span><span class="p">,</span> <span class="n">paths</span><span class="o">.</span><span class="n">features_dir</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="n">PILOT_FEATURE</span><span class="p">),</span> <span class="n">process</span><span class="p">,</span> <span class="s2">"none"</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">,</span> <span class="n">cameras</span><span class="p">,</span> <span class="n">phases</span><span class="p">,</span> <span class="n">overlay</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span>
+    <span class="p">)</span>  <span class="c1"># fmt: skip</span></div>
 
 </pre></div>
         </article>

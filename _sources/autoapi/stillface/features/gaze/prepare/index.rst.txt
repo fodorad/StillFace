@@ -60,6 +60,18 @@ Module Contents
       Person mapped to one box per sampled frame, None where not found.
 
 
+   .. py:method:: reason_missing(camera: str, person: str) -> str
+
+      Why a person has no head on some frame of this clip.
+
+      :param camera: Camera name.
+      :param person: ``mother`` or ``baby``.
+
+      :returns: ``roles_ambiguous`` if the roles could not be assigned, else ``occluded`` or
+                ``no_head`` (see :func:`~stillface.features.gaze.roles.missing_reason`).
+
+
+
 .. py:function:: clip_properties(clip: pathlib.Path) -> tuple[int, float]
 
    Frame count and frame rate of a clip.

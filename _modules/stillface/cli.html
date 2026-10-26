@@ -219,8 +219,10 @@
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/heads/index.html">stillface.features.gaze.heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/pilot/index.html">stillface.features.gaze.pilot</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/roles/index.html">stillface.features.gaze.roles</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/runner/index.html">stillface.features.gaze.runner</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../autoapi/stillface/features/io/index.html">stillface.features.io</a></li>
@@ -269,7 +271,8 @@
 <span></span><span class="sd">"""Command line interface.</span>
 
 <span class="sd">``stillface prepare &lt;sync|cut|thumbnails|check-missing&gt;`` runs the data preparation,</span>
-<span class="sd">``stillface features heads`` the head and role pilot of the gaze extraction.</span>
+<span class="sd">``stillface features heads`` the head and role pilot of the gaze extraction and</span>
+<span class="sd">``stillface features gaze`` the gaze extraction itself.</span>
 <span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
@@ -284,8 +287,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.data_preparation.sync</span><span class="w"> </span><span class="kn">import</span> <span class="n">sync</span><span class="p">,</span> <span class="n">sync_all</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.data_preparation.thumbnails</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_thumbnails</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_CONFIG_PATH</span><span class="p">,</span> <span class="n">load_gaze_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.estimator</span><span class="w"> </span><span class="kn">import</span> <span class="n">GazeEstimator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.heads</span><span class="w"> </span><span class="kn">import</span> <span class="n">HeadTracker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.pilot</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_heads</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_gaze</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -320,13 +325,17 @@
     <span class="n">features</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"features"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Feature extraction"</span><span class="p">)</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span>
         <span class="n">dest</span><span class="o">=</span><span class="s2">"command"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
-    <span class="n">heads</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"heads"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Head detection, roles and overlays (no gaze model)"</span><span class="p">)</span>
-    <span class="n">heads</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--session-id"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Sessions to process"</span><span class="p">)</span>
-    <span class="n">heads</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--camera"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">CAMERAS</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">CAMERAS</span><span class="p">))</span>
-    <span class="n">heads</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--phase"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">PHASES</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">PHASES</span><span class="p">))</span>
-    <span class="n">heads</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--no-overlay"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Skip the overlay videos"</span><span class="p">)</span>
-    <span class="n">heads</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--overwrite"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Recompute existing outputs"</span><span class="p">)</span>
-    <span class="n">heads</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--config"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_CONFIG_PATH</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Gaze config file"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">help_text</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">"heads"</span><span class="p">,</span> <span class="s2">"Head detection, roles and overlays (no gaze model)"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"gaze"</span><span class="p">,</span> <span class="s2">"Gaze extraction"</span><span class="p">),</span>
+    <span class="p">):</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">help_text</span><span class="p">)</span>
+        <span class="n">step</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--session-id"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Sessions to process"</span><span class="p">)</span>
+        <span class="n">step</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--camera"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">CAMERAS</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">CAMERAS</span><span class="p">))</span>
+        <span class="n">step</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--phase"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">PHASES</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">PHASES</span><span class="p">))</span>
+        <span class="n">step</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--no-overlay"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Skip the overlay videos"</span><span class="p">)</span>
+        <span class="n">step</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--overwrite"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Recompute existing outputs"</span><span class="p">)</span>
+        <span class="n">step</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--config"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_CONFIG_PATH</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Gaze config"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">parser</span></div>
 
 
@@ -338,11 +347,19 @@
     <span class="k">return</span> <span class="n">ExordiumHeadTracker</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_gaze_estimator</span><span class="p">(</span><span class="n">variant</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GazeEstimator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build the Gaze-LLE estimator of a model variant."""</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+        <span class="s2">"The Gaze-LLE adapter is not available yet: it needs the exordium Gaze-LLE wrapper"</span>
+    <span class="p">)</span>
+
+
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../autoapi/stillface/cli/index.html#stillface.cli.main">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span>
     <span class="n">argv</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">head_tracker_factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">HeadTracker</span><span class="p">]</span> <span class="o">=</span> <span class="n">_exordium_head_tracker</span><span class="p">,</span>
+    <span class="n">gaze_estimator_factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">GazeEstimator</span><span class="p">]</span> <span class="o">=</span> <span class="n">_gaze_estimator</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Run the command line interface.</span>
 
@@ -350,6 +367,8 @@
 <span class="sd">        argv: Arguments, ``sys.argv[1:]`` if None.</span>
 <span class="sd">        head_tracker_factory: Builds the head tracker for ``features heads``; replaceable so</span>
 <span class="sd">            the command can run without exordium models.</span>
+<span class="sd">        gaze_estimator_factory: Builds the gaze estimator for a model variant, for</span>
+<span class="sd">            ``features gaze``; replaceable for the same reason.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Process exit code.</span>
@@ -367,11 +386,22 @@
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="s2">"features"</span><span class="p">:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">load_gaze_config</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
         <span class="n">tracker</span> <span class="o">=</span> <span class="n">head_tracker_factory</span><span class="p">()</span>
+        <span class="n">estimator</span> <span class="o">=</span> <span class="n">gaze_estimator_factory</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">model_variant</span><span class="p">)</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"gaze"</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">session_id</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">session_id</span><span class="p">:</span>
-            <span class="n">run_heads</span><span class="p">(</span>
-                <span class="n">paths</span><span class="p">,</span> <span class="n">session_id</span><span class="p">,</span> <span class="n">tracker</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">camera</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span>
-                <span class="n">overlay</span><span class="o">=</span><span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">no_overlay</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span>
-            <span class="p">)</span>  <span class="c1"># fmt: skip</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">overlay</span><span class="o">=</span><span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">no_overlay</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">overwrite</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">estimator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">run_heads</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">session_id</span><span class="p">,</span> <span class="n">tracker</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">camera</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">run_gaze</span><span class="p">(</span>
+                    <span class="n">paths</span><span class="p">,</span>
+                    <span class="n">session_id</span><span class="p">,</span>
+                    <span class="n">tracker</span><span class="p">,</span>
+                    <span class="n">estimator</span><span class="p">,</span>
+                    <span class="n">config</span><span class="p">,</span>
+                    <span class="n">args</span><span class="o">.</span><span class="n">camera</span><span class="p">,</span>
+                    <span class="n">args</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">options</span><span class="p">,</span>
+                <span class="p">)</span>
     <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"sync"</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">session_id</span><span class="p">:</span>
             <span class="n">sync</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">session_id</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">visualize</span><span class="p">)</span>

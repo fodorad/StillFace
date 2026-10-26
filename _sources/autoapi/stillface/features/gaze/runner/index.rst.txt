@@ -1,0 +1,96 @@
+stillface.features.gaze.runner
+==============================
+
+.. py:module:: stillface.features.gaze.runner
+
+.. autoapi-nested-parse::
+
+   Session runner shared by the head pilot and the gaze pipeline.
+
+   Walks over the phase clips of a session, writes one timeline CSV and (optionally) one
+   overlay clip per clip and one stacked overlay grid per phase, skips finished outputs,
+   isolates failures and records the run.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.gaze.runner.logger
+   stillface.features.gaze.runner.ROLES_FEATURE
+   stillface.features.gaze.runner.ClipProcessor
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.runner.ClipOutput
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.gaze.runner.run_session
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: ROLES_FEATURE
+   :type:  str
+   :value: 'gaze'
+
+
+   Feature folder holding the per-session ``roles.json`` used by every gaze-related run.
+
+.. py:class:: ClipOutput
+
+   Result of processing one clip.
+
+   .. attribute:: rows
+
+      Timeline rows.
+
+   .. attribute:: overlay_items
+
+      Sampled frame index mapped to the annotations to draw.
+
+   .. attribute:: flags
+
+      Issues of the clip, e.g. ``roles_ambiguous``.
+
+
+.. py:data:: ClipProcessor
+
+   Processes ``(clip, camera, phase, role overrides)`` into a :class:`ClipOutput`.
+
+.. py:function:: run_session(paths: stillface.config.DatasetPaths, session_id: str, out_dir: pathlib.Path, processor: ClipProcessor, model_variant: str, config: stillface.features.gaze.config.GazeConfig, cameras: collections.abc.Sequence[str] = CAMERAS, phases: collections.abc.Sequence[str] = PHASES, overlay: bool = True, overwrite: bool = False) -> stillface.features.run_record.RunRecord
+
+   Process the phase clips of a session and write the outputs.
+
+   Existing outputs are kept unless ``overwrite``. A failing clip is logged, recorded under
+   the ``failed`` flag of the run record and does not stop the others.
+
+   :param paths: Dataset locations.
+   :param session_id: Session identifier.
+   :param out_dir: Output folder; CSVs go here, overlays to ``overlay/``, the run record to
+                   ``run.json``.
+   :param processor: Turns one clip into rows and overlay annotations.
+   :param model_variant: Model recorded in the run record.
+   :param config: Configuration, copied into the run record.
+   :param cameras: Cameras to process.
+   :param phases: Phases to process.
+   :param overlay: Also render overlay clips and grids.
+   :param overwrite: Recompute existing outputs.
+
+   :returns: The run record, also written to ``out_dir/run.json``.
+
+

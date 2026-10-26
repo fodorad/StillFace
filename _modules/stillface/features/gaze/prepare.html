@@ -219,8 +219,10 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/heads/index.html">stillface.features.gaze.heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pilot/index.html">stillface.features.gaze.pilot</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/roles/index.html">stillface.features.gaze.roles</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/runner/index.html">stillface.features.gaze.runner</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/io/index.html">stillface.features.io</a></li>
@@ -282,6 +284,7 @@
     <span class="n">RoleReferences</span><span class="p">,</span>
     <span class="n">assign_roles</span><span class="p">,</span>
     <span class="n">head_per_frame</span><span class="p">,</span>
+    <span class="n">missing_reason</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.timeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">sample_frame_indices</span>
 
@@ -304,7 +307,25 @@
     <span class="n">frame_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
     <span class="n">clip_fps</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">assignment</span><span class="p">:</span> <span class="n">RoleAssignment</span>
-    <span class="n">heads</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">HeadBox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]</span></div>
+    <span class="n">heads</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">HeadBox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]</span>
+
+<div class="viewcode-block" id="ClipHeads.reason_missing">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/prepare/index.html#stillface.features.gaze.prepare.ClipHeads.reason_missing">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reason_missing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">camera</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">person</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Why a person has no head on some frame of this clip.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            camera: Camera name.</span>
+<span class="sd">            person: ``mother`` or ``baby``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ``roles_ambiguous`` if the roles could not be assigned, else ``occluded`` or</span>
+<span class="sd">            ``no_head`` (see :func:`~stillface.features.gaze.roles.missing_reason`).</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="s2">"roles_ambiguous"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">assignment</span><span class="o">.</span><span class="n">flags</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"roles_ambiguous"</span>
+        <span class="k">return</span> <span class="n">missing_reason</span><span class="p">(</span><span class="n">camera</span><span class="p">,</span> <span class="n">person</span><span class="p">)</span></div>
+</div>
 
 
 

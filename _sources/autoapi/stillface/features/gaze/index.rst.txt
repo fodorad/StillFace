@@ -21,7 +21,9 @@ Submodules
    /autoapi/stillface/features/gaze/exordium_heads/index
    /autoapi/stillface/features/gaze/heads/index
    /autoapi/stillface/features/gaze/pilot/index
+   /autoapi/stillface/features/gaze/pipeline/index
    /autoapi/stillface/features/gaze/prepare/index
    /autoapi/stillface/features/gaze/roles/index
+   /autoapi/stillface/features/gaze/runner/index
 
 

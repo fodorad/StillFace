@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.gaze.roles" href="../roles/index.html"><link rel="prev" title="stillface.features.gaze.pilot" href="../pilot/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.gaze.roles" href="../roles/index.html"><link rel="prev" title="stillface.features.gaze.pipeline" href="../pipeline/index.html">
         <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/gaze/prepare/index.html">
         <link rel="prefetch" href="../../../../../_static/logo.svg" as="image">
 
@@ -220,8 +220,10 @@
 <li class="toctree-l5"><a class="reference internal" href="../exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../heads/index.html">stillface.features.gaze.heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../pilot/index.html">stillface.features.gaze.pilot</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../roles/index.html">stillface.features.gaze.roles</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../runner/index.html">stillface.features.gaze.runner</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../io/index.html">stillface.features.io</a></li>
@@ -349,6 +351,24 @@
 <dd><p>Person mapped to one box per sampled frame, None where not found.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.features.gaze.prepare.ClipHeads.reason_missing">
+<span class="sig-name descname"><span class="pre">reason_missing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">person</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/prepare.html#ClipHeads.reason_missing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.prepare.ClipHeads.reason_missing" title="Link to this definition">¶</a></dt>
+<dd><p>Why a person has no head on some frame of this clip.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>camera</strong> – Camera name.</p></li>
+<li><p><strong>person</strong> – <code class="docutils literal notranslate"><span class="pre">mother</span></code> or <code class="docutils literal notranslate"><span class="pre">baby</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">roles_ambiguous</span></code> if the roles could not be assigned, else <code class="docutils literal notranslate"><span class="pre">occluded</span></code> or
+<code class="docutils literal notranslate"><span class="pre">no_head</span></code> (see <a class="reference internal" href="../roles/index.html#stillface.features.gaze.roles.missing_reason" title="stillface.features.gaze.roles.missing_reason"><code class="xref py py-func docutils literal notranslate"><span class="pre">missing_reason()</span></code></a>).</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
@@ -407,14 +427,14 @@
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../pilot/index.html">
+          <a class="prev-page" href="../pipeline/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">stillface.features.gaze.pilot</div>
+                <div class="title">stillface.features.gaze.pipeline</div>
                 
               </div>
             </a>
@@ -459,6 +479,7 @@
 <li><a class="reference internal" href="#stillface.features.gaze.prepare.ClipHeads.clip_fps"><code class="docutils literal notranslate"><span class="pre">ClipHeads.clip_fps</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.prepare.ClipHeads.assignment"><code class="docutils literal notranslate"><span class="pre">ClipHeads.assignment</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.prepare.ClipHeads.heads"><code class="docutils literal notranslate"><span class="pre">ClipHeads.heads</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.prepare.ClipHeads.reason_missing"><code class="docutils literal notranslate"><span class="pre">ClipHeads.reason_missing()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#stillface.features.gaze.prepare.clip_properties"><code class="docutils literal notranslate"><span class="pre">clip_properties()</span></code></a></li>

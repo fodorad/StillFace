@@ -1,0 +1,83 @@
+stillface.features.gaze.pipeline
+================================
+
+.. py:module:: stillface.features.gaze.pipeline
+
+.. autoapi-nested-parse::
+
+   Gaze extraction pipeline: heads, gaze model, classes, timelines and overlays.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.gaze.pipeline.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.gaze.pipeline.read_frames
+   stillface.features.gaze.pipeline.gaze_outputs
+   stillface.features.gaze.pipeline.run_gaze
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: read_frames(clip: pathlib.Path, frame_indices: collections.abc.Sequence[int]) -> collections.abc.Iterator[numpy.ndarray]
+
+   Stream selected frames of a clip.
+
+   :param clip: Video file.
+   :param frame_indices: Ascending frame indices to return.
+
+   :Yields: RGB ``uint8`` frames of shape ``(height, width, 3)``, in the order of the indices.
+
+   :raises RuntimeError: If the clip cannot be read or ends before the last index.
+
+
+.. py:function:: gaze_outputs(session_id: str, camera: str, phase: str, prepared: stillface.features.gaze.prepare.ClipHeads, decisions: dict[tuple[int, str], stillface.features.gaze.classes.GazeDecision]) -> stillface.features.gaze.runner.ClipOutput
+
+   Timeline rows and overlay annotations from the decisions of a clip.
+
+   :param session_id: Session identifier.
+   :param camera: Camera name.
+   :param phase: Experiment phase.
+   :param prepared: Heads of the clip.
+   :param decisions: ``(sample position, person)`` mapped to the decision; people without a
+                     head on a frame are not codable.
+
+   :returns: Rows and overlay items of every sampled frame.
+
+
+.. py:function:: run_gaze(paths: stillface.config.DatasetPaths, session_id: str, tracker: stillface.features.gaze.heads.HeadTracker, estimator: stillface.features.gaze.estimator.GazeEstimator, config: stillface.features.gaze.config.GazeConfig, cameras: collections.abc.Sequence[str] = CAMERAS, phases: collections.abc.Sequence[str] = PHASES, overlay: bool = True, overwrite: bool = False, batch_size: int = 8) -> stillface.features.run_record.RunRecord
+
+   Extract the gaze of the mother and the baby for one session.
+
+   Per clip a timeline CSV and (optionally) an overlay clip are written; per phase a
+   stacked overlay grid; per session ``run.json`` records the model variant used. See
+   :func:`~stillface.features.gaze.runner.run_session` for the resume and failure
+   behaviour.
+
+   :param paths: Dataset locations.
+   :param session_id: Session identifier.
+   :param tracker: Head detector and tracker.
+   :param estimator: Gaze target model.
+   :param config: Gaze configuration.
+   :param cameras: Cameras to process.
+   :param phases: Phases to process.
+   :param overlay: Also render overlay clips and grids.
+   :param overwrite: Recompute existing outputs.
+   :param batch_size: Frames per model call.
+
+   :returns: The run record, also written to ``run.json`` in the gaze folder.
+
+

@@ -72,8 +72,9 @@ Module Contents
    Run the head pilot on the clips of one session.
 
    Per clip a timeline CSV and (optionally) an overlay clip are written; per phase a
-   stacked overlay grid. Existing outputs are kept unless ``overwrite``. A failing clip is
-   recorded in the run record and does not stop the others.
+   stacked overlay grid. See :func:`~stillface.features.gaze.runner.run_session` for the
+   resume and failure behaviour. Pinned roles are read from the session's ``roles.json``
+   in the gaze feature folder.
 
    :param paths: Dataset locations.
    :param session_id: Session identifier.
