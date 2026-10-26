@@ -6,6 +6,7 @@ import pandas as pd
 
 from stillface.cli import build_parser, main
 from stillface.constants import PHASES
+from tests.features.gaze.fakes import FakeHeadTracker, track
 from tests.helpers import make_video
 
 
@@ -71,6 +72,30 @@ class TestCli(unittest.TestCase):
                 "1",
             ]
             self.assertEqual(main(args), 0)
+
+
+class TestFeaturesCli(unittest.TestCase):
+    def test_heads_runs_the_pilot_with_the_given_tracker(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            raw, out = Path(tmp) / "raw", Path(tmp) / "out"
+            make_video(
+                raw / "Sessions" / "9" / "processed" / "window_play.mp4",
+                seconds=1, fps=60, size="160x120", audio=False,
+            )  # fmt: skip
+            tracker = FakeHeadTracker({"window_play.mp4": [track(1, 0.3), track(2, 0.8)]})
+            args = ["--raw-dir", str(raw), "--processed-dir", str(out), "features", "heads"]
+            args += ["--session-id", "9", "--camera", "window", "--phase", "play", "--no-overlay"]
+
+            self.assertEqual(main(args, head_tracker_factory=lambda: tracker), 0)
+
+            folder = out / "Sessions" / "9" / "features" / "heads"
+            self.assertTrue((folder / "window_play.csv").exists())
+            self.assertTrue((folder / "run.json").exists())
+            self.assertFalse((folder / "overlay").exists())
+
+    def test_heads_requires_a_session(self) -> None:
+        with self.assertRaises(SystemExit):
+            build_parser().parse_args(["features", "heads"])
 
 
 if __name__ == "__main__":

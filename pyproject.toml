@@ -38,6 +38,9 @@ dev = [
   "ruff",
   "ty",
 ]
+features = [
+  "exordium[video]>=2.11",
+]
 docs = [
   "furo",
   "myst-parser",

@@ -194,6 +194,18 @@ def head_per_frame(
     return heads
 
 
+def camera_persons(camera: str) -> tuple[str, ...]:
+    """People whose gaze a camera can show.
+
+    Args:
+        camera: Camera name.
+
+    Returns:
+        Both people for the side cameras, only the camera's owner for the close cameras.
+    """
+    return PERSONS if camera in SIDE_CAMERAS else (camera,)
+
+
 def missing_reason(camera: str, person: str) -> str:
     """Why a person has no head on a frame.
 
