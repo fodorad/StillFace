@@ -1,0 +1,132 @@
+stillface.data_preparation.metadata
+===================================
+
+.. py:module:: stillface.data_preparation.metadata
+
+.. autoapi-nested-parse::
+
+   Session metadata spreadsheet access.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.data_preparation.metadata.logger
+   stillface.data_preparation.metadata.HRV_COLUMNS
+   stillface.data_preparation.metadata.MISSING_CAMERA_COLUMNS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.data_preparation.metadata.PhaseWindows
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.data_preparation.metadata.load_metadata
+   stillface.data_preparation.metadata.missing_recordings
+   stillface.data_preparation.metadata.sessions_to_sync
+   stillface.data_preparation.metadata.sessions_to_cut
+   stillface.data_preparation.metadata.phase_windows
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: HRV_COLUMNS
+   :type:  tuple[str, ...]
+   :value: ('polar_mother', 'polar_baby')
+
+
+   Metadata columns flagging the availability of the heart rate recordings.
+
+.. py:data:: MISSING_CAMERA_COLUMNS
+   :type:  tuple[str, ...]
+   :value: ('mother', 'baby', 'window', 'door')
+
+
+   Metadata columns flagging the availability of the camera recordings.
+
+.. py:class:: PhaseWindows
+
+   Start and end time of each experiment phase.
+
+   .. attribute:: windows
+
+      Phase name mapped to ``(start, end)`` strings in ``MM:SS`` format.
+
+
+   .. py:method:: from_row(row: pandas.Series) -> PhaseWindows
+      :classmethod:
+
+
+      Read the phase windows of one metadata row.
+
+      :param row: Metadata row with ``<phase>_start_(MM:SS)``/``<phase>_end_(MM:SS)`` columns.
+
+      :returns: The phase windows, with missing cells stored as ``"nan"``.
+
+
+
+.. py:function:: load_metadata(path: pathlib.Path) -> pandas.DataFrame
+
+   Load the session metadata table.
+
+   :param path: Spreadsheet (``.xlsx``) or ``.csv`` file.
+
+   :returns: One row per session.
+
+   :raises FileNotFoundError: If ``path`` does not exist.
+   :raises ValueError: If the file type is not supported.
+
+
+.. py:function:: missing_recordings(metadata: pandas.DataFrame) -> pandas.DataFrame
+
+   List the camera and heart rate recordings flagged as missing.
+
+   :param metadata: Table returned by :func:`load_metadata`.
+
+   :returns: One row per missing recording with ``ID``, session date, hour and a description.
+
+
+.. py:function:: sessions_to_sync(metadata: pandas.DataFrame) -> list[str]
+
+   Select the sessions that are automatically processable and not yet synchronized.
+
+   :param metadata: Table returned by :func:`load_metadata`.
+
+   :returns: Session IDs, in table order.
+
+
+.. py:function:: sessions_to_cut(metadata: pandas.DataFrame) -> list[str]
+
+   Select the sessions that are automatically processable.
+
+   :param metadata: Table returned by :func:`load_metadata`.
+
+   :returns: Session IDs, in table order.
+
+
+.. py:function:: phase_windows(metadata: pandas.DataFrame, session_id: str) -> PhaseWindows
+
+   Look up the phase windows of a session.
+
+   :param metadata: Table returned by :func:`load_metadata`.
+   :param session_id: Session identifier.
+
+   :returns: The session's phase windows.
+
+   :raises KeyError: If the session is not in the table.
+
+

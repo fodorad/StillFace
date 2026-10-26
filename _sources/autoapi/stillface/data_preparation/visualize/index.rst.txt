@@ -1,0 +1,103 @@
+stillface.data_preparation.visualize
+====================================
+
+.. py:module:: stillface.data_preparation.visualize
+
+.. autoapi-nested-parse::
+
+   Stacked overview videos of the camera views.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.data_preparation.visualize.logger
+   stillface.data_preparation.visualize.GRID_ORDER
+   stillface.data_preparation.visualize.AUDIO_PRIORITY
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.data_preparation.visualize.placeholder
+   stillface.data_preparation.visualize.stack_vertical
+   stillface.data_preparation.visualize.stack_grid
+   stillface.data_preparation.visualize.create_stacked_videos
+   stillface.data_preparation.visualize.find_cut_videos
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: GRID_ORDER
+   :type:  tuple[str, ...]
+   :value: ('mother', 'window', 'baby', 'door')
+
+
+   top-left, top-right, bottom-left, bottom-right.
+
+   :type: Camera layout of the 2x2 grid
+
+.. py:data:: AUDIO_PRIORITY
+   :type:  tuple[str, ...]
+   :value: ('baby', 'mother', 'window', 'door')
+
+
+   Fallback order when the requested audio source is unavailable.
+
+.. py:function:: placeholder(reference: pathlib.Path) -> str
+
+   Build the lavfi source standing in for a missing camera.
+
+   :param reference: Present video whose size, frame rate and length are matched.
+
+   :returns: ffmpeg ``lavfi`` input description of a black video.
+
+
+.. py:function:: stack_vertical(top: pathlib.Path, bottom: pathlib.Path, dst: pathlib.Path, audio_source: int = 1) -> bool
+
+   Stack two videos on top of each other.
+
+   :param top: Video placed on top.
+   :param bottom: Video placed below.
+   :param dst: Output video. An existing file is kept.
+   :param audio_source: 0 to keep the audio of ``top``, 1 for ``bottom``.
+
+   :returns: True if the output exists afterwards.
+
+
+.. py:function:: stack_grid(videos: dict[str, pathlib.Path | None], dst: pathlib.Path, audio_source: str = 'baby') -> bool
+
+   Arrange the cameras in a 2x2 grid, replacing missing ones with black.
+
+   :param videos: Camera name mapped to video path, or None if unavailable.
+   :param dst: Output video. An existing file is kept.
+   :param audio_source: Camera providing the audio; falls back by :data:`AUDIO_PRIORITY`.
+
+   :returns: True if the output exists afterwards.
+
+
+.. py:function:: create_stacked_videos(clips: dict[str, dict[str, pathlib.Path]], output_dir: pathlib.Path) -> None
+
+   Create the mother-baby stack and the 2x2 grid of every phase.
+
+   :param clips: Camera name mapped to phase mapped to clip path.
+   :param output_dir: Folder receiving ``mother-baby_<phase>.mp4`` and ``session_<phase>.mp4``.
+
+
+.. py:function:: find_cut_videos(cut_dir: pathlib.Path) -> dict[str, dict[str, pathlib.Path]]
+
+   Collect the existing phase clips of a session.
+
+   :param cut_dir: Folder with ``<camera>_<phase>.mp4`` clips.
+
+   :returns: Camera name mapped to phase mapped to clip path.
+
+

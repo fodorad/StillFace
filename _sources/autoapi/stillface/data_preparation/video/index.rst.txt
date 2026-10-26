@@ -1,0 +1,77 @@
+stillface.data_preparation.video
+================================
+
+.. py:module:: stillface.data_preparation.video
+
+.. autoapi-nested-parse::
+
+   Thin ffmpeg/ffprobe helpers.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.data_preparation.video.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.data_preparation.video.run_ffmpeg
+   stillface.data_preparation.video.video_duration
+   stillface.data_preparation.video.to_seconds
+   stillface.data_preparation.video.convert_to_fps
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: run_ffmpeg(args: list[str]) -> bool
+
+   Run ffmpeg quietly, overwriting outputs.
+
+   :param args: Arguments following the ``ffmpeg`` executable.
+
+   :returns: True if ffmpeg exited successfully.
+
+
+.. py:function:: video_duration(path: pathlib.Path) -> float
+
+   Return the container duration of a media file.
+
+   :param path: Media file.
+
+   :returns: Duration in seconds, 0.0 if it cannot be determined.
+
+
+.. py:function:: to_seconds(timestamp: str) -> int
+
+   Convert ``MM:SS`` or ``HH:MM:SS`` to seconds.
+
+   :param timestamp: Time string.
+
+   :returns: Seconds.
+
+   :raises ValueError: If the string is not a valid timestamp.
+
+
+.. py:function:: convert_to_fps(src: pathlib.Path, dst: pathlib.Path, fps: int) -> pathlib.Path
+
+   Re-encode a video to a fixed frame rate, skipping existing output.
+
+   :param src: Input video.
+   :param dst: Output ``.mp4`` path.
+   :param fps: Target frame rate.
+
+   :returns: ``dst``.
+
+   :raises RuntimeError: If the conversion fails.
+
+

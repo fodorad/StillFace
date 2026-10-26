@@ -1,0 +1,45 @@
+stillface.constants
+===================
+
+.. py:module:: stillface.constants
+
+.. autoapi-nested-parse::
+
+   Experiment-level constants shared across the package.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.constants.CAMERAS
+   stillface.constants.PHASES
+   stillface.constants.TARGET_FPS
+
+
+Module Contents
+---------------
+
+.. py:data:: CAMERAS
+   :type:  tuple[str, ...]
+   :value: ('mother', 'baby', 'window', 'door')
+
+
+   Camera names, in the order used for the 2x2 session grid.
+
+.. py:data:: PHASES
+   :type:  tuple[str, ...]
+   :value: ('baseline', 'play', 'stillface', 'reunion')
+
+
+   Experiment phases in chronological order.
+
+.. py:data:: TARGET_FPS
+   :type:  int
+   :value: 60
+
+
+   Frame rate all camera sources are normalized to before synchronization.
+

@@ -1,0 +1,23 @@
+stillface
+=========
+
+.. py:module:: stillface
+
+.. autoapi-nested-parse::
+
+   StillFace: tools for the analysis of mother-baby Still Face experiment recordings.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/stillface/cli/index
+   /autoapi/stillface/config/index
+   /autoapi/stillface/constants/index
+   /autoapi/stillface/data_preparation/index
+
+

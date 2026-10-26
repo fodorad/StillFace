@@ -1,0 +1,49 @@
+stillface.cli
+=============
+
+.. py:module:: stillface.cli
+
+.. autoapi-nested-parse::
+
+   Command line interface: ``stillface prepare <sync|cut|thumbnails|check-missing>``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.cli.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.cli.build_parser
+   stillface.cli.main
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: build_parser() -> argparse.ArgumentParser
+
+   Create the argument parser.
+
+   :returns: The configured parser.
+
+
+.. py:function:: main(argv: collections.abc.Sequence[str] | None = None) -> int
+
+   Run the command line interface.
+
+   :param argv: Arguments, ``sys.argv[1:]`` if None.
+
+   :returns: Process exit code.
+
+

@@ -1,0 +1,164 @@
+stillface.data_preparation.sync
+===============================
+
+.. py:module:: stillface.data_preparation.sync
+
+.. autoapi-nested-parse::
+
+   Synchronize the camera videos of a session.
+
+   The mother and baby cameras are aligned to each other with :mod:`avst`; the window and
+   door cameras are aligned to the resulting reference. Originals are never modified, every
+   product is written below the processed dataset root.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.data_preparation.sync.logger
+   stillface.data_preparation.sync.SOURCE_SUFFIXES
+   stillface.data_preparation.sync.REFERENCE_PRIORITY
+   stillface.data_preparation.sync.AUXILIARY_CAMERAS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.data_preparation.sync.SyncResult
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.data_preparation.sync.find_cameras
+   stillface.data_preparation.sync.normalize
+   stillface.data_preparation.sync.sync_mother_baby
+   stillface.data_preparation.sync.sync_auxiliary
+   stillface.data_preparation.sync.pick_reference
+   stillface.data_preparation.sync.sync
+   stillface.data_preparation.sync.sync_all
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: SOURCE_SUFFIXES
+   :type:  dict[str, tuple[str, ...]]
+
+   Accepted file extensions of each camera's original recording, by preference.
+
+.. py:data:: REFERENCE_PRIORITY
+   :type:  tuple[str, ...]
+   :value: ('baby', 'mother', 'window')
+
+
+   Camera order used as the alignment reference of the auxiliary cameras.
+
+.. py:data:: AUXILIARY_CAMERAS
+   :type:  tuple[str, ...]
+   :value: ('window', 'door')
+
+
+   Cameras aligned to the mother-baby reference instead of to each other.
+
+.. py:class:: SyncResult
+
+   Outcome of synchronizing one session.
+
+   .. attribute:: videos
+
+      Camera name mapped to the synced video path.
+
+   .. attribute:: offset_ms
+
+      Mother-baby offset in milliseconds, None if not computed in this run.
+
+
+.. py:function:: find_cameras(original_dir: pathlib.Path) -> dict[str, pathlib.Path]
+
+   Detect the available original recordings of a session.
+
+   :param original_dir: Folder with the original recordings.
+
+   :returns: Camera name mapped to its source path, for the cameras that exist.
+
+
+.. py:function:: normalize(cameras: dict[str, pathlib.Path], normalized_dir: pathlib.Path) -> dict[str, pathlib.Path]
+
+   Bring the window and door recordings to ``.mp4`` at the target frame rate.
+
+   :param cameras: Output of :func:`find_cameras`.
+   :param normalized_dir: Folder receiving the converted files.
+
+   :returns: The camera mapping, with auxiliary cameras pointing to the converted files.
+
+   :raises RuntimeError: If a conversion fails.
+
+
+.. py:function:: sync_mother_baby(mother: pathlib.Path | None, baby: pathlib.Path | None, synced_dir: pathlib.Path, visualize: bool = False) -> SyncResult
+
+   Align the mother and baby videos, or pass a single available one through.
+
+   :param mother: Mother camera source, if recorded.
+   :param baby: Baby camera source, if recorded.
+   :param synced_dir: Output folder.
+   :param visualize: Also write a stacked check video of the aligned pair.
+
+   :returns: Synced videos and the offset when both cameras exist and were aligned.
+
+
+.. py:function:: sync_auxiliary(camera: str, source: pathlib.Path, reference: pathlib.Path | None, synced_dir: pathlib.Path, visualize: bool = False) -> pathlib.Path
+
+   Align an auxiliary camera to the reference video.
+
+   :param camera: Camera name, ``window`` or ``door``.
+   :param source: Normalized camera source.
+   :param reference: Reference video, or None if the camera is the only one.
+   :param synced_dir: Output folder.
+   :param visualize: Also write a stacked check video.
+
+   :returns: Path of the synced video.
+
+
+.. py:function:: pick_reference(synced: dict[str, pathlib.Path], cameras: dict[str, pathlib.Path]) -> pathlib.Path | None
+
+   Choose the video the auxiliary cameras are aligned to.
+
+   :param synced: Cameras synced so far.
+   :param cameras: Normalized sources of all available cameras.
+
+   :returns: The synced baby, mother or window video by :data:`REFERENCE_PRIORITY`; the
+             unsynced window source if it is the only camera so far; otherwise None.
+
+
+.. py:function:: sync(paths: stillface.config.DatasetPaths, session_id: str, visualize: bool = False) -> SyncResult
+
+   Synchronize all available cameras of a session.
+
+   :param paths: Dataset locations.
+   :param session_id: Session identifier.
+   :param visualize: Also write stacked check videos.
+
+   :returns: Synced videos and the mother-baby offset. Empty if no camera was recorded.
+
+
+.. py:function:: sync_all(paths: stillface.config.DatasetPaths, visualize: bool = False) -> None
+
+   Synchronize every pending, automatically processable session.
+
+   Failures are logged per session and recorded in ``logs/failed_sessions.txt``; offsets
+   of successful sessions go to ``logs/synced_sessions.txt`` for review.
+
+   :param paths: Dataset locations.
+   :param visualize: Also write stacked check videos.
+
+

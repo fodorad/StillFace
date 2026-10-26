@@ -1,0 +1,139 @@
+stillface.config
+================
+
+.. py:module:: stillface.config
+
+.. autoapi-nested-parse::
+
+   Dataset locations.
+
+   The ``data/`` folder of a checkout holds soft links to the unmodified recordings
+   (``DB``) and to the derived products (``DB_PROCESSED``). Raw data is only read,
+   every generated file is written below the processed root.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.config.DATASET_NAME
+   stillface.config.RAW_ENV_VAR
+   stillface.config.PROCESSED_ENV_VAR
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.config.DatasetPaths
+
+
+Module Contents
+---------------
+
+.. py:data:: DATASET_NAME
+   :type:  str
+   :value: 'ELTE-PPK_StillFace'
+
+
+   Directory name of the dataset below the raw and processed roots.
+
+.. py:data:: RAW_ENV_VAR
+   :type:  str
+   :value: 'STILLFACE_RAW_DIR'
+
+
+   Environment variable overriding the raw dataset directory.
+
+.. py:data:: PROCESSED_ENV_VAR
+   :type:  str
+   :value: 'STILLFACE_PROCESSED_DIR'
+
+
+   Environment variable overriding the processed dataset directory.
+
+.. py:class:: DatasetPaths
+
+   Resolves every dataset location from a raw and a processed root.
+
+   .. attribute:: raw_dir
+
+      Directory of the original, untouched recordings and metadata.
+
+   .. attribute:: processed_dir
+
+      Directory receiving all derived data.
+
+
+   .. py:method:: default(base: pathlib.Path = Path('data')) -> DatasetPaths
+      :classmethod:
+
+
+      Build paths from the environment, falling back to ``base``/DB[_PROCESSED].
+
+      :param base: Folder holding the ``DB`` and ``DB_PROCESSED`` links.
+
+      :returns: Resolved dataset paths.
+
+
+
+   .. py:property:: metadata_path
+      :type: pathlib.Path
+
+
+      Session metadata spreadsheet.
+
+
+   .. py:method:: original_dir(session_id: str) -> pathlib.Path
+
+      Original recordings of a session (read-only).
+
+
+
+   .. py:method:: normalized_dir(session_id: str) -> pathlib.Path
+
+      Original sources converted to a common container and frame rate.
+
+
+
+   .. py:method:: synced_dir(session_id: str) -> pathlib.Path
+
+      Time-aligned camera videos.
+
+
+
+   .. py:method:: cut_dir(session_id: str) -> pathlib.Path
+
+      Per-phase clips of the synced videos.
+
+
+
+   .. py:method:: visualize_dir(session_id: str) -> pathlib.Path
+
+      Stacked overview videos.
+
+
+
+   .. py:method:: thumbnail_path(session_id: str) -> pathlib.Path
+
+      Overview image of a session.
+
+
+
+   .. py:property:: thumbnails_dir
+      :type: pathlib.Path
+
+
+      Flat folder with one thumbnail per session.
+
+
+   .. py:property:: logs_dir
+      :type: pathlib.Path
+
+
+      Per-run bookkeeping files (synced, failed sessions).
+
+

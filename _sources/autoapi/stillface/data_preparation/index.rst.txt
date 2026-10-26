@@ -1,0 +1,25 @@
+stillface.data_preparation
+==========================
+
+.. py:module:: stillface.data_preparation
+
+.. autoapi-nested-parse::
+
+   Data preparation: synchronize the cameras, cut the phases and render overviews.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/stillface/data_preparation/cut/index
+   /autoapi/stillface/data_preparation/metadata/index
+   /autoapi/stillface/data_preparation/sync/index
+   /autoapi/stillface/data_preparation/thumbnails/index
+   /autoapi/stillface/data_preparation/video/index
+   /autoapi/stillface/data_preparation/visualize/index
+
+

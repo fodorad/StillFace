@@ -1,0 +1,60 @@
+stillface.data_preparation.thumbnails
+=====================================
+
+.. py:module:: stillface.data_preparation.thumbnails
+
+.. autoapi-nested-parse::
+
+   Session thumbnails taken from the stillface overview video.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.data_preparation.thumbnails.logger
+   stillface.data_preparation.thumbnails.OVERVIEW_VIDEO
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.data_preparation.thumbnails.middle_frame
+   stillface.data_preparation.thumbnails.generate_thumbnails
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: OVERVIEW_VIDEO
+   :type:  str
+   :value: 'session_stillface.mp4'
+
+
+   Overview video the thumbnail is taken from.
+
+.. py:function:: middle_frame(video: pathlib.Path) -> cv2.typing.MatLike | None
+
+   Read the frame in the middle of a video.
+
+   :param video: Video file.
+
+   :returns: BGR image, or None if the video cannot be read.
+
+
+.. py:function:: generate_thumbnails(paths: stillface.config.DatasetPaths, session_ids: list[str] | None = None) -> int
+
+   Save a thumbnail for each session, per session and in a flat overview folder.
+
+   :param paths: Dataset locations.
+   :param session_ids: Sessions to process; all sessions with processed data if None.
+
+   :returns: Number of thumbnails written.
+
+

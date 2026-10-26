@@ -1,0 +1,80 @@
+stillface.data_preparation.cut
+==============================
+
+.. py:module:: stillface.data_preparation.cut
+
+.. autoapi-nested-parse::
+
+   Cut the synchronized camera videos into experiment phases.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.data_preparation.cut.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.data_preparation.cut.cut_clip
+   stillface.data_preparation.cut.cut_all_phases
+   stillface.data_preparation.cut.cut
+   stillface.data_preparation.cut.cut_all
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: cut_clip(src: pathlib.Path, dst: pathlib.Path, start: str, end: str) -> bool
+
+   Cut ``[start, end]`` out of a video without re-encoding.
+
+   :param src: Input video.
+   :param dst: Output video. An existing file is kept.
+   :param start: Start time in ``MM:SS`` format.
+   :param end: End time in ``MM:SS`` format.
+
+   :returns: True if the clip exists afterwards.
+
+
+.. py:function:: cut_all_phases(synced_dir: pathlib.Path, windows: stillface.data_preparation.metadata.PhaseWindows, output_dir: pathlib.Path) -> dict[str, dict[str, pathlib.Path]]
+
+   Cut every synced camera into the experiment phases.
+
+   :param synced_dir: Folder with ``<camera>.mp4`` files.
+   :param windows: Phase boundaries.
+   :param output_dir: Folder receiving ``<camera>_<phase>.mp4`` clips.
+
+   :returns: Camera name mapped to phase mapped to clip path, for the clips that exist.
+
+
+.. py:function:: cut(paths: stillface.config.DatasetPaths, session_id: str, windows: stillface.data_preparation.metadata.PhaseWindows, visualize: bool = False) -> dict[str, dict[str, pathlib.Path]]
+
+   Cut one session into phases and optionally render the stacked overviews.
+
+   :param paths: Dataset locations.
+   :param session_id: Session identifier.
+   :param windows: Phase boundaries of the session.
+   :param visualize: Also create the stacked overview videos.
+
+   :returns: Camera name mapped to phase mapped to clip path.
+
+
+.. py:function:: cut_all(paths: stillface.config.DatasetPaths, visualize: bool = False) -> None
+
+   Cut every automatically processable session listed in the metadata.
+
+   Failures are logged per session and recorded in ``logs/failed_cut_sessions.txt``.
+
+   :param paths: Dataset locations.
+   :param visualize: Also create the stacked overview videos.
+
+
