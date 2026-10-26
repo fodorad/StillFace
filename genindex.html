@@ -212,7 +212,9 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/stillface/features/index.html">stillface.features</a><input aria-label="Toggle navigation of stillface.features" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/stillface/features/config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/stillface/features/gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/classes/index.html">stillface.features.gaze.classes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/config/index.html">stillface.features.gaze.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/estimator/index.html">stillface.features.gaze.estimator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/heads/index.html">stillface.features.gaze.heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/roles/index.html">stillface.features.gaze.roles</a></li>
 </ul>
@@ -271,13 +273,15 @@
 </li>
         <li><a href="autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.assign_roles">assign_roles() (in module stillface.features.gaze.roles)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/data_preparation/visualize/index.html#stillface.data_preparation.visualize.AUDIO_PRIORITY">AUDIO_PRIORITY (in module stillface.data_preparation.visualize)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/data_preparation/sync/index.html#stillface.data_preparation.sync.AUXILIARY_CAMERAS">AUXILIARY_CAMERAS (in module stillface.data_preparation.sync)</a>
 </li>
         <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.available_phase_clips">available_phase_clips() (stillface.config.DatasetPaths method)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.AWAY_CLASS">AWAY_CLASS (in module stillface.features.gaze.classes)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -315,6 +319,8 @@
 </li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadBox.center">center (stillface.features.gaze.heads.HeadBox property)</a>
 </li>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.classify">classify() (in module stillface.features.gaze.classes)</a>
+</li>
         <li><a href="autoapi/stillface/features/run_record/index.html#stillface.features.run_record.RunRecord.clips">clips (stillface.features.run_record.RunRecord attribute)</a>
 </li>
         <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.COLUMNS">COLUMNS (in module stillface.features.timeline)</a>
@@ -323,10 +329,10 @@
 </li>
         <li><a href="autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.CONFIG_VERSION">CONFIG_VERSION (in module stillface.features.gaze.config)</a>
 </li>
-        <li><a href="autoapi/stillface/features/config/index.html#stillface.features.config.ConfigError">ConfigError</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/features/config/index.html#stillface.features.config.ConfigError">ConfigError</a>
+</li>
         <li><a href="autoapi/stillface/data_preparation/video/index.html#stillface.data_preparation.video.convert_to_fps">convert_to_fps() (in module stillface.data_preparation.video)</a>
 </li>
         <li><a href="autoapi/stillface/data_preparation/visualize/index.html#stillface.data_preparation.visualize.create_stacked_videos">create_stacked_videos() (in module stillface.data_preparation.visualize)</a>
@@ -373,8 +379,12 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack.embedding">embedding (stillface.features.gaze.heads.HeadTrack attribute)</a>
 </li>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.ENVIRONMENT_CLASS">ENVIRONMENT_CLASS (in module stillface.features.gaze.classes)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/features/gaze/estimator/index.html#stillface.features.gaze.estimator.GazeEstimator.estimate">estimate() (stillface.features.gaze.estimator.GazeEstimator method)</a>
+</li>
         <li><a href="autoapi/stillface/features/run_record/index.html#stillface.features.run_record.RunRecord.exordium_version">exordium_version (stillface.features.run_record.RunRecord attribute)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadBox.expand">expand() (stillface.features.gaze.heads.HeadBox method)</a>
@@ -413,19 +423,39 @@
   <h2>G</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.gaze_class">gaze_class (stillface.features.timeline.TimelineRow attribute)</a>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.GazeDecision.gaze_class">gaze_class (stillface.features.gaze.classes.GazeDecision attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.gaze_class">(stillface.features.timeline.TimelineRow attribute)</a>
 </li>
+        </ul></li>
         <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.gaze_dir">gaze_dir() (stillface.config.DatasetPaths method)</a>
 </li>
         <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.gaze_overlay_dir">gaze_overlay_dir() (stillface.config.DatasetPaths method)</a>
 </li>
-        <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.gaze_x">gaze_x (stillface.features.timeline.TimelineRow attribute)</a>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.gaze_point">gaze_point() (in module stillface.features.gaze.classes)</a>
 </li>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.GazeDecision.gaze_x">gaze_x (stillface.features.gaze.classes.GazeDecision attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.gaze_x">(stillface.features.timeline.TimelineRow attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.GazeDecision.gaze_y">gaze_y (stillface.features.gaze.classes.GazeDecision attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.gaze_y">(stillface.features.timeline.TimelineRow attribute)</a>
+</li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.gaze_y">gaze_y (stillface.features.timeline.TimelineRow attribute)</a>
-</li>
         <li><a href="autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.GazeConfig">GazeConfig (class in stillface.features.gaze.config)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.GazeDecision">GazeDecision (class in stillface.features.gaze.classes)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/estimator/index.html#stillface.features.gaze.estimator.GazeEstimate">GazeEstimate (class in stillface.features.gaze.estimator)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/estimator/index.html#stillface.features.gaze.estimator.GazeEstimator">GazeEstimator (class in stillface.features.gaze.estimator)</a>
 </li>
         <li><a href="autoapi/stillface/data_preparation/thumbnails/index.html#stillface.data_preparation.thumbnails.generate_thumbnails">generate_thumbnails() (in module stillface.data_preparation.thumbnails)</a>
 </li>
@@ -445,11 +475,13 @@
 </li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadBox">HeadBox (class in stillface.features.gaze.heads)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack">HeadTrack (class in stillface.features.gaze.heads)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTracker">HeadTracker (class in stillface.features.gaze.heads)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/estimator/index.html#stillface.features.gaze.estimator.GazeEstimate.heatmap">heatmap (stillface.features.gaze.estimator.GazeEstimate attribute)</a>
 </li>
         <li><a href="autoapi/stillface/data_preparation/metadata/index.html#stillface.data_preparation.metadata.HRV_COLUMNS">HRV_COLUMNS (in module stillface.data_preparation.metadata)</a>
 </li>
@@ -461,9 +493,13 @@
   <h2>I</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.Thresholds.inout">inout (stillface.features.gaze.config.Thresholds attribute)</a>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.GazeDecision.inout">inout (stillface.features.gaze.classes.GazeDecision attribute)</a>
 
         <ul>
+          <li><a href="autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.Thresholds.inout">(stillface.features.gaze.config.Thresholds attribute)</a>
+</li>
+          <li><a href="autoapi/stillface/features/gaze/estimator/index.html#stillface.features.gaze.estimator.GazeEstimate.inout">(stillface.features.gaze.estimator.GazeEstimate attribute)</a>
+</li>
           <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.inout">(stillface.features.timeline.TimelineRow attribute)</a>
 </li>
         </ul></li>
@@ -506,6 +542,8 @@
 </li>
           <li><a href="autoapi/stillface/data_preparation/visualize/index.html#stillface.data_preparation.visualize.logger">(in module stillface.data_preparation.visualize)</a>
 </li>
+          <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.logger">(in module stillface.features.gaze.classes)</a>
+</li>
           <li><a href="autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.logger">(in module stillface.features.gaze.roles)</a>
 </li>
           <li><a href="autoapi/stillface/features/io/index.html#stillface.features.io.logger">(in module stillface.features.io)</a>
@@ -524,6 +562,8 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/cli/index.html#stillface.cli.main">main() (in module stillface.cli)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.mass_in_box">mass_in_box() (in module stillface.features.gaze.classes)</a>
 </li>
         <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.metadata_path">metadata_path (stillface.config.DatasetPaths property)</a>
 </li>
@@ -579,7 +619,11 @@
 </li>
           <li><a href="autoapi/stillface/features/gaze/index.html#module-stillface.features.gaze">stillface.features.gaze</a>
 </li>
+          <li><a href="autoapi/stillface/features/gaze/classes/index.html#module-stillface.features.gaze.classes">stillface.features.gaze.classes</a>
+</li>
           <li><a href="autoapi/stillface/features/gaze/config/index.html#module-stillface.features.gaze.config">stillface.features.gaze.config</a>
+</li>
+          <li><a href="autoapi/stillface/features/gaze/estimator/index.html#module-stillface.features.gaze.estimator">stillface.features.gaze.estimator</a>
 </li>
           <li><a href="autoapi/stillface/features/gaze/heads/index.html#module-stillface.features.gaze.heads">stillface.features.gaze.heads</a>
 </li>
@@ -608,11 +652,15 @@
   <h2>N</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.NK">NK (in module stillface.features.gaze.classes)</a>
+</li>
         <li><a href="autoapi/stillface/data_preparation/sync/index.html#stillface.data_preparation.sync.normalize">normalize() (in module stillface.data_preparation.sync)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.normalized_dir">normalized_dir() (stillface.config.DatasetPaths method)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.GazeDecision.not_codable">not_codable() (stillface.features.gaze.classes.GazeDecision class method)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -638,9 +686,13 @@
   <h2>P</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.Thresholds.partner_mass">partner_mass (stillface.features.gaze.config.Thresholds attribute)</a>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.PARTNER_CLASS">PARTNER_CLASS (in module stillface.features.gaze.classes)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.GazeDecision.partner_mass">partner_mass (stillface.features.gaze.classes.GazeDecision attribute)</a>
 
         <ul>
+          <li><a href="autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.Thresholds.partner_mass">(stillface.features.gaze.config.Thresholds attribute)</a>
+</li>
           <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.partner_mass">(stillface.features.timeline.TimelineRow attribute)</a>
 </li>
         </ul></li>
@@ -652,10 +704,10 @@
 </li>
         <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.phase">phase (stillface.features.timeline.TimelineRow attribute)</a>
 </li>
-        <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.phase_clip">phase_clip() (stillface.config.DatasetPaths method)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.phase_clip">phase_clip() (stillface.config.DatasetPaths method)</a>
+</li>
         <li><a href="autoapi/stillface/data_preparation/metadata/index.html#stillface.data_preparation.metadata.phase_windows">phase_windows() (in module stillface.data_preparation.metadata)</a>
 </li>
         <li><a href="autoapi/stillface/constants/index.html#stillface.constants.PHASES">PHASES (in module stillface.constants)</a>
@@ -686,8 +738,12 @@
 </li>
         <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.read_timeline">read_timeline() (in module stillface.features.timeline)</a>
 </li>
-        <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.reason">reason (stillface.features.timeline.TimelineRow attribute)</a>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.GazeDecision.reason">reason (stillface.features.gaze.classes.GazeDecision attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.reason">(stillface.features.timeline.TimelineRow attribute)</a>
 </li>
+        </ul></li>
         <li><a href="autoapi/stillface/data_preparation/sync/index.html#stillface.data_preparation.sync.REFERENCE_PRIORITY">REFERENCE_PRIORITY (in module stillface.data_preparation.sync)</a>
 </li>
     </ul></td>
@@ -805,8 +861,6 @@
           <li><a href="autoapi/stillface/data_preparation/thumbnails/index.html#module-stillface.data_preparation.thumbnails">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     stillface.data_preparation.video
 
@@ -814,6 +868,8 @@
           <li><a href="autoapi/stillface/data_preparation/video/index.html#module-stillface.data_preparation.video">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     stillface.data_preparation.visualize
 
@@ -843,10 +899,24 @@
 </li>
         </ul></li>
         <li>
+    stillface.features.gaze.classes
+
+        <ul>
+          <li><a href="autoapi/stillface/features/gaze/classes/index.html#module-stillface.features.gaze.classes">module</a>
+</li>
+        </ul></li>
+        <li>
     stillface.features.gaze.config
 
         <ul>
           <li><a href="autoapi/stillface/features/gaze/config/index.html#module-stillface.features.gaze.config">module</a>
+</li>
+        </ul></li>
+        <li>
+    stillface.features.gaze.estimator
+
+        <ul>
+          <li><a href="autoapi/stillface/features/gaze/estimator/index.html#module-stillface.features.gaze.estimator">module</a>
 </li>
         </ul></li>
         <li>

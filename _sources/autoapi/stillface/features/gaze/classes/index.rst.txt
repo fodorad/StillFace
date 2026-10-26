@@ -1,0 +1,155 @@
+stillface.features.gaze.classes
+===============================
+
+.. py:module:: stillface.features.gaze.classes
+
+.. autoapi-nested-parse::
+
+   From gaze heatmaps to the plan's gaze target classes.
+
+   Classes follow the manual coding scheme: for the baby (T1) ANYARA (at the mother),
+   TARGY_KORNYEZET (at an object or the environment), ELFORDUL (turned away); for the mother
+   (T6) BABARA (at the baby) and MASHOVA (elsewhere); NK if not codable.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.gaze.classes.logger
+   stillface.features.gaze.classes.NK
+   stillface.features.gaze.classes.PARTNER_CLASS
+   stillface.features.gaze.classes.AWAY_CLASS
+   stillface.features.gaze.classes.ENVIRONMENT_CLASS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.classes.GazeDecision
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.gaze.classes.mass_in_box
+   stillface.features.gaze.classes.gaze_point
+   stillface.features.gaze.classes.classify
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: NK
+   :type:  str
+   :value: 'NK'
+
+
+   Class of a row that cannot be coded.
+
+.. py:data:: PARTNER_CLASS
+   :type:  dict[str, str]
+
+   Class of looking at the partner, by looker.
+
+.. py:data:: AWAY_CLASS
+   :type:  dict[str, str]
+
+   Class of a gaze target outside the frame, by looker.
+
+.. py:data:: ENVIRONMENT_CLASS
+   :type:  dict[str, str]
+
+   Class of looking at something else in the scene, by looker.
+
+.. py:class:: GazeDecision
+
+   Class and supporting values of one person on one frame.
+
+   .. attribute:: gaze_class
+
+      Target class, :data:`NK` if not codable.
+
+   .. attribute:: reason
+
+      Why it is not codable, else empty.
+
+   .. attribute:: gaze_x
+
+      Gaze target x (heatmap peak), normalized, None if not codable.
+
+   .. attribute:: gaze_y
+
+      Gaze target y (heatmap peak), normalized, None if not codable.
+
+   .. attribute:: inout
+
+      In/out-of-frame score.
+
+   .. attribute:: partner_mass
+
+      Heatmap share on the partner (head box or zone), None if undefined.
+
+
+   .. py:method:: not_codable(reason: str) -> GazeDecision
+      :classmethod:
+
+
+      A row without gaze values.
+
+      :param reason: Why the person cannot be coded, e.g. ``occluded``.
+
+      :returns: Decision of class :data:`NK`.
+
+
+
+.. py:function:: mass_in_box(heatmap: numpy.ndarray, box: stillface.features.gaze.heads.HeadBox) -> float
+
+   Share of a heatmap's mass inside a normalized box.
+
+   Cells that the box covers partially count proportionally, so the result is 1 for the
+   whole image and never shrinks when the box grows.
+
+   :param heatmap: Gaze map of shape ``(height, width)``.
+   :param box: Region in normalized image coordinates.
+
+   :returns: Value in [0, 1]; 0 if the heatmap is empty.
+
+
+.. py:function:: gaze_point(heatmap: numpy.ndarray) -> tuple[float, float]
+
+   Location of the heatmap maximum.
+
+   :param heatmap: Gaze map of shape ``(height, width)``.
+
+   :returns: Normalized ``(x, y)`` of the peak cell center.
+
+
+.. py:function:: classify(person: str, camera: str, heatmap: numpy.ndarray, inout: float | None, partner_box: stillface.features.gaze.heads.HeadBox | None, config: stillface.features.gaze.config.GazeConfig) -> GazeDecision
+
+   Turn one person's gaze heatmap into a target class.
+
+   Side cameras see the partner, so looking at the partner means heatmap mass inside the
+   partner's (enlarged) head box. A close camera does not see the partner; there the
+   calibrated partner zone of that camera takes its place.
+
+   :param person: ``mother`` or ``baby``, the looker.
+   :param camera: Camera the frame comes from.
+   :param heatmap: Gaze map of shape ``(height, width)``.
+   :param inout: Probability that the target is inside the frame, None if unavailable.
+   :param partner_box: Head box of the partner on side cameras, None if not found.
+   :param config: Thresholds, margins and partner zones.
+
+   :returns: The decision with the supporting values.
+
+   :raises ValueError: If ``person`` or ``camera`` is unknown.
+
+

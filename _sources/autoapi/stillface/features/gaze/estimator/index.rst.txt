@@ -1,0 +1,58 @@
+stillface.features.gaze.estimator
+=================================
+
+.. py:module:: stillface.features.gaze.estimator
+
+.. autoapi-nested-parse::
+
+   What the gaze pipeline needs from a gaze target model.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.estimator.GazeEstimate
+   stillface.features.gaze.estimator.GazeEstimator
+
+
+Module Contents
+---------------
+
+.. py:class:: GazeEstimate
+
+   Gaze target prediction for a batch of frames.
+
+   .. attribute:: heatmap
+
+      Gaze target probability map per person, shape ``(frames, people, 64, 64)``,
+      values in [0, 1]. People are padded to the largest count in the batch.
+
+   .. attribute:: inout
+
+      Probability that the target is inside the frame, shape ``(frames, people)``,
+      None for models without that output.
+
+
+.. py:class:: GazeEstimator
+
+   Bases: :py:obj:`Protocol`
+
+
+   Predicts where the given heads look.
+
+
+   .. py:method:: estimate(frames: numpy.ndarray, boxes: collections.abc.Sequence[collections.abc.Sequence[stillface.features.gaze.heads.HeadBox | None]]) -> GazeEstimate
+
+      Estimate the gaze target of every head.
+
+      :param frames: RGB frames, ``uint8`` array of shape ``(frames, height, width, 3)``.
+      :param boxes: Per frame the head box of each person, in the same person order for all
+                    frames. A None box yields an empty heatmap.
+
+      :returns: Heatmaps and in/out scores.
+
+
+

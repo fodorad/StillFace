@@ -15,7 +15,9 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   /autoapi/stillface/features/gaze/classes/index
    /autoapi/stillface/features/gaze/config/index
+   /autoapi/stillface/features/gaze/estimator/index
    /autoapi/stillface/features/gaze/heads/index
    /autoapi/stillface/features/gaze/roles/index
 
