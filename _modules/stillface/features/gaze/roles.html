@@ -216,7 +216,10 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/classes/index.html">stillface.features.gaze.classes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/estimator/index.html">stillface.features.gaze.estimator</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/heads/index.html">stillface.features.gaze.heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pilot/index.html">stillface.features.gaze.pilot</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/roles/index.html">stillface.features.gaze.roles</a></li>
 </ul>
 </li>
@@ -471,6 +474,21 @@
         <span class="n">boxes</span> <span class="o">=</span> <span class="n">by_id</span><span class="p">[</span><span class="n">track_id</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span> <span class="k">if</span> <span class="n">track_id</span> <span class="ow">in</span> <span class="n">by_id</span> <span class="k">else</span> <span class="p">{}</span>
         <span class="n">heads</span><span class="p">[</span><span class="n">person</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">boxes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frame_indices</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">heads</span></div>
+
+
+
+<div class="viewcode-block" id="camera_persons">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.camera_persons">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">camera_persons</span><span class="p">(</span><span class="n">camera</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""People whose gaze a camera can show.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        camera: Camera name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Both people for the side cameras, only the camera's owner for the close cameras.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">PERSONS</span> <span class="k">if</span> <span class="n">camera</span> <span class="ow">in</span> <span class="n">SIDE_CAMERAS</span> <span class="k">else</span> <span class="p">(</span><span class="n">camera</span><span class="p">,)</span></div>
 
 
 

@@ -41,6 +41,7 @@ Functions
 
    stillface.features.gaze.roles.assign_roles
    stillface.features.gaze.roles.head_per_frame
+   stillface.features.gaze.roles.camera_persons
    stillface.features.gaze.roles.missing_reason
    stillface.features.gaze.roles.load_role_overrides
 
@@ -129,6 +130,15 @@ Module Contents
    :param frame_indices: Sampled frames.
 
    :returns: Person mapped to one box per frame, None where the head was not found.
+
+
+.. py:function:: camera_persons(camera: str) -> tuple[str, ...]
+
+   People whose gaze a camera can show.
+
+   :param camera: Camera name.
+
+   :returns: Both people for the side cameras, only the camera's owner for the close cameras.
 
 
 .. py:function:: missing_reason(camera: str, person: str) -> str

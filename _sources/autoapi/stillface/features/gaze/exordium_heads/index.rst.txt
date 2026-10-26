@@ -1,0 +1,58 @@
+stillface.features.gaze.exordium_heads
+======================================
+
+.. py:module:: stillface.features.gaze.exordium_heads
+
+.. autoapi-nested-parse::
+
+   Head detection and tracking with exordium.
+
+   Faces are found with exordium's YOLO11 face detector on the sampled frames only and
+   followed with its IoU tracker. Needs the ``features`` extra (``exordium``).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.gaze.exordium_heads.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.exordium_heads.ExordiumHeadTracker
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ExordiumHeadTracker(device_id: int = 0, conf: float = 0.25, min_score: float = 0.5, batch_size: int = 16, max_lost: int = 60, iou_threshold: float = 0.2)
+
+   :class:`~stillface.features.gaze.heads.HeadTracker` backed by exordium.
+
+   :param device_id: Torch device index; negative selects the CPU, otherwise MPS or CUDA if available.
+   :param conf: Detector confidence threshold.
+   :param min_score: Detections below this score are not tracked.
+   :param batch_size: Frames per detector call.
+   :param max_lost: Frames a track may be missing before it is closed.
+   :param iou_threshold: Minimum box overlap to continue a track.
+
+
+   .. py:method:: track(clip: pathlib.Path, frame_indices: collections.abc.Sequence[int]) -> list[stillface.features.gaze.heads.HeadTrack]
+
+      Detect and track the faces on the sampled frames of a clip.
+
+      :param clip: Video clip.
+      :param frame_indices: Frames to analyze, ascending.
+
+      :returns: One track per face, with boxes in normalized coordinates.
+
+
+

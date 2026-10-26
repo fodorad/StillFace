@@ -215,7 +215,10 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/classes/index.html">stillface.features.gaze.classes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/estimator/index.html">stillface.features.gaze.estimator</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/heads/index.html">stillface.features.gaze.heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/pilot/index.html">stillface.features.gaze.pilot</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/gaze/roles/index.html">stillface.features.gaze.roles</a></li>
 </ul>
 </li>
@@ -274,10 +277,12 @@
 </li>
         <li><a href="autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.assign_roles">assign_roles() (in module stillface.features.gaze.roles)</a>
 </li>
-        <li><a href="autoapi/stillface/data_preparation/visualize/index.html#stillface.data_preparation.visualize.AUDIO_PRIORITY">AUDIO_PRIORITY (in module stillface.data_preparation.visualize)</a>
+        <li><a href="autoapi/stillface/features/gaze/prepare/index.html#stillface.features.gaze.prepare.ClipHeads.assignment">assignment (stillface.features.gaze.prepare.ClipHeads attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/data_preparation/visualize/index.html#stillface.data_preparation.visualize.AUDIO_PRIORITY">AUDIO_PRIORITY (in module stillface.data_preparation.visualize)</a>
+</li>
         <li><a href="autoapi/stillface/data_preparation/sync/index.html#stillface.data_preparation.sync.AUXILIARY_CAMERAS">AUXILIARY_CAMERAS (in module stillface.data_preparation.sync)</a>
 </li>
         <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.available_phase_clips">available_phase_clips() (stillface.config.DatasetPaths method)</a>
@@ -318,22 +323,30 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.camera">camera (stillface.features.timeline.TimelineRow attribute)</a>
 </li>
+        <li><a href="autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.camera_persons">camera_persons() (in module stillface.features.gaze.roles)</a>
+</li>
         <li><a href="autoapi/stillface/constants/index.html#stillface.constants.CAMERAS">CAMERAS (in module stillface.constants)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadBox.center">center (stillface.features.gaze.heads.HeadBox property)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.classify">classify() (in module stillface.features.gaze.classes)</a>
 </li>
+        <li><a href="autoapi/stillface/features/gaze/prepare/index.html#stillface.features.gaze.prepare.ClipHeads.clip_fps">clip_fps (stillface.features.gaze.prepare.ClipHeads attribute)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/prepare/index.html#stillface.features.gaze.prepare.clip_properties">clip_properties() (in module stillface.features.gaze.prepare)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/prepare/index.html#stillface.features.gaze.prepare.ClipHeads">ClipHeads (class in stillface.features.gaze.prepare)</a>
+</li>
         <li><a href="autoapi/stillface/features/run_record/index.html#stillface.features.run_record.RunRecord.clips">clips (stillface.features.run_record.RunRecord attribute)</a>
 </li>
         <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.COLUMNS">COLUMNS (in module stillface.features.timeline)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/run_record/index.html#stillface.features.run_record.RunRecord.config">config (stillface.features.run_record.RunRecord attribute)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.CONFIG_VERSION">CONFIG_VERSION (in module stillface.features.gaze.config)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/config/index.html#stillface.features.config.ConfigError">ConfigError</a>
 </li>
         <li><a href="autoapi/stillface/data_preparation/video/index.html#stillface.data_preparation.video.convert_to_fps">convert_to_fps() (in module stillface.data_preparation.video)</a>
@@ -386,11 +399,13 @@
 </li>
         <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.ENVIRONMENT_CLASS">ENVIRONMENT_CLASS (in module stillface.features.gaze.classes)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/gaze/estimator/index.html#stillface.features.gaze.estimator.GazeEstimator.estimate">estimate() (stillface.features.gaze.estimator.GazeEstimator method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/run_record/index.html#stillface.features.run_record.RunRecord.exordium_version">exordium_version (stillface.features.run_record.RunRecord attribute)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/exordium_heads/index.html#stillface.features.gaze.exordium_heads.ExordiumHeadTracker">ExordiumHeadTracker (class in stillface.features.gaze.exordium_heads)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadBox.expand">expand() (stillface.features.gaze.heads.HeadBox method)</a>
 </li>
@@ -408,15 +423,17 @@
 </li>
         <li><a href="autoapi/stillface/data_preparation/visualize/index.html#stillface.data_preparation.visualize.find_cut_videos">find_cut_videos() (in module stillface.data_preparation.visualize)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.RoleAssignment.flags">flags (stillface.features.gaze.roles.RoleAssignment attribute)</a>
 
         <ul>
           <li><a href="autoapi/stillface/features/run_record/index.html#stillface.features.run_record.RunRecord.flags">(stillface.features.run_record.RunRecord attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.frame_index">frame_index (stillface.features.timeline.TimelineRow attribute)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/prepare/index.html#stillface.features.gaze.prepare.ClipHeads.frame_indices">frame_indices (stillface.features.gaze.prepare.ClipHeads attribute)</a>
 </li>
         <li><a href="autoapi/stillface/data_preparation/metadata/index.html#stillface.data_preparation.metadata.PhaseWindows.from_row">from_row() (stillface.data_preparation.metadata.PhaseWindows class method)</a>
 </li>
@@ -478,14 +495,20 @@
   <h2>H</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/features/gaze/pilot/index.html#stillface.features.gaze.pilot.head_overlay_items">head_overlay_items() (in module stillface.features.gaze.pilot)</a>
+</li>
         <li><a href="autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.head_per_frame">head_per_frame() (in module stillface.features.gaze.roles)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/pilot/index.html#stillface.features.gaze.pilot.head_rows">head_rows() (in module stillface.features.gaze.pilot)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadBox">HeadBox (class in stillface.features.gaze.heads)</a>
 </li>
-        <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack">HeadTrack (class in stillface.features.gaze.heads)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/features/gaze/prepare/index.html#stillface.features.gaze.prepare.ClipHeads.heads">heads (stillface.features.gaze.prepare.ClipHeads attribute)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack">HeadTrack (class in stillface.features.gaze.heads)</a>
+</li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTracker">HeadTracker (class in stillface.features.gaze.heads)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/estimator/index.html#stillface.features.gaze.estimator.GazeEstimate.heatmap">heatmap (stillface.features.gaze.estimator.GazeEstimate attribute)</a>
@@ -552,6 +575,12 @@
           <li><a href="autoapi/stillface/data_preparation/visualize/index.html#stillface.data_preparation.visualize.logger">(in module stillface.data_preparation.visualize)</a>
 </li>
           <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.logger">(in module stillface.features.gaze.classes)</a>
+</li>
+          <li><a href="autoapi/stillface/features/gaze/exordium_heads/index.html#stillface.features.gaze.exordium_heads.logger">(in module stillface.features.gaze.exordium_heads)</a>
+</li>
+          <li><a href="autoapi/stillface/features/gaze/pilot/index.html#stillface.features.gaze.pilot.logger">(in module stillface.features.gaze.pilot)</a>
+</li>
+          <li><a href="autoapi/stillface/features/gaze/prepare/index.html#stillface.features.gaze.prepare.logger">(in module stillface.features.gaze.prepare)</a>
 </li>
           <li><a href="autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.logger">(in module stillface.features.gaze.roles)</a>
 </li>
@@ -636,7 +665,13 @@
 </li>
           <li><a href="autoapi/stillface/features/gaze/estimator/index.html#module-stillface.features.gaze.estimator">stillface.features.gaze.estimator</a>
 </li>
+          <li><a href="autoapi/stillface/features/gaze/exordium_heads/index.html#module-stillface.features.gaze.exordium_heads">stillface.features.gaze.exordium_heads</a>
+</li>
           <li><a href="autoapi/stillface/features/gaze/heads/index.html#module-stillface.features.gaze.heads">stillface.features.gaze.heads</a>
+</li>
+          <li><a href="autoapi/stillface/features/gaze/pilot/index.html#module-stillface.features.gaze.pilot">stillface.features.gaze.pilot</a>
+</li>
+          <li><a href="autoapi/stillface/features/gaze/prepare/index.html#module-stillface.features.gaze.prepare">stillface.features.gaze.prepare</a>
 </li>
           <li><a href="autoapi/stillface/features/gaze/roles/index.html#module-stillface.features.gaze.roles">stillface.features.gaze.roles</a>
 </li>
@@ -725,10 +760,10 @@
 </li>
         <li><a href="autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.PERSONS">PERSONS (in module stillface.features.gaze.roles)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.phase">phase (stillface.features.timeline.TimelineRow attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.phase_clip">phase_clip() (stillface.config.DatasetPaths method)</a>
 </li>
         <li><a href="autoapi/stillface/data_preparation/metadata/index.html#stillface.data_preparation.metadata.phase_windows">phase_windows() (in module stillface.data_preparation.metadata)</a>
@@ -739,7 +774,11 @@
 </li>
         <li><a href="autoapi/stillface/data_preparation/sync/index.html#stillface.data_preparation.sync.pick_reference">pick_reference() (in module stillface.data_preparation.sync)</a>
 </li>
+        <li><a href="autoapi/stillface/features/gaze/pilot/index.html#stillface.features.gaze.pilot.PILOT_FEATURE">PILOT_FEATURE (in module stillface.features.gaze.pilot)</a>
+</li>
         <li><a href="autoapi/stillface/data_preparation/visualize/index.html#stillface.data_preparation.visualize.placeholder">placeholder() (in module stillface.data_preparation.visualize)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/prepare/index.html#stillface.features.gaze.prepare.prepare_clip">prepare_clip() (in module stillface.features.gaze.prepare)</a>
 </li>
         <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.processed_dir">processed_dir (stillface.config.DatasetPaths attribute)</a>
 </li>
@@ -786,6 +825,8 @@
         <li><a href="autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.GazeConfig.roles">roles (stillface.features.gaze.config.GazeConfig attribute)</a>
 </li>
         <li><a href="autoapi/stillface/data_preparation/video/index.html#stillface.data_preparation.video.run_ffmpeg">run_ffmpeg() (in module stillface.data_preparation.video)</a>
+</li>
+        <li><a href="autoapi/stillface/features/gaze/pilot/index.html#stillface.features.gaze.pilot.run_heads">run_heads() (in module stillface.features.gaze.pilot)</a>
 </li>
         <li><a href="autoapi/stillface/features/run_record/index.html#stillface.features.run_record.RunRecord">RunRecord (class in stillface.features.run_record)</a>
 </li>
@@ -895,8 +936,6 @@
           <li><a href="autoapi/stillface/data_preparation/video/index.html#module-stillface.data_preparation.video">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     stillface.data_preparation.visualize
 
@@ -911,6 +950,8 @@
           <li><a href="autoapi/stillface/features/index.html#module-stillface.features">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     stillface.features.config
 
@@ -947,10 +988,31 @@
 </li>
         </ul></li>
         <li>
+    stillface.features.gaze.exordium_heads
+
+        <ul>
+          <li><a href="autoapi/stillface/features/gaze/exordium_heads/index.html#module-stillface.features.gaze.exordium_heads">module</a>
+</li>
+        </ul></li>
+        <li>
     stillface.features.gaze.heads
 
         <ul>
           <li><a href="autoapi/stillface/features/gaze/heads/index.html#module-stillface.features.gaze.heads">module</a>
+</li>
+        </ul></li>
+        <li>
+    stillface.features.gaze.pilot
+
+        <ul>
+          <li><a href="autoapi/stillface/features/gaze/pilot/index.html#module-stillface.features.gaze.pilot">module</a>
+</li>
+        </ul></li>
+        <li>
+    stillface.features.gaze.prepare
+
+        <ul>
+          <li><a href="autoapi/stillface/features/gaze/prepare/index.html#module-stillface.features.gaze.prepare">module</a>
 </li>
         </ul></li>
         <li>
@@ -1020,16 +1082,20 @@
 </li>
         <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.thumbnails_dir">thumbnails_dir (stillface.config.DatasetPaths property)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.time_s">time_s (stillface.features.timeline.TimelineRow attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow">TimelineRow (class in stillface.features.timeline)</a>
 </li>
         <li><a href="autoapi/stillface/data_preparation/video/index.html#stillface.data_preparation.video.to_seconds">to_seconds() (in module stillface.data_preparation.video)</a>
 </li>
-        <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTracker.track">track() (stillface.features.gaze.heads.HeadTracker method)</a>
+        <li><a href="autoapi/stillface/features/gaze/exordium_heads/index.html#stillface.features.gaze.exordium_heads.ExordiumHeadTracker.track">track() (stillface.features.gaze.exordium_heads.ExordiumHeadTracker method)</a>
+
+        <ul>
+          <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTracker.track">(stillface.features.gaze.heads.HeadTracker method)</a>
 </li>
+        </ul></li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack.track_id">track_id (stillface.features.gaze.heads.HeadTrack attribute)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.RoleAssignment.track_id">track_id() (stillface.features.gaze.roles.RoleAssignment method)</a>

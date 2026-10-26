@@ -1,0 +1,89 @@
+stillface.features.gaze.pilot
+=============================
+
+.. py:module:: stillface.features.gaze.pilot
+
+.. autoapi-nested-parse::
+
+   Head pilot: heads, roles and overlays without any gaze model.
+
+   The pilot validates the detection, tracking and role assignment on chosen sessions before
+   the gaze model is run. It writes the same timeline format as the gaze pipeline, with empty
+   gaze fields, plus overlay clips showing the heads and their roles.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.gaze.pilot.logger
+   stillface.features.gaze.pilot.PILOT_FEATURE
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.gaze.pilot.head_rows
+   stillface.features.gaze.pilot.head_overlay_items
+   stillface.features.gaze.pilot.run_heads
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: PILOT_FEATURE
+   :type:  str
+   :value: 'heads'
+
+
+   Name of the pilot's output folder below ``features/``.
+
+.. py:function:: head_rows(session_id: str, camera: str, phase: str, prepared: stillface.features.gaze.prepare.ClipHeads) -> list[stillface.features.timeline.TimelineRow]
+
+   Timeline rows of the pilot: heads found or not, no gaze values.
+
+   :param session_id: Session identifier.
+   :param camera: Camera name.
+   :param phase: Experiment phase.
+   :param prepared: Heads of the clip.
+
+   :returns: One row per sampled frame for each person the camera can show; missing heads are
+             ``NK`` rows with the reason.
+
+
+.. py:function:: head_overlay_items(camera: str, prepared: stillface.features.gaze.prepare.ClipHeads) -> dict[int, list[stillface.features.overlay.OverlayItem]]
+
+   Overlay annotations of the pilot, keyed by sampled frame.
+
+   :param camera: Camera name.
+   :param prepared: Heads of the clip.
+
+   :returns: Frame index mapped to one item per person.
+
+
+.. py:function:: run_heads(paths: stillface.config.DatasetPaths, session_id: str, tracker: stillface.features.gaze.heads.HeadTracker, config: stillface.features.gaze.config.GazeConfig, cameras: collections.abc.Sequence[str] = CAMERAS, phases: collections.abc.Sequence[str] = PHASES, overlay: bool = True, overwrite: bool = False) -> stillface.features.run_record.RunRecord
+
+   Run the head pilot on the clips of one session.
+
+   Per clip a timeline CSV and (optionally) an overlay clip are written; per phase a
+   stacked overlay grid. Existing outputs are kept unless ``overwrite``. A failing clip is
+   recorded in the run record and does not stop the others.
+
+   :param paths: Dataset locations.
+   :param session_id: Session identifier.
+   :param tracker: Head detector and tracker.
+   :param config: Gaze configuration.
+   :param cameras: Cameras to process.
+   :param phases: Phases to process.
+   :param overlay: Also render overlay clips and grids.
+   :param overwrite: Recompute existing outputs.
+
+   :returns: The run record, also written to ``run.json`` in the pilot folder.
+
+

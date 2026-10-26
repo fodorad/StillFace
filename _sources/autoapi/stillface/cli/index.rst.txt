@@ -5,7 +5,10 @@ stillface.cli
 
 .. autoapi-nested-parse::
 
-   Command line interface: ``stillface prepare <sync|cut|thumbnails|check-missing>``.
+   Command line interface.
+
+   ``stillface prepare <sync|cut|thumbnails|check-missing>`` runs the data preparation,
+   ``stillface features heads`` the head and role pilot of the gaze extraction.
 
 
 
@@ -38,11 +41,13 @@ Module Contents
    :returns: The configured parser.
 
 
-.. py:function:: main(argv: collections.abc.Sequence[str] | None = None) -> int
+.. py:function:: main(argv: collections.abc.Sequence[str] | None = None, head_tracker_factory: collections.abc.Callable[[], stillface.features.gaze.heads.HeadTracker] = _exordium_head_tracker) -> int
 
    Run the command line interface.
 
    :param argv: Arguments, ``sys.argv[1:]`` if None.
+   :param head_tracker_factory: Builds the head tracker for ``features heads``; replaceable so
+                                the command can run without exordium models.
 
    :returns: Process exit code.
 

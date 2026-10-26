@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.io" href="../../io/index.html"><link rel="prev" title="stillface.features.gaze.heads" href="../heads/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.io" href="../../io/index.html"><link rel="prev" title="stillface.features.gaze.prepare" href="../prepare/index.html">
         <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/gaze/roles/index.html">
         <link rel="prefetch" href="../../../../../_static/logo.svg" as="image">
 
@@ -217,7 +217,10 @@
 <li class="toctree-l5"><a class="reference internal" href="../classes/index.html">stillface.features.gaze.classes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../estimator/index.html">stillface.features.gaze.estimator</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../heads/index.html">stillface.features.gaze.heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../pilot/index.html">stillface.features.gaze.pilot</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.gaze.roles</a></li>
 </ul>
 </li>
@@ -323,10 +326,13 @@ the baseline phase the positions may change, so size and face identity decide th
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.head_per_frame" title="stillface.features.gaze.roles.head_per_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">head_per_frame</span></code></a>(→ dict[str, ...)</p></td>
 <td><p>Look up each person's head box on every sampled frame.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.missing_reason" title="stillface.features.gaze.roles.missing_reason"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_reason</span></code></a>(→ str)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.camera_persons" title="stillface.features.gaze.roles.camera_persons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">camera_persons</span></code></a>(→ tuple[str, ...])</p></td>
+<td><p>People whose gaze a camera can show.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.missing_reason" title="stillface.features.gaze.roles.missing_reason"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_reason</span></code></a>(→ str)</p></td>
 <td><p>Why a person has no head on a frame.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.load_role_overrides" title="stillface.features.gaze.roles.load_role_overrides"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_role_overrides</span></code></a>(→ RoleOverrides)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.load_role_overrides" title="stillface.features.gaze.roles.load_role_overrides"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_role_overrides</span></code></a>(→ RoleOverrides)</p></td>
 <td><p>Read a per-session <code class="docutils literal notranslate"><span class="pre">roles.json</span></code>.</p></td>
 </tr>
 </tbody>
@@ -448,6 +454,20 @@ the baseline phase the positions may change, so size and face identity decide th
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.gaze.roles.camera_persons">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.roles.</span></span><span class="sig-name descname"><span class="pre">camera_persons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/roles.html#camera_persons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.roles.camera_persons" title="Link to this definition">¶</a></dt>
+<dd><p>People whose gaze a camera can show.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>camera</strong> – Camera name.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Both people for the side cameras, only the camera’s owner for the close cameras.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="stillface.features.gaze.roles.missing_reason">
 <span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.roles.</span></span><span class="sig-name descname"><span class="pre">missing_reason</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">person</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/roles.html#missing_reason"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.roles.missing_reason" title="Link to this definition">¶</a></dt>
 <dd><p>Why a person has no head on a frame.</p>
@@ -503,14 +523,14 @@ track id.</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../heads/index.html">
+          <a class="prev-page" href="../prepare/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">stillface.features.gaze.heads</div>
+                <div class="title">stillface.features.gaze.prepare</div>
                 
               </div>
             </a>
@@ -567,6 +587,7 @@ track id.</p>
 </li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.assign_roles"><code class="docutils literal notranslate"><span class="pre">assign_roles()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.head_per_frame"><code class="docutils literal notranslate"><span class="pre">head_per_frame()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.roles.camera_persons"><code class="docutils literal notranslate"><span class="pre">camera_persons()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.missing_reason"><code class="docutils literal notranslate"><span class="pre">missing_reason()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.load_role_overrides"><code class="docutils literal notranslate"><span class="pre">load_role_overrides()</span></code></a></li>
 </ul>

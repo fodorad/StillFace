@@ -1,0 +1,88 @@
+stillface.features.gaze.prepare
+===============================
+
+.. py:module:: stillface.features.gaze.prepare
+
+.. autoapi-nested-parse::
+
+   Per-clip preparation shared by the head pilot and the gaze pipeline.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.gaze.prepare.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.prepare.ClipHeads
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.gaze.prepare.clip_properties
+   stillface.features.gaze.prepare.prepare_clip
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: ClipHeads
+
+   Sampled frames of a clip with the assigned head of each person.
+
+   .. attribute:: frame_indices
+
+      Sampled frames of the clip.
+
+   .. attribute:: clip_fps
+
+      Frame rate of the clip.
+
+   .. attribute:: assignment
+
+      Role assignment of the head tracks.
+
+   .. attribute:: heads
+
+      Person mapped to one box per sampled frame, None where not found.
+
+
+.. py:function:: clip_properties(clip: pathlib.Path) -> tuple[int, float]
+
+   Frame count and frame rate of a clip.
+
+   :param clip: Video file.
+
+   :returns: ``(n_frames, fps)``.
+
+   :raises RuntimeError: If the clip cannot be read.
+
+
+.. py:function:: prepare_clip(clip: pathlib.Path, camera: str, phase: str, tracker: stillface.features.gaze.heads.HeadTracker, config: stillface.features.gaze.config.GazeConfig, references: stillface.features.gaze.roles.RoleReferences | None = None, overrides: collections.abc.Mapping[tuple[str, str], collections.abc.Mapping[str, int]] | None = None) -> ClipHeads
+
+   Track the heads of a clip and assign them to the mother and the baby.
+
+   :param clip: Phase clip of one camera.
+   :param camera: Camera name.
+   :param phase: Experiment phase.
+   :param tracker: Head detector and tracker.
+   :param config: Gaze configuration (sample rate, role rules).
+   :param references: Identity embeddings of the participants, if available.
+   :param overrides: Pinned role assignments.
+
+   :returns: Sampled frames, role assignment and per-frame heads.
+
+
