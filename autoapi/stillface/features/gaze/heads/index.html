@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.gaze.pilot" href="../pilot/index.html"><link rel="prev" title="stillface.features.gaze.exordium_heads" href="../exordium_heads/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.gaze.owl_heads" href="../owl_heads/index.html"><link rel="prev" title="stillface.features.gaze.exordium_heads" href="../exordium_heads/index.html">
         <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/gaze/heads/index.html">
         <link rel="prefetch" href="../../../../../_static/logo.svg" as="image">
 
@@ -215,15 +215,18 @@
 <li class="toctree-l4"><a class="reference internal" href="../../config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5"><a class="reference internal" href="../classes/index.html">stillface.features.gaze.classes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../combined/index.html">stillface.features.gaze.combined</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../estimator/index.html">stillface.features.gaze.estimator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.gaze.heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../owl_heads/index.html">stillface.features.gaze.owl_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../pilot/index.html">stillface.features.gaze.pilot</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../roles/index.html">stillface.features.gaze.roles</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../runner/index.html">stillface.features.gaze.runner</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../selection/index.html">stillface.features.gaze.selection</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../io/index.html">stillface.features.io</a></li>
@@ -290,6 +293,18 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.heads.HeadTracker" title="stillface.features.gaze.heads.HeadTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HeadTracker</span></code></a></p></td>
 <td><p>Finds and tracks the heads in a clip.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.heads.interpolate_boxes" title="stillface.features.gaze.heads.interpolate_boxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate_boxes</span></code></a>(→ dict[int, HeadBox])</p></td>
+<td><p>Fill the frames between detected anchor frames by linear interpolation.</p></td>
 </tr>
 </tbody>
 </table>
@@ -375,6 +390,32 @@
 <dd><p>Mean face-identity embedding of the track, None if not computed.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.gaze.heads.HeadTrack.scores">
+<span class="sig-name descname"><span class="pre">scores</span></span><a class="headerlink" href="#stillface.features.gaze.heads.HeadTrack.scores" title="Link to this definition">¶</a></dt>
+<dd><p>Frame index mapped to the detection confidence; frames without a score count
+as fully confident.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.gaze.heads.HeadTrack.role">
+<span class="sig-name descname"><span class="pre">role</span></span><a class="headerlink" href="#stillface.features.gaze.heads.HeadTrack.role" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">mother</span></code> or <code class="docutils literal notranslate"><span class="pre">baby</span></code> if the detector knows whose head it is (text-prompted
+detectors do), None for anonymous tracks.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.features.gaze.heads.HeadTrack.evidence">
+<span class="sig-name descname"><span class="pre">evidence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/heads.html#HeadTrack.evidence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.heads.HeadTrack.evidence" title="Link to this definition">¶</a></dt>
+<dd><p>Confidence-weighted presence: the sum of the detection scores over the frames.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.features.gaze.heads.HeadTrack.weight">
+<span class="sig-name descname"><span class="pre">weight</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/heads.html#HeadTrack.weight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.heads.HeadTrack.weight" title="Link to this definition">¶</a></dt>
+<dd><p>Confidence-weighted head size: the sum of box area times score over the frames.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -401,6 +442,26 @@
 
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.gaze.heads.interpolate_boxes">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.heads.</span></span><span class="sig-name descname"><span class="pre">interpolate_boxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anchors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#stillface.features.gaze.heads.HeadBox" title="stillface.features.gaze.heads.HeadBox"><span class="pre">HeadBox</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#stillface.features.gaze.heads.HeadBox" title="stillface.features.gaze.heads.HeadBox"><span class="pre">HeadBox</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/heads.html#interpolate_boxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.heads.interpolate_boxes" title="Link to this definition">¶</a></dt>
+<dd><p>Fill the frames between detected anchor frames by linear interpolation.</p>
+<p>Frames before the first or after the last anchor, and frames whose surrounding anchors
+are further apart than <code class="docutils literal notranslate"><span class="pre">max_gap</span></code> frames, stay empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>anchors</strong> – Frame index mapped to the detected box.</p></li>
+<li><p><strong>frame_indices</strong> – Frames to produce boxes for.</p></li>
+<li><p><strong>max_gap</strong> – Largest distance in frames between two anchors that is still bridged.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Frame index mapped to a box, for every requested frame that could be filled.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -409,12 +470,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../pilot/index.html">
+          <a class="next-page" href="../owl_heads/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">stillface.features.gaze.pilot</div>
+                <div class="title">stillface.features.gaze.owl_heads</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -461,6 +522,7 @@
             <ul>
 <li><a class="reference internal" href="#">stillface.features.gaze.heads</a><ul>
 <li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#stillface.features.gaze.heads.HeadBox"><code class="docutils literal notranslate"><span class="pre">HeadBox</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.gaze.heads.HeadBox.x0"><code class="docutils literal notranslate"><span class="pre">HeadBox.x0</span></code></a></li>
@@ -476,12 +538,17 @@
 <li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.track_id"><code class="docutils literal notranslate"><span class="pre">HeadTrack.track_id</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.boxes"><code class="docutils literal notranslate"><span class="pre">HeadTrack.boxes</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.embedding"><code class="docutils literal notranslate"><span class="pre">HeadTrack.embedding</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.scores"><code class="docutils literal notranslate"><span class="pre">HeadTrack.scores</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.role"><code class="docutils literal notranslate"><span class="pre">HeadTrack.role</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.evidence"><code class="docutils literal notranslate"><span class="pre">HeadTrack.evidence()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.weight"><code class="docutils literal notranslate"><span class="pre">HeadTrack.weight()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTracker"><code class="docutils literal notranslate"><span class="pre">HeadTracker</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTracker.track"><code class="docutils literal notranslate"><span class="pre">HeadTracker.track()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#stillface.features.gaze.heads.interpolate_boxes"><code class="docutils literal notranslate"><span class="pre">interpolate_boxes()</span></code></a></li>
 </ul>
 </li>
 </ul>

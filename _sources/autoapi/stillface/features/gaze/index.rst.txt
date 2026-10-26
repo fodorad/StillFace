@@ -16,14 +16,17 @@ Submodules
    :maxdepth: 1
 
    /autoapi/stillface/features/gaze/classes/index
+   /autoapi/stillface/features/gaze/combined/index
    /autoapi/stillface/features/gaze/config/index
    /autoapi/stillface/features/gaze/estimator/index
    /autoapi/stillface/features/gaze/exordium_heads/index
    /autoapi/stillface/features/gaze/heads/index
+   /autoapi/stillface/features/gaze/owl_heads/index
    /autoapi/stillface/features/gaze/pilot/index
    /autoapi/stillface/features/gaze/pipeline/index
    /autoapi/stillface/features/gaze/prepare/index
    /autoapi/stillface/features/gaze/roles/index
    /autoapi/stillface/features/gaze/runner/index
+   /autoapi/stillface/features/gaze/selection/index
 
 

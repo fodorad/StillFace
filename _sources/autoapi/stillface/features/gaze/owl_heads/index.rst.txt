@@ -1,0 +1,84 @@
+stillface.features.gaze.owl_heads
+=================================
+
+.. py:module:: stillface.features.gaze.owl_heads
+
+.. autoapi-nested-parse::
+
+   Text-prompted head detection with OWLv2.
+
+   OWLv2 (Google, Apache-2.0, safetensors) finds objects described in words. Prompted with
+   "a baby's head" it puts a tight box on the baby's head even when the face is turned away,
+   reclined in profile or partly hidden, where face detectors fail. Because the prompt names
+   the person, the track carries its role. Needs the ``features`` extra (``transformers``).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.gaze.owl_heads.logger
+   stillface.features.gaze.owl_heads.DEFAULT_MODEL
+   stillface.features.gaze.owl_heads.BABY_QUERY
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.owl_heads.OwlHeadTracker
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: DEFAULT_MODEL
+   :type:  str
+   :value: 'google/owlv2-base-patch16-ensemble'
+
+
+   Hugging Face model used for the text-prompted detection.
+
+.. py:data:: BABY_QUERY
+   :type:  str
+   :value: "a baby's head"
+
+
+   Text prompt that finds the baby's head.
+
+.. py:class:: OwlHeadTracker(query: str = BABY_QUERY, role: str = 'baby', model_name: str = DEFAULT_MODEL, rate_hz: float = 3.0, max_candidates: int = 3, min_score: float = 0.1, jump_penalty: float = 2.0, max_gap_s: float = 1.5, batch_size: int = 4, device: str | None = None)
+
+   :class:`~stillface.features.gaze.heads.HeadTracker` for one prompted person.
+
+   The model runs on a sparse time grid (``rate_hz``); per anchor frame the candidate
+   boxes are reduced to one smooth path (see :func:`select_path`), and the frames between
+   anchors are interpolated.
+
+   :param query: Text prompt describing the head.
+   :param role: ``mother`` or ``baby``, stored on the returned track.
+   :param model_name: Hugging Face OWLv2 checkpoint.
+   :param rate_hz: Anchor rate of the detector.
+   :param max_candidates: Candidate boxes kept per frame.
+   :param min_score: Candidates below this score are ignored.
+   :param jump_penalty: Smoothness weight of the path selection.
+   :param max_gap_s: Longest gap between anchors that is interpolated.
+   :param batch_size: Frames per model call.
+   :param device: Torch device name, the best available if None.
+
+
+   .. py:method:: track(clip: pathlib.Path, frame_indices: collections.abc.Sequence[int]) -> list[stillface.features.gaze.heads.HeadTrack]
+
+      Find the prompted head on a sparse grid and interpolate to the requested frames.
+
+      :param clip: Video clip.
+      :param frame_indices: Frames to produce boxes for, ascending.
+
+      :returns: One role-tagged track, empty of boxes if the head was never found.
+
+
+

@@ -19,6 +19,14 @@ Classes
    stillface.features.gaze.heads.HeadTracker
 
 
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.gaze.heads.interpolate_boxes
+
+
 Module Contents
 ---------------
 
@@ -83,6 +91,28 @@ Module Contents
 
       Mean face-identity embedding of the track, None if not computed.
 
+   .. attribute:: scores
+
+      Frame index mapped to the detection confidence; frames without a score count
+      as fully confident.
+
+   .. attribute:: role
+
+      ``mother`` or ``baby`` if the detector knows whose head it is (text-prompted
+      detectors do), None for anonymous tracks.
+
+
+   .. py:method:: evidence() -> float
+
+      Confidence-weighted presence: the sum of the detection scores over the frames.
+
+
+
+   .. py:method:: weight() -> float
+
+      Confidence-weighted head size: the sum of box area times score over the frames.
+
+
 
 .. py:class:: HeadTracker
 
@@ -101,5 +131,19 @@ Module Contents
 
       :returns: One track per head, with boxes only on the requested frames.
 
+
+
+.. py:function:: interpolate_boxes(anchors: dict[int, HeadBox], frame_indices: collections.abc.Sequence[int], max_gap: int) -> dict[int, HeadBox]
+
+   Fill the frames between detected anchor frames by linear interpolation.
+
+   Frames before the first or after the last anchor, and frames whose surrounding anchors
+   are further apart than ``max_gap`` frames, stay empty.
+
+   :param anchors: Frame index mapped to the detected box.
+   :param frame_indices: Frames to produce boxes for.
+   :param max_gap: Largest distance in frames between two anchors that is still bridged.
+
+   :returns: Frame index mapped to a box, for every requested frame that could be filled.
 
 

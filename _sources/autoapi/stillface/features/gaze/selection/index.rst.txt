@@ -1,0 +1,60 @@
+stillface.features.gaze.selection
+=================================
+
+.. py:module:: stillface.features.gaze.selection
+
+.. autoapi-nested-parse::
+
+   Choosing one head box per frame from noisy candidates.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.selection.Candidate
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.gaze.selection.select_path
+
+
+Module Contents
+---------------
+
+.. py:class:: Candidate
+
+   One detected box on one frame.
+
+   .. attribute:: box
+
+      Head box in normalized coordinates.
+
+   .. attribute:: score
+
+      Detection confidence.
+
+
+.. py:function:: select_path(frames: list[list[Candidate]], jump_penalty: float = 2.0, min_score: float = 0.0) -> list[Candidate | None]
+
+   Pick the candidate sequence with the best scores and the smoothest motion.
+
+   A head moves little between neighboring samples, so a weaker box next to the previous
+   one beats a strong box elsewhere (another person, an object). Dynamic programming over
+   the candidates of all frames maximizes the sum of scores minus ``jump_penalty`` times
+   the distance the box center travels (normalized image units); a frame may also be left
+   empty at no gain.
+
+   :param frames: Candidates of each frame, possibly empty.
+   :param jump_penalty: Cost per unit of center distance between consecutive chosen boxes.
+   :param min_score: Candidates below this score are ignored.
+
+   :returns: One chosen candidate per frame, None where the frame stays empty.
+
+

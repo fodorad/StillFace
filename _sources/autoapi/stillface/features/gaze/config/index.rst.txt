@@ -108,6 +108,11 @@ Module Contents
 
       Cosine similarity needed to accept an identity match.
 
+   .. attribute:: min_relative_head_area
+
+      A head found without a text prompt must be at least this share
+      of the prompted partner's head area, which rejects background people.
+
 
 .. py:class:: GazeConfig
 

@@ -97,7 +97,7 @@ Module Contents
    .. attribute:: flags
 
       ``roles_ambiguous`` if the participants could not be told apart,
-      ``single_track`` if only one candidate was assigned by image half.
+      ``single_track`` if only one candidate head was found on a side camera.
 
 
    .. py:method:: track_id(person: str) -> int | None

@@ -10,6 +10,11 @@ stillface.features.gaze.exordium_heads
    Faces are found with exordium's YOLO11 face detector on the sampled frames only and
    followed with its IoU tracker. Needs the ``features`` extra (``exordium``).
 
+   The small model at 1280 px finds the mother and the baby on all cameras of the development
+   sessions with scores around 0.7-0.9; the nano model at the default 640 px lost the baby on
+   the window camera (scores below 0.15). Because a baby's face in profile still scores low on
+   some frames, tracks are started by confident detections but continue through weak ones.
+
 
 
 Attributes
@@ -33,13 +38,16 @@ Module Contents
 
 .. py:data:: logger
 
-.. py:class:: ExordiumHeadTracker(device_id: int = 0, conf: float = 0.25, min_score: float = 0.5, batch_size: int = 16, max_lost: int = 60, iou_threshold: float = 0.2)
+.. py:class:: ExordiumHeadTracker(device_id: int = 0, model_name: str = 'yolo11s-pose_widerface', imgsz: int = 1280, conf: float = 0.1, start_score: float = 0.5, min_confident: int = 3, batch_size: int = 16, max_lost: int = 60, iou_threshold: float = 0.2)
 
    :class:`~stillface.features.gaze.heads.HeadTracker` backed by exordium.
 
    :param device_id: Torch device index; negative selects the CPU, otherwise MPS or CUDA if available.
-   :param conf: Detector confidence threshold.
-   :param min_score: Detections below this score are not tracked.
+   :param model_name: exordium YOLO11 face model.
+   :param imgsz: Detector input size in pixels (long side).
+   :param conf: Detector confidence threshold; weak detections are kept for track continuity.
+   :param start_score: A track needs confident detections (at least this score) to be kept.
+   :param min_confident: Number of confident detections a track needs.
    :param batch_size: Frames per detector call.
    :param max_lost: Frames a track may be missing before it is closed.
    :param iou_threshold: Minimum box overlap to continue a track.
