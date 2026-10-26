@@ -55,6 +55,15 @@ class TestRows(unittest.TestCase):
         rows = head_rows("7", "baby", "play", self.prepared())
         self.assertEqual({r.person for r in rows}, {"baby"})
 
+    def test_ambiguous_roles_are_the_reason_for_missing_heads(self) -> None:
+        prepared = ClipHeads(
+            [0], 60.0, RoleAssignment(None, None, ("roles_ambiguous",)),
+            {"mother": [None], "baby": [None]},
+        )  # fmt: skip
+        self.assertEqual(
+            {r.reason for r in head_rows("7", "window", "play", prepared)}, {"roles_ambiguous"}
+        )
+
     def test_overlay_items(self) -> None:
         items = head_overlay_items("window", self.prepared())
         self.assertEqual(sorted(items), [0, 2])
@@ -104,10 +113,11 @@ class TestRunHeads(PilotCase):
         record = run_heads(self.paths, "7", tracker, GazeConfig(), overlay=False)
         self.assertEqual(record.flags["roles_ambiguous"], ["window_play"])
 
-    def test_roles_json_in_the_output_folder_is_used(self) -> None:
+    def test_roles_json_in_the_gaze_folder_is_used(self) -> None:
         self.clip("window")
-        self.out.mkdir(parents=True)
-        (self.out / "roles.json").write_text(
+        roles = self.paths.features_dir("7", "gaze")
+        roles.mkdir(parents=True)
+        (roles / "roles.json").write_text(
             json.dumps({"window": {"play": {"mother": 1, "baby": 2}}})
         )
         tracker = FakeHeadTracker({"window_play.mp4": [track(1, 0.5), track(2, 0.51)]})

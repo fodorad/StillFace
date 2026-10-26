@@ -22,6 +22,11 @@ class TestExordiumHeadTracker(unittest.TestCase):
             clip = make_video(Path(tmp) / "c.mp4", seconds=1, fps=30, size="320x240", audio=False)
             self.assertEqual(self.tracker.track(clip, list(range(0, 30, 3))), [])
 
+    def test_frames_beyond_the_decodable_range_are_skipped(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            clip = make_video(Path(tmp) / "c.mp4", seconds=1, fps=30, size="320x240", audio=False)
+            self.assertEqual(self.tracker.track(clip, [0, 10, 10_000]), [])
+
     def test_dataset_clip_yields_normalized_boxes_on_the_requested_frames(self) -> None:
         clip = DatasetPaths.default().phase_clip("605317", "mother", "play")
         if not clip.exists():

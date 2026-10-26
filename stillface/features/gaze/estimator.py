@@ -25,7 +25,13 @@ class GazeEstimate:
 
 
 class GazeEstimator(Protocol):
-    """Predicts where the given heads look."""
+    """Predicts where the given heads look.
+
+    Attributes:
+        variant: Name of the model variant in use, recorded in the run record.
+    """
+
+    variant: str
 
     def estimate(
         self, frames: np.ndarray, boxes: Sequence[Sequence[HeadBox | None]]

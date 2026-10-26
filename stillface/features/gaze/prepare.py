@@ -14,6 +14,7 @@ from stillface.features.gaze.roles import (
     RoleReferences,
     assign_roles,
     head_per_frame,
+    missing_reason,
 )
 from stillface.features.timeline import sample_frame_indices
 
@@ -35,6 +36,21 @@ class ClipHeads:
     clip_fps: float
     assignment: RoleAssignment
     heads: dict[str, list[HeadBox | None]]
+
+    def reason_missing(self, camera: str, person: str) -> str:
+        """Why a person has no head on some frame of this clip.
+
+        Args:
+            camera: Camera name.
+            person: ``mother`` or ``baby``.
+
+        Returns:
+            ``roles_ambiguous`` if the roles could not be assigned, else ``occluded`` or
+            ``no_head`` (see :func:`~stillface.features.gaze.roles.missing_reason`).
+        """
+        if "roles_ambiguous" in self.assignment.flags:
+            return "roles_ambiguous"
+        return missing_reason(camera, person)
 
 
 def clip_properties(clip: Path) -> tuple[int, float]:

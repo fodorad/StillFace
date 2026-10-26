@@ -54,6 +54,8 @@ class FakeGazeEstimator:
         inout: In/out score returned for everyone.
     """
 
+    variant = "fake"
+
     def __init__(self, targets: dict[int, tuple[float, float]], inout: float = 0.9) -> None:
         self.targets = targets
         self.inout = inout

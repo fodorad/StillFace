@@ -6,7 +6,8 @@ import pandas as pd
 
 from stillface.cli import build_parser, main
 from stillface.constants import PHASES
-from tests.features.gaze.fakes import FakeHeadTracker, track
+from stillface.features.timeline import read_timeline
+from tests.features.gaze.fakes import FakeGazeEstimator, FakeHeadTracker, track
 from tests.helpers import make_video
 
 
@@ -92,6 +93,51 @@ class TestFeaturesCli(unittest.TestCase):
             self.assertTrue((folder / "window_play.csv").exists())
             self.assertTrue((folder / "run.json").exists())
             self.assertFalse((folder / "overlay").exists())
+
+    def test_gaze_runs_the_pipeline_with_the_given_estimator(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            raw, out = Path(tmp) / "raw", Path(tmp) / "out"
+            make_video(
+                raw / "Sessions" / "9" / "processed" / "window_play.mp4",
+                seconds=1, fps=60, size="160x120", audio=False,
+            )  # fmt: skip
+            frames = list(range(0, 60, 2))
+            heads = [track(1, 0.3, frames=frames), track(2, 0.8, frames=frames)]
+            tracker = FakeHeadTracker({"window_play.mp4": heads})
+            estimator = FakeGazeEstimator({0: (0.3, 0.4), 1: (0.8, 0.4)})
+            variants: list[str] = []
+
+            def make_estimator(variant: str) -> FakeGazeEstimator:
+                variants.append(variant)
+                return estimator
+
+            args = ["--raw-dir", str(raw), "--processed-dir", str(out), "features", "gaze"]
+            args += ["--session-id", "9", "--camera", "window", "--phase", "play", "--no-overlay"]
+
+            code = main(
+                args, head_tracker_factory=lambda: tracker, gaze_estimator_factory=make_estimator
+            )
+
+            self.assertEqual(code, 0)
+            self.assertEqual(variants, ["vitl14_inout_childplay"])
+            folder = out / "Sessions" / "9" / "features" / "gaze"
+            rows = read_timeline(folder / "window_play.csv")
+            self.assertEqual({r.gaze_class for r in rows}, {"BABARA", "ANYARA"})
+
+    def test_gaze_without_an_adapter_fails_clearly(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            args = [
+                "--raw-dir",
+                tmp,
+                "--processed-dir",
+                tmp,
+                "features",
+                "gaze",
+                "--session-id",
+                "1",
+            ]
+            with self.assertRaisesRegex(RuntimeError, "not available"):
+                main(args, head_tracker_factory=lambda: FakeHeadTracker({}))
 
     def test_heads_requires_a_session(self) -> None:
         with self.assertRaises(SystemExit):
