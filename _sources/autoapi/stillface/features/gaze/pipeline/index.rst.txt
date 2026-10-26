@@ -40,8 +40,10 @@ Module Contents
    :param frame_indices: Ascending frame indices to return.
 
    :Yields: RGB ``uint8`` frames of shape ``(height, width, 3)``, in the order of the indices.
+            The stream ends early if the clip has fewer decodable frames than its metadata
+            claims (decoders disagree by a frame on real clips); callers must handle that.
 
-   :raises RuntimeError: If the clip cannot be read or ends before the last index.
+   :raises RuntimeError: If the clip cannot be read.
 
 
 .. py:function:: gaze_outputs(session_id: str, camera: str, phase: str, prepared: stillface.features.gaze.prepare.ClipHeads, decisions: dict[tuple[int, str], stillface.features.gaze.classes.GazeDecision]) -> stillface.features.gaze.runner.ClipOutput
