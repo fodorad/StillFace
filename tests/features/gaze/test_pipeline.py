@@ -4,9 +4,11 @@ from pathlib import Path
 
 from stillface.config import DatasetPaths
 from stillface.features.gaze.config import GazeConfig
-from stillface.features.gaze.pipeline import read_frames, run_gaze
+from stillface.features.gaze.pipeline import _decide, read_frames, run_gaze
+from stillface.features.gaze.prepare import ClipHeads
+from stillface.features.gaze.roles import RoleAssignment
 from stillface.features.timeline import read_timeline
-from tests.features.gaze.fakes import FakeGazeEstimator, FakeHeadTracker, track
+from tests.features.gaze.fakes import FakeGazeEstimator, FakeHeadTracker, box, track
 from tests.helpers import make_video
 
 FRAMES = list(range(0, 60, 2))
@@ -165,6 +167,26 @@ class TestBatching(PipelineCase):
         self.assertEqual(max(estimator.calls), 8)
 
 
+class TestUndecodableFrames(PipelineCase):
+    def test_frames_the_clip_cannot_deliver_are_not_codable(self) -> None:
+        clip = self.clip("window")
+        indices = [0, 10, 5_000, 5_002]  # the clip has 60 frames
+        prepared = ClipHeads(
+            indices, 60.0, RoleAssignment(2, 1),
+            {"mother": [box(0.8)] * 4, "baby": [box(0.3)] * 4},
+        )  # fmt: skip
+        estimator = FakeGazeEstimator({0: (0.3, 0.4), 1: (0.8, 0.4)})
+
+        decisions = _decide(prepared, "window", clip, estimator, GazeConfig(), batch_size=8)
+
+        self.assertEqual(decisions[(0, "mother")].gaze_class, "BABARA")
+        self.assertEqual(decisions[(1, "baby")].gaze_class, "ANYARA")
+        for position in (2, 3):
+            self.assertEqual(decisions[(position, "mother")].reason, "no_frame")
+            self.assertEqual(decisions[(position, "baby")].reason, "no_frame")
+        self.assertEqual(sum(estimator.calls), 2)
+
+
 class TestReadFrames(PipelineCase):
     def test_yields_rgb_frames_of_the_requested_indices_in_order(self) -> None:
         clip = self.clip("window")
@@ -176,10 +198,9 @@ class TestReadFrames(PipelineCase):
     def test_no_indices_yields_nothing(self) -> None:
         self.assertEqual(list(read_frames(self.clip("window"), [])), [])
 
-    def test_index_past_the_end_raises(self) -> None:
+    def test_index_past_the_end_ends_the_stream_early(self) -> None:
         clip = self.clip("window")
-        with self.assertRaises(RuntimeError):
-            list(read_frames(clip, [0, 10_000]))
+        self.assertEqual(len(list(read_frames(clip, [0, 10, 10_000, 20_000]))), 2)
 
     def test_unreadable_clip_raises(self) -> None:
         with self.assertRaises(RuntimeError):
