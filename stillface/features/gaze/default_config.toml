@@ -1,0 +1,14 @@
+# Default gaze extraction settings. Thresholds and zones are provisional until they are
+# calibrated on the development sessions.
+version = 1
+sample_rate_hz = 30.0
+model_variant = "vitl14_inout_childplay"
+
+[side_priors]
+window = "right"
+door = "left"
+
+[thresholds]
+partner_mass = 0.3
+inout = 0.5
+box_margin = 0.25
