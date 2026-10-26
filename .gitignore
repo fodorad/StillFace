@@ -1,5 +1,5 @@
-# data
-data/ELTE-PPK_StillFace
+# data (soft links to the original and processed datasets)
+data/
 
 # Mac
 .DS_Store
@@ -211,3 +211,13 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Local planning notes and agent artifacts
+tmp/
+.claude/
+graphify-out/
+
+# Docs and coverage output
+site/
+coverage_html/
+docs/autoapi/
