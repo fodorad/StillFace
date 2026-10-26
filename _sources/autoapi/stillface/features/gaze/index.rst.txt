@@ -16,5 +16,7 @@ Submodules
    :maxdepth: 1
 
    /autoapi/stillface/features/gaze/config/index
+   /autoapi/stillface/features/gaze/heads/index
+   /autoapi/stillface/features/gaze/roles/index
 
 

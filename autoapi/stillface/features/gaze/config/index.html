@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.io" href="../../io/index.html"><link rel="prev" title="stillface.features.gaze" href="../index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.gaze.heads" href="../heads/index.html"><link rel="prev" title="stillface.features.gaze" href="../index.html">
         <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/gaze/config/index.html">
         <link rel="prefetch" href="../../../../../_static/logo.svg" as="image">
 
@@ -215,6 +215,8 @@
 <li class="toctree-l4"><a class="reference internal" href="../../config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.gaze.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../heads/index.html">stillface.features.gaze.heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../roles/index.html">stillface.features.gaze.roles</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../io/index.html">stillface.features.io</a></li>
@@ -296,7 +298,10 @@ the <code class="docutils literal notranslate"><span class="pre">version</span><
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.config.Thresholds" title="stillface.features.gaze.config.Thresholds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Thresholds</span></code></a></p></td>
 <td><p>Decision thresholds of the class assignment.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.config.GazeConfig" title="stillface.features.gaze.config.GazeConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GazeConfig</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.config.RoleRules" title="stillface.features.gaze.config.RoleRules"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RoleRules</span></code></a></p></td>
+<td><p>Rules assigning head tracks to the mother and the baby.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.config.GazeConfig" title="stillface.features.gaze.config.GazeConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GazeConfig</span></code></a></p></td>
 <td><p>Gaze extraction settings.</p></td>
 </tr>
 </tbody>
@@ -372,6 +377,38 @@ the <code class="docutils literal notranslate"><span class="pre">version</span><
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.gaze.config.RoleRules">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.config.</span></span><span class="sig-name descname"><span class="pre">RoleRules</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/config.html#RoleRules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.config.RoleRules" title="Link to this definition">¶</a></dt>
+<dd><p>Rules assigning head tracks to the mother and the baby.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.gaze.config.RoleRules.min_presence">
+<span class="sig-name descname"><span class="pre">min_presence</span></span><a class="headerlink" href="#stillface.features.gaze.config.RoleRules.min_presence" title="Link to this definition">¶</a></dt>
+<dd><p>Share of the sampled frames a track must appear in to be a candidate.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.gaze.config.RoleRules.size_ambiguity_ratio">
+<span class="sig-name descname"><span class="pre">size_ambiguity_ratio</span></span><a class="headerlink" href="#stillface.features.gaze.config.RoleRules.size_ambiguity_ratio" title="Link to this definition">¶</a></dt>
+<dd><p>Two candidates whose head areas differ by less than this ratio
+(smaller over larger) cannot be told apart by size.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.gaze.config.RoleRules.min_side_separation">
+<span class="sig-name descname"><span class="pre">min_side_separation</span></span><a class="headerlink" href="#stillface.features.gaze.config.RoleRules.min_side_separation" title="Link to this definition">¶</a></dt>
+<dd><p>Smaller horizontal distance between the two candidates than this
+(normalized) makes the side prior ambiguous.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.gaze.config.RoleRules.min_identity_similarity">
+<span class="sig-name descname"><span class="pre">min_identity_similarity</span></span><a class="headerlink" href="#stillface.features.gaze.config.RoleRules.min_identity_similarity" title="Link to this definition">¶</a></dt>
+<dd><p>Cosine similarity needed to accept an identity match.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="stillface.features.gaze.config.GazeConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.config.</span></span><span class="sig-name descname"><span class="pre">GazeConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/config.html#GazeConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.config.GazeConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Gaze extraction settings.</p>
@@ -406,6 +443,12 @@ the <code class="docutils literal notranslate"><span class="pre">version</span><
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.gaze.config.GazeConfig.roles">
+<span class="sig-name descname"><span class="pre">roles</span></span><a class="headerlink" href="#stillface.features.gaze.config.GazeConfig.roles" title="Link to this definition">¶</a></dt>
+<dd><p>Rules assigning head tracks to the mother and the baby.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="stillface.features.gaze.config.GazeConfig.partner_zones">
 <span class="sig-name descname"><span class="pre">partner_zones</span></span><a class="headerlink" href="#stillface.features.gaze.config.GazeConfig.partner_zones" title="Link to this definition">¶</a></dt>
 <dd><p>Close camera name mapped to the normalized <code class="docutils literal notranslate"><span class="pre">(x0,</span> <span class="pre">y0,</span> <span class="pre">x1,</span> <span class="pre">y1)</span></code> image
@@ -436,12 +479,12 @@ region where the partner is looked at; calibrated on the development sessions.</
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../../io/index.html">
+          <a class="next-page" href="../heads/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">stillface.features.io</div>
+                <div class="title">stillface.features.gaze.heads</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -504,12 +547,20 @@ region where the partner is looked at; calibrated on the development sessions.</
 <li><a class="reference internal" href="#stillface.features.gaze.config.Thresholds.box_margin"><code class="docutils literal notranslate"><span class="pre">Thresholds.box_margin</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#stillface.features.gaze.config.RoleRules"><code class="docutils literal notranslate"><span class="pre">RoleRules</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.gaze.config.RoleRules.min_presence"><code class="docutils literal notranslate"><span class="pre">RoleRules.min_presence</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.config.RoleRules.size_ambiguity_ratio"><code class="docutils literal notranslate"><span class="pre">RoleRules.size_ambiguity_ratio</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.config.RoleRules.min_side_separation"><code class="docutils literal notranslate"><span class="pre">RoleRules.min_side_separation</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.config.RoleRules.min_identity_similarity"><code class="docutils literal notranslate"><span class="pre">RoleRules.min_identity_similarity</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#stillface.features.gaze.config.GazeConfig"><code class="docutils literal notranslate"><span class="pre">GazeConfig</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.gaze.config.GazeConfig.version"><code class="docutils literal notranslate"><span class="pre">GazeConfig.version</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.config.GazeConfig.sample_rate_hz"><code class="docutils literal notranslate"><span class="pre">GazeConfig.sample_rate_hz</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.config.GazeConfig.model_variant"><code class="docutils literal notranslate"><span class="pre">GazeConfig.model_variant</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.config.GazeConfig.side_priors"><code class="docutils literal notranslate"><span class="pre">GazeConfig.side_priors</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.config.GazeConfig.thresholds"><code class="docutils literal notranslate"><span class="pre">GazeConfig.thresholds</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.config.GazeConfig.roles"><code class="docutils literal notranslate"><span class="pre">GazeConfig.roles</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.config.GazeConfig.partner_zones"><code class="docutils literal notranslate"><span class="pre">GazeConfig.partner_zones</span></code></a></li>
 </ul>
 </li>

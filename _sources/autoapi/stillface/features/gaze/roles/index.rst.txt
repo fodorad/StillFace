@@ -1,0 +1,161 @@
+stillface.features.gaze.roles
+=============================
+
+.. py:module:: stillface.features.gaze.roles
+
+.. autoapi-nested-parse::
+
+   Deciding which head track is the mother and which is the baby.
+
+   Close cameras show one person, so the dominant track belongs to the camera's owner. The
+   side cameras show both participants in profile at fixed positions (mother on the right in
+   the window camera, on the left in the door camera) plus occasional background people. In
+   the baseline phase the positions may change, so size and face identity decide there.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.gaze.roles.logger
+   stillface.features.gaze.roles.PERSONS
+   stillface.features.gaze.roles.SIDE_CAMERAS
+   stillface.features.gaze.roles.RoleOverrides
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.roles.RoleReferences
+   stillface.features.gaze.roles.RoleAssignment
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.gaze.roles.assign_roles
+   stillface.features.gaze.roles.head_per_frame
+   stillface.features.gaze.roles.missing_reason
+   stillface.features.gaze.roles.load_role_overrides
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: PERSONS
+   :type:  tuple[str, ...]
+   :value: ('mother', 'baby')
+
+
+   The two people whose gaze is extracted.
+
+.. py:data:: SIDE_CAMERAS
+   :type:  tuple[str, ...]
+   :value: ('window', 'door')
+
+
+   Cameras seeing both participants.
+
+.. py:data:: RoleOverrides
+
+   ``(camera, phase)`` mapped to ``{person: track_id}``, from a ``roles.json`` file.
+
+.. py:class:: RoleReferences
+
+   Face-identity embeddings of the two participants of a session.
+
+   .. attribute:: mother
+
+      Mean embedding from the mother camera.
+
+   .. attribute:: baby
+
+      Mean embedding from the baby camera.
+
+
+.. py:class:: RoleAssignment
+
+   Outcome of the role assignment for one clip.
+
+   .. attribute:: mother
+
+      Track id of the mother, None if not seen or not decidable.
+
+   .. attribute:: baby
+
+      Track id of the baby, None if not seen or not decidable.
+
+   .. attribute:: flags
+
+      ``roles_ambiguous`` if the participants could not be told apart,
+      ``single_track`` if only one candidate was assigned by image half.
+
+
+   .. py:method:: track_id(person: str) -> int | None
+
+      Track id of a person.
+
+
+
+.. py:function:: assign_roles(tracks: collections.abc.Sequence[stillface.features.gaze.heads.HeadTrack], camera: str, phase: str, n_frames: int, config: stillface.features.gaze.config.GazeConfig, references: RoleReferences | None = None, overrides: collections.abc.Mapping[tuple[str, str], collections.abc.Mapping[str, int]] | None = None) -> RoleAssignment
+
+   Assign head tracks to the mother and the baby.
+
+   :param tracks: Head tracks of the clip.
+   :param camera: Camera name.
+   :param phase: Experiment phase.
+   :param n_frames: Number of sampled frames in the clip.
+   :param config: Gaze configuration (side priors, role rules).
+   :param references: Identity embeddings of the participants, if available.
+   :param overrides: Pinned assignments that win over the automatic decision.
+
+   :returns: The assignment; people that cannot be assigned are None.
+
+
+.. py:function:: head_per_frame(assignment: RoleAssignment, tracks: collections.abc.Sequence[stillface.features.gaze.heads.HeadTrack], frame_indices: collections.abc.Sequence[int]) -> dict[str, list[stillface.features.gaze.heads.HeadBox | None]]
+
+   Look up each person's head box on every sampled frame.
+
+   :param assignment: Role assignment of the clip.
+   :param tracks: Head tracks of the clip.
+   :param frame_indices: Sampled frames.
+
+   :returns: Person mapped to one box per frame, None where the head was not found.
+
+
+.. py:function:: missing_reason(camera: str, person: str) -> str
+
+   Why a person has no head on a frame.
+
+   The mother's face is regularly hidden by the baby camera in the door view; elsewhere a
+   missing head is just not found.
+
+   :param camera: Camera name.
+   :param person: ``mother`` or ``baby``.
+
+   :returns: ``occluded`` or ``no_head``.
+
+
+.. py:function:: load_role_overrides(path: pathlib.Path) -> RoleOverrides
+
+   Read a per-session ``roles.json``.
+
+   The file maps camera, phase and person to a track id, e.g.
+   ``{"window": {"play": {"mother": 3, "baby": 1}}}``.
+
+   :param path: File to read; a missing file means no overrides.
+
+   :returns: The overrides, empty if the file does not exist.
+
+   :raises ValueError: If the file names an unknown camera, phase or person, or a non-integer
+       track id.
+
+

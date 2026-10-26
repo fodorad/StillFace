@@ -29,6 +29,7 @@ Classes
 
    stillface.features.gaze.config.SidePriors
    stillface.features.gaze.config.Thresholds
+   stillface.features.gaze.config.RoleRules
    stillface.features.gaze.config.GazeConfig
 
 
@@ -85,6 +86,29 @@ Module Contents
       Relative margin added around the partner's head box.
 
 
+.. py:class:: RoleRules
+
+   Rules assigning head tracks to the mother and the baby.
+
+   .. attribute:: min_presence
+
+      Share of the sampled frames a track must appear in to be a candidate.
+
+   .. attribute:: size_ambiguity_ratio
+
+      Two candidates whose head areas differ by less than this ratio
+      (smaller over larger) cannot be told apart by size.
+
+   .. attribute:: min_side_separation
+
+      Smaller horizontal distance between the two candidates than this
+      (normalized) makes the side prior ambiguous.
+
+   .. attribute:: min_identity_similarity
+
+      Cosine similarity needed to accept an identity match.
+
+
 .. py:class:: GazeConfig
 
    Gaze extraction settings.
@@ -108,6 +132,10 @@ Module Contents
    .. attribute:: thresholds
 
       Class decision thresholds.
+
+   .. attribute:: roles
+
+      Rules assigning head tracks to the mother and the baby.
 
    .. attribute:: partner_zones
 

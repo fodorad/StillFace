@@ -1,0 +1,105 @@
+stillface.features.gaze.heads
+=============================
+
+.. py:module:: stillface.features.gaze.heads
+
+.. autoapi-nested-parse::
+
+   Head boxes and tracks: what the gaze pipeline needs from a head detector.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.heads.HeadBox
+   stillface.features.gaze.heads.HeadTrack
+   stillface.features.gaze.heads.HeadTracker
+
+
+Module Contents
+---------------
+
+.. py:class:: HeadBox
+
+   Axis-aligned head box in normalized image coordinates.
+
+   .. attribute:: x0
+
+      Left edge.
+
+   .. attribute:: y0
+
+      Top edge.
+
+   .. attribute:: x1
+
+      Right edge.
+
+   .. attribute:: y1
+
+      Bottom edge.
+
+
+   .. py:property:: area
+      :type: float
+
+
+      Box area as a share of the image.
+
+
+   .. py:property:: center
+      :type: tuple[float, float]
+
+
+      Box center ``(x, y)``.
+
+
+   .. py:method:: expand(margin: float) -> HeadBox
+
+      Grow the box on every side by a share of its size, clipped to the image.
+
+      :param margin: Relative margin, 0.25 adds a quarter of the width and height per side.
+
+      :returns: The enlarged box.
+
+
+
+.. py:class:: HeadTrack
+
+   One head followed across the sampled frames of a clip.
+
+   .. attribute:: track_id
+
+      Identifier of the track within the clip.
+
+   .. attribute:: boxes
+
+      Frame index mapped to the head box, for the frames the head was found in.
+
+   .. attribute:: embedding
+
+      Mean face-identity embedding of the track, None if not computed.
+
+
+.. py:class:: HeadTracker
+
+   Bases: :py:obj:`Protocol`
+
+
+   Finds and tracks the heads in a clip.
+
+
+   .. py:method:: track(clip: pathlib.Path, frame_indices: collections.abc.Sequence[int]) -> list[HeadTrack]
+
+      Track all heads in the given frames of a clip.
+
+      :param clip: Video clip.
+      :param frame_indices: Frames to analyze, ascending.
+
+      :returns: One track per head, with boxes only on the requested frames.
+
+
+

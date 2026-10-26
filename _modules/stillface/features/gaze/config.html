@@ -214,6 +214,8 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/config/index.html">stillface.features.gaze.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/heads/index.html">stillface.features.gaze.heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/roles/index.html">stillface.features.gaze.roles</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/io/index.html">stillface.features.io</a></li>
@@ -311,6 +313,28 @@
 
 
 
+<div class="viewcode-block" id="RoleRules">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.RoleRules">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RoleRules</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Rules assigning head tracks to the mother and the baby.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        min_presence: Share of the sampled frames a track must appear in to be a candidate.</span>
+<span class="sd">        size_ambiguity_ratio: Two candidates whose head areas differ by less than this ratio</span>
+<span class="sd">            (smaller over larger) cannot be told apart by size.</span>
+<span class="sd">        min_side_separation: Smaller horizontal distance between the two candidates than this</span>
+<span class="sd">            (normalized) makes the side prior ambiguous.</span>
+<span class="sd">        min_identity_similarity: Cosine similarity needed to accept an identity match.</span>
+<span class="sd">    """</span>
+
+    <span class="n">min_presence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="n">size_ambiguity_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span>
+    <span class="n">min_side_separation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span>
+    <span class="n">min_identity_similarity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span></div>
+
+
+
 <div class="viewcode-block" id="GazeConfig">
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.GazeConfig">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -323,6 +347,7 @@
 <span class="sd">        model_variant: Gaze-LLE variant.</span>
 <span class="sd">        side_priors: Mother position in the side cameras.</span>
 <span class="sd">        thresholds: Class decision thresholds.</span>
+<span class="sd">        roles: Rules assigning head tracks to the mother and the baby.</span>
 <span class="sd">        partner_zones: Close camera name mapped to the normalized ``(x0, y0, x1, y1)`` image</span>
 <span class="sd">            region where the partner is looked at; calibrated on the development sessions.</span>
 <span class="sd">    """</span>
@@ -332,6 +357,7 @@
     <span class="n">model_variant</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"vitl14_inout_childplay"</span>
     <span class="n">side_priors</span><span class="p">:</span> <span class="n">SidePriors</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">SidePriors</span><span class="p">)</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">Thresholds</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">Thresholds</span><span class="p">)</span>
+    <span class="n">roles</span><span class="p">:</span> <span class="n">RoleRules</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">RoleRules</span><span class="p">)</span>
     <span class="n">partner_zones</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
 
 
