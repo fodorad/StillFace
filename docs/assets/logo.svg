@@ -1,7 +1,7 @@
-<svg width="360" height="150" viewBox="0 0 360 150" role="img"
+<svg width="520" height="150" viewBox="0 0 520 150" role="img"
      xmlns="http://www.w3.org/2000/svg" aria-labelledby="title desc">
   <title id="title">StillFace</title>
-  <desc id="desc">Two facing profiles, a larger and a smaller one, each with a flat neutral mouth, above the StillFace wordmark.</desc>
+  <desc id="desc">Two facing profiles, a larger and a smaller one, each with a flat neutral mouth, beside the StillFace wordmark.</desc>
 
   <!-- mother: larger face -->
   <circle cx="56" cy="62" r="40" fill="none" stroke="#2dd4bf" stroke-width="6"/>
@@ -19,5 +19,5 @@
   <text x="184" y="70" font-family="-apple-system, Segoe UI, sans-serif"
         font-size="44" font-weight="600" fill="#2dd4bf">StillFace</text>
   <text x="185" y="100" font-family="-apple-system, Segoe UI, sans-serif"
-        font-size="14" font-weight="400" fill="#94a3b8">sync · extract · analyze</text>
+        font-size="14" font-weight="400" fill="#94a3b8">mother-infant interaction · still face paradigm</text>
 </svg>

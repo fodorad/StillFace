@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/fodorad/StillFace/main/docs/assets/logo.svg" alt="StillFace" width="320"/>
+<img src="https://raw.githubusercontent.com/fodorad/StillFace/main/docs/assets/logo.svg" alt="StillFace" width="440"/>
 
 <br/>
 
