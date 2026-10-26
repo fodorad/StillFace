@@ -12,3 +12,9 @@ door = "left"
 partner_mass = 0.3
 inout = 0.5
 box_margin = 0.25
+
+[roles]
+min_presence = 0.2
+size_ambiguity_ratio = 0.8
+min_side_separation = 0.05
+min_identity_similarity = 0.3

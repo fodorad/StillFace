@@ -46,6 +46,25 @@ class Thresholds:
 
 
 @dataclass(frozen=True)
+class RoleRules:
+    """Rules assigning head tracks to the mother and the baby.
+
+    Attributes:
+        min_presence: Share of the sampled frames a track must appear in to be a candidate.
+        size_ambiguity_ratio: Two candidates whose head areas differ by less than this ratio
+            (smaller over larger) cannot be told apart by size.
+        min_side_separation: Smaller horizontal distance between the two candidates than this
+            (normalized) makes the side prior ambiguous.
+        min_identity_similarity: Cosine similarity needed to accept an identity match.
+    """
+
+    min_presence: float = 0.2
+    size_ambiguity_ratio: float = 0.8
+    min_side_separation: float = 0.05
+    min_identity_similarity: float = 0.3
+
+
+@dataclass(frozen=True)
 class GazeConfig:
     """Gaze extraction settings.
 
@@ -55,6 +74,7 @@ class GazeConfig:
         model_variant: Gaze-LLE variant.
         side_priors: Mother position in the side cameras.
         thresholds: Class decision thresholds.
+        roles: Rules assigning head tracks to the mother and the baby.
         partner_zones: Close camera name mapped to the normalized ``(x0, y0, x1, y1)`` image
             region where the partner is looked at; calibrated on the development sessions.
     """
@@ -64,6 +84,7 @@ class GazeConfig:
     model_variant: str = "vitl14_inout_childplay"
     side_priors: SidePriors = field(default_factory=SidePriors)
     thresholds: Thresholds = field(default_factory=Thresholds)
+    roles: RoleRules = field(default_factory=RoleRules)
     partner_zones: dict[str, tuple[float, float, float, float]] = field(default_factory=dict)
 
 
