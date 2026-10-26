@@ -51,10 +51,11 @@ jobs:
       - name: Debug ffmpeg (temporary)
         if: failure()
         run: |
-          ffmpeg -version | head -2
-          ffmpeg -hide_banner -y -f lavfi -i testsrc=size=64x48:rate=25:duration=1 -pix_fmt yuv420p /tmp/w.MTS 2>&1 | tail -5
-          ffprobe -hide_banner /tmp/w.MTS 2>&1 | tail -5
-          ffmpeg -hide_banner -y -i /tmp/w.MTS -r 60 /tmp/o.mp4 2>&1 | tail -8
+          set +e
+          echo "=== make MTS"; ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc=size=64x48:rate=25:duration=1 -pix_fmt yuv420p /tmp/w.MTS; echo "rc=$?"
+          echo "=== convert"; ffmpeg -hide_banner -loglevel error -y -i /tmp/w.MTS -r 60 /tmp/o.mp4; echo "rc=$?"
+          echo "=== make MTS with audio"; ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc=size=64x48:rate=60:duration=1 -f lavfi -i sine=duration=1 -shortest -pix_fmt yuv420p /tmp/w2.MTS; echo "rc=$?"
+          echo "=== remux"; ffmpeg -hide_banner -loglevel error -y -i /tmp/w2.MTS -c copy /tmp/o2.mp4; echo "rc=$?"
 
       - name: Upload coverage to Codecov
         if: matrix.python-version == '3.13'
