@@ -18,6 +18,7 @@ Submodules
    /autoapi/stillface/features/config/index
    /autoapi/stillface/features/gaze/index
    /autoapi/stillface/features/io/index
+   /autoapi/stillface/features/overlay/index
    /autoapi/stillface/features/run_record/index
    /autoapi/stillface/features/timeline/index
 

@@ -1,0 +1,118 @@
+stillface.features.overlay
+==========================
+
+.. py:module:: stillface.features.overlay
+
+.. autoapi-nested-parse::
+
+   Overlay videos: extracted features drawn onto the camera clips.
+
+   An overlay clip has the resolution, frame rate and frame count of its source clip, drops
+   the audio, and shows the annotations of the last sampled frame until the next one
+   (sample and hold). The overlays of the four cameras can be stacked into the same 2x2 grid
+   as the overview videos.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.overlay.logger
+   stillface.features.overlay.PERSON_COLORS
+   stillface.features.overlay.NOT_CODABLE_COLOR
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.overlay.OverlayItem
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.overlay.draw_items
+   stillface.features.overlay.render_overlay
+   stillface.features.overlay.render_overlay_grid
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: PERSON_COLORS
+   :type:  dict[str, tuple[int, int, int]]
+
+   BGR drawing color of each person.
+
+.. py:data:: NOT_CODABLE_COLOR
+   :type:  tuple[int, int, int]
+   :value: (160, 160, 160)
+
+
+   BGR color of rows that cannot be coded.
+
+.. py:class:: OverlayItem
+
+   What is drawn for one person on one frame.
+
+   .. attribute:: person
+
+      ``mother`` or ``baby``.
+
+   .. attribute:: box
+
+      Head box in normalized coordinates, None if no head was found.
+
+   .. attribute:: gaze
+
+      Gaze target in normalized coordinates, None if there is none (pilot mode or
+      not codable).
+
+   .. attribute:: label
+
+      Text after the role, e.g. the gaze class; labels starting with ``NK`` are
+      drawn as not codable.
+
+
+.. py:function:: draw_items(frame: numpy.ndarray, items: collections.abc.Sequence[OverlayItem]) -> None
+
+   Draw annotations onto a BGR frame, in place.
+
+   :param frame: Image of shape ``(height, width, 3)``.
+   :param items: One item per person to draw.
+
+
+.. py:function:: render_overlay(clip: pathlib.Path, items_by_frame: collections.abc.Mapping[int, collections.abc.Sequence[OverlayItem]], dst: pathlib.Path, overwrite: bool = False) -> None
+
+   Render an overlay clip.
+
+   :param clip: Source clip.
+   :param items_by_frame: Sampled frame index mapped to the annotations from that frame on.
+   :param dst: Output ``.mp4``. An existing file is kept unless ``overwrite``.
+   :param overwrite: Render even if ``dst`` exists.
+
+   :raises RuntimeError: If the clip cannot be read or ffmpeg fails.
+
+
+.. py:function:: render_overlay_grid(overlays: collections.abc.Mapping[str, pathlib.Path | None], dst: pathlib.Path, overwrite: bool = False) -> bool
+
+   Stack the camera overlays into the 2x2 overview layout.
+
+   Mother is top-left, window top-right, baby bottom-left, door bottom-right; missing
+   cameras are black.
+
+   :param overlays: Camera name mapped to its overlay clip, or None.
+   :param dst: Output ``.mp4``. An existing file is kept unless ``overwrite``.
+   :param overwrite: Render even if ``dst`` exists.
+
+   :returns: True if the grid exists afterwards.
+
+
