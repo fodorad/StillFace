@@ -43,12 +43,16 @@ class TestSidePrior(unittest.TestCase):
         self.assertEqual((result.mother, result.baby), (None, None))
         self.assertIn("roles_ambiguous", result.flags)
 
-    def test_single_track_uses_the_image_half_and_is_flagged(self) -> None:
-        right = assign([track(1, 0.8)])
-        self.assertEqual((right.mother, right.baby), (1, None))
-        left = assign([track(1, 0.3)])
-        self.assertEqual((left.mother, left.baby), (None, 1))
-        self.assertIn("single_track", right.flags)
+    def test_single_track_is_not_assigned_by_image_half(self) -> None:
+        for x in (0.3, 0.8):
+            result = assign([track(1, x)])
+            self.assertEqual((result.mother, result.baby), (None, None))
+            self.assertEqual(result.flags, ("single_track", "roles_ambiguous"))
+
+    def test_single_track_can_be_pinned_by_roles_json(self) -> None:
+        overrides = {("window", "play"): {"mother": 1}}
+        result = assign([track(1, 0.3)], overrides=overrides)
+        self.assertEqual((result.mother, result.baby), (1, None))
 
     def test_no_tracks(self) -> None:
         result = assign([])
@@ -95,6 +99,35 @@ class TestBaseline(unittest.TestCase):
         self.assertEqual((result.mother, result.baby), (1, 2))
 
 
+class TestTaggedTracks(unittest.TestCase):
+    def tagged(self, track_id: int, cx: float, role: str, width: float = 0.07) -> HeadTrack:
+        return HeadTrack(track_id, {f: box(cx, width=width) for f in range(10)}, role=role)
+
+    def test_prompted_baby_and_best_face_for_the_mother(self) -> None:
+        baby = self.tagged(1000, 0.3, "baby")
+        result = assign([baby, track(2, 0.4, width=0.09), track(3, 0.85, width=0.12)])
+        self.assertEqual((result.mother, result.baby), (3, 1000))
+
+    def test_tiny_background_face_is_not_the_mother(self) -> None:
+        baby = self.tagged(1000, 0.3, "baby")
+        result = assign([baby, track(2, 0.6, width=0.015)])
+        self.assertEqual((result.mother, result.baby), (None, 1000))
+
+    def test_both_roles_prompted(self) -> None:
+        result = assign([self.tagged(1000, 0.3, "baby"), self.tagged(1001, 0.8, "mother")])
+        self.assertEqual((result.mother, result.baby), (1001, 1000))
+
+    def test_prompted_baby_works_in_baseline_without_position_priors(self) -> None:
+        baby = self.tagged(1000, 0.8, "baby")
+        result = assign([baby, track(2, 0.2, width=0.09)], phase="baseline")
+        self.assertEqual((result.mother, result.baby), (2, 1000))
+
+    def test_short_lived_faces_are_not_candidates(self) -> None:
+        baby = self.tagged(1000, 0.3, "baby")
+        result = assign([baby, track(2, 0.8, width=0.1, frames=[0])])
+        self.assertEqual((result.mother, result.baby), (None, 1000))
+
+
 class TestCloseCameras(unittest.TestCase):
     def test_owner_is_the_dominant_track(self) -> None:
         tracks = [track(1, 0.5, width=0.3), track(2, 0.1, width=0.05)]
@@ -102,6 +135,12 @@ class TestCloseCameras(unittest.TestCase):
         self.assertEqual((mother.mother, mother.baby), (1, None))
         baby = assign(tracks, camera="baby", phase="baseline")
         self.assertEqual((baby.mother, baby.baby), (None, 1))
+
+    def test_confident_face_beats_a_larger_weak_partner_box(self) -> None:
+        owner = track(1, 0.5, width=0.2, score=0.88)
+        partner_edge = track(2, 0.05, width=0.5, score=0.5)  # partner's face entering the view
+        result = assign([partner_edge, owner], camera="baby")
+        self.assertEqual((result.mother, result.baby), (None, 1))
 
     def test_close_camera_without_head(self) -> None:
         result = assign([], camera="baby")
@@ -173,6 +212,18 @@ class TestHeadPerFrame(unittest.TestCase):
         self.assertEqual(missing_reason("door", "mother"), "occluded")
         self.assertEqual(missing_reason("door", "baby"), "no_head")
         self.assertEqual(missing_reason("window", "mother"), "no_head")
+
+
+class TestHeadTrackEvidence(unittest.TestCase):
+    def test_evidence_and_weight_use_the_scores(self) -> None:
+        scored = HeadTrack(
+            1, {0: box(0.5, width=0.2), 1: box(0.5, width=0.2)}, scores={0: 0.5, 1: 1.0}
+        )
+        self.assertAlmostEqual(scored.evidence(), 1.5)
+        area = box(0.5, width=0.2).area
+        self.assertAlmostEqual(scored.weight(), area * 1.5)
+        unscored = HeadTrack(2, {0: box(0.5, width=0.2)})
+        self.assertAlmostEqual(unscored.evidence(), 1.0)
 
 
 class TestHeadBox(unittest.TestCase):

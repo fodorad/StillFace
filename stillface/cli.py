@@ -68,10 +68,18 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _exordium_head_tracker() -> HeadTracker:
-    """Build the exordium head tracker on the best available device."""
-    from stillface.features.gaze.exordium_heads import ExordiumHeadTracker
+    """Build the head tracker used on real data.
 
-    return ExordiumHeadTracker(device_id=0)
+    Close cameras use the face detector. Side cameras combine OWLv2, prompted with the
+    baby's head (reclined, in profile or half hidden, where face detectors fail), with the
+    same face detector for the mother.
+    """
+    from stillface.features.gaze.combined import CombinedHeadTracker, PerCameraTracker
+    from stillface.features.gaze.exordium_heads import ExordiumHeadTracker
+    from stillface.features.gaze.owl_heads import OwlHeadTracker
+
+    faces = ExordiumHeadTracker(device_id=0)
+    return PerCameraTracker(side=CombinedHeadTracker(OwlHeadTracker(), faces), close=faces)
 
 
 def _gaze_estimator(variant: str) -> GazeEstimator:

@@ -51,7 +51,7 @@ class RoleAssignment:
         mother: Track id of the mother, None if not seen or not decidable.
         baby: Track id of the baby, None if not seen or not decidable.
         flags: ``roles_ambiguous`` if the participants could not be told apart,
-            ``single_track`` if only one candidate was assigned by image half.
+            ``single_track`` if only one candidate head was found on a side camera.
     """
 
     mother: int | None
@@ -94,11 +94,16 @@ def assign_roles(
         return RoleAssignment(pinned.get("mother"), pinned.get("baby"))
 
     if camera in PERSONS:
-        dominant = max(tracks, key=_weight, default=None)
+        # the camera's owner is the most confidently present face, not the biggest box: the
+        # partner's face partly enters the close-up views as a large, weak detection
+        dominant = max(tracks, key=lambda t: t.evidence(), default=None)
         track_id = None if dominant is None else dominant.track_id
         return RoleAssignment(*((track_id, None) if camera == "mother" else (None, track_id)))
 
     rules = config.roles
+    tagged = {t.role: t for t in tracks if t.role is not None and t.role in PERSONS}
+    if tagged:
+        return _with_tagged(tracks, tagged, n_frames, config)
     candidates = sorted(
         (t for t in tracks if len(t.boxes) >= rules.min_presence * n_frames),
         key=_weight,
@@ -108,24 +113,54 @@ def assign_roles(
         return RoleAssignment(None, None)
     prior = getattr(config.side_priors, camera)
     if len(candidates) == 1:
-        return _single_track(candidates[0], prior)
+        # one visible participant cannot be told from the other by position alone: the mother
+        # leans over the baby, and the baby's face is often missed
+        return RoleAssignment(None, None, ("single_track", "roles_ambiguous"))
     if phase == "baseline":
         return _by_identity_or_size(candidates, config, references)
     return _by_side(candidates, prior, config)
 
 
+def _with_tagged(
+    tracks: Sequence[HeadTrack],
+    tagged: dict[str, HeadTrack],
+    n_frames: int,
+    config: GazeConfig,
+) -> RoleAssignment:
+    """Assignment when a text-prompted detector already named some of the heads.
+
+    The missing role takes the most confident anonymous head that is not tiny compared with
+    the named partner's (background people are small).
+    """
+    ids = {person: tagged[person].track_id if person in tagged else None for person in PERSONS}
+    rules = config.roles
+    for person in PERSONS:
+        if ids[person] is not None:
+            continue
+        partner = tagged.get("baby" if person == "mother" else "mother")
+        floor = 0.0
+        if partner is not None and partner.boxes:
+            floor = rules.min_relative_head_area * float(
+                np.median([box.area for box in partner.boxes.values()])
+            )
+        used = {i for i in ids.values() if i is not None}
+        candidates = [
+            t for t in tracks
+            if t.role is None and t.track_id not in used
+            and len(t.boxes) >= rules.min_presence * n_frames
+            and float(np.mean([b.area for b in t.boxes.values()])) >= floor
+        ]  # fmt: skip
+        if candidates:
+            ids[person] = max(candidates, key=lambda t: t.weight()).track_id
+    return RoleAssignment(ids["mother"], ids["baby"])
+
+
 def _weight(track: HeadTrack) -> float:
-    return sum(box.area for box in track.boxes.values())
+    return track.weight()
 
 
 def _mean_x(track: HeadTrack) -> float:
     return float(np.mean([box.center[0] for box in track.boxes.values()]))
-
-
-def _single_track(track: HeadTrack, prior: str) -> RoleAssignment:
-    on_mother_side = (_mean_x(track) > 0.5) == (prior == "right")
-    mother, baby = (track.track_id, None) if on_mother_side else (None, track.track_id)
-    return RoleAssignment(mother, baby, ("single_track",))
 
 
 def _by_side(candidates: list[HeadTrack], prior: str, config: GazeConfig) -> RoleAssignment:
