@@ -1,0 +1,23 @@
+<svg width="360" height="150" viewBox="0 0 360 150" role="img"
+     xmlns="http://www.w3.org/2000/svg" aria-labelledby="title desc">
+  <title id="title">StillFace</title>
+  <desc id="desc">Two facing profiles, a larger and a smaller one, each with a flat neutral mouth, above the StillFace wordmark.</desc>
+
+  <!-- mother: larger face -->
+  <circle cx="56" cy="62" r="40" fill="none" stroke="#2dd4bf" stroke-width="6"/>
+  <circle cx="42" cy="52" r="4.5" fill="#2dd4bf"/>
+  <circle cx="70" cy="52" r="4.5" fill="#2dd4bf"/>
+  <path d="M42 78 L70 78" stroke="#2dd4bf" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- baby: smaller face -->
+  <circle cx="134" cy="76" r="26" fill="none" stroke="#94a3b8" stroke-width="6"/>
+  <circle cx="125" cy="70" r="3.5" fill="#94a3b8"/>
+  <circle cx="143" cy="70" r="3.5" fill="#94a3b8"/>
+  <path d="M124 87 L144 87" stroke="#94a3b8" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- wordmark -->
+  <text x="184" y="70" font-family="-apple-system, Segoe UI, sans-serif"
+        font-size="44" font-weight="600" fill="#2dd4bf">StillFace</text>
+  <text x="185" y="100" font-family="-apple-system, Segoe UI, sans-serif"
+        font-size="14" font-weight="400" fill="#94a3b8">sync · extract · analyze</text>
+</svg>

@@ -1,27 +1,102 @@
 [build-system]
-requires = ["hatchling", "hatch-requirements-txt"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "StillFace"
-version = "0.0.1"
-description = "Still Face experiment"
-keywords = ["audio", "video", "still face experiment"]
+name = "stillface"
+version = "0.1.0"
+description = "Toolkit for the analysis of mother-baby Still Face experiment recordings: data preparation and behavioral feature extraction."
+keywords = ["still face experiment", "mother-infant interaction", "video", "audio", "feature extraction"]
+readme = {"file" = "README.md", "content-type" = "text/markdown"}
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
   { name = "fodorad", email = "fodorad201@gmail.com" },
 ]
-readme = {"file" = "README.md", "content-type" = "text/markdown"}
-requires-python = ">=3.11"
-dynamic = ["dependencies"]
+requires-python = ">=3.13"
 classifiers = [
-  "Programming Language :: Python :: 3",
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering",
+]
+dependencies = [
+  "avst>=1.1",
+  "numpy",
+  "opencv-python",
+  "openpyxl",
+  "pandas",
+  "tqdm",
 ]
 
+[project.optional-dependencies]
+dev = [
+  "coverage",
+  "pre-commit",
+  "ruff",
+  "ty",
+]
+docs = [
+  "furo",
+  "myst-parser",
+  "sphinx>=8.0",
+  "sphinx-autoapi",
+  "sphinx-autobuild",
+]
+
+[project.scripts]
+stillface = "stillface.cli:main"
+
 [project.urls]
-Documentation = "https://github.com/fodorad/StillFace#readme"
+Documentation = "https://fodorad.github.io/StillFace/"
 Issues = "https://github.com/fodorad/StillFace/issues"
 Source = "https://github.com/fodorad/StillFace"
+Changelog = "https://github.com/fodorad/StillFace/blob/main/CHANGELOG.md"
 
-[tool.hatch.metadata.hooks.requirements_txt]
-files = ["requirements.txt"]
+[tool.hatch.build.targets.wheel]
+packages = ["stillface"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "D"]
+ignore = [
+  "D107",  # covered by the class docstring
+  "D203",  # conflicts with D211
+  "D213",  # conflicts with D212
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["D104"]
+"tests/**/*.py" = ["D"]
+"docs/conf.py" = ["D"]
+
+[tool.coverage.run]
+source = ["stillface"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+exclude_lines = [
+  "pragma: no cover",
+  "raise NotImplementedError",
+  "if TYPE_CHECKING:",
+]
+
+[tool.coverage.html]
+directory = "coverage_html"
+
+[tool.ty.environment]
+python-version = "3.13"
