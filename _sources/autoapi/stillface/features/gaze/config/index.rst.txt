@@ -1,0 +1,126 @@
+stillface.features.gaze.config
+==============================
+
+.. py:module:: stillface.features.gaze.config
+
+.. autoapi-nested-parse::
+
+   Configuration of the gaze extraction.
+
+   Every threshold, margin and prior lives here, never in the code, and a copy is stored in
+   each run record. Values are calibrated on the development sessions and versioned through
+   the ``version`` key of the config file.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.gaze.config.CONFIG_VERSION
+   stillface.features.gaze.config.DEFAULT_CONFIG_PATH
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.config.SidePriors
+   stillface.features.gaze.config.Thresholds
+   stillface.features.gaze.config.GazeConfig
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.gaze.config.load_gaze_config
+
+
+Module Contents
+---------------
+
+.. py:data:: CONFIG_VERSION
+   :type:  int
+   :value: 1
+
+
+   Supported version of the gaze config file format.
+
+.. py:data:: DEFAULT_CONFIG_PATH
+   :type:  pathlib.Path
+
+   Config file shipped with the package.
+
+.. py:class:: SidePriors
+
+   Where the mother sits in the side cameras' image.
+
+   .. attribute:: window
+
+      ``left`` or ``right`` half of the window camera image.
+
+   .. attribute:: door
+
+      ``left`` or ``right`` half of the door camera image.
+
+
+.. py:class:: Thresholds
+
+   Decision thresholds of the class assignment.
+
+   .. attribute:: partner_mass
+
+      Heatmap share on the partner needed for the PARTNER class.
+
+   .. attribute:: inout
+
+      In/out-of-frame score below which the gaze target is out of frame.
+
+   .. attribute:: box_margin
+
+      Relative margin added around the partner's head box.
+
+
+.. py:class:: GazeConfig
+
+   Gaze extraction settings.
+
+   .. attribute:: version
+
+      Config format version.
+
+   .. attribute:: sample_rate_hz
+
+      Extraction rate; 30 matches the native rate of the side cameras.
+
+   .. attribute:: model_variant
+
+      Gaze-LLE variant.
+
+   .. attribute:: side_priors
+
+      Mother position in the side cameras.
+
+   .. attribute:: thresholds
+
+      Class decision thresholds.
+
+   .. attribute:: partner_zones
+
+      Close camera name mapped to the normalized ``(x0, y0, x1, y1)`` image
+      region where the partner is looked at; calibrated on the development sessions.
+
+
+.. py:function:: load_gaze_config(path: pathlib.Path = DEFAULT_CONFIG_PATH) -> GazeConfig
+
+   Load a gaze config file.
+
+   :param path: TOML file, the packaged default if omitted.
+
+   :returns: The validated configuration.
+
+

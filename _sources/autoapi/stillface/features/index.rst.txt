@@ -1,0 +1,24 @@
+stillface.features
+==================
+
+.. py:module:: stillface.features
+
+.. autoapi-nested-parse::
+
+   Behavioral feature extraction from the synchronized per-camera, per-phase clips.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/stillface/features/config/index
+   /autoapi/stillface/features/gaze/index
+   /autoapi/stillface/features/io/index
+   /autoapi/stillface/features/run_record/index
+   /autoapi/stillface/features/timeline/index
+
+

@@ -1,0 +1,105 @@
+stillface.features.run_record
+=============================
+
+.. py:module:: stillface.features.run_record
+
+.. autoapi-nested-parse::
+
+   Run record: what produced a set of feature outputs.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.run_record.RunRecord
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.run_record.write_run_record
+   stillface.features.run_record.read_run_record
+   stillface.features.run_record.current_git_sha
+   stillface.features.run_record.installed_version
+
+
+Module Contents
+---------------
+
+.. py:class:: RunRecord
+
+   Provenance of one extraction run over a session.
+
+   .. attribute:: session_id
+
+      Session identifier.
+
+   .. attribute:: model_variant
+
+      Model that produced the signals (``none`` for the head pilot).
+
+   .. attribute:: config
+
+      Copy of the configuration used.
+
+   .. attribute:: exordium_version
+
+      Installed exordium version, None if not installed.
+
+   .. attribute:: stillface_version
+
+      Installed StillFace version.
+
+   .. attribute:: git_sha
+
+      Commit of the StillFace checkout, None outside a git repository.
+
+   .. attribute:: clips
+
+      Names of the processed clips.
+
+   .. attribute:: flags
+
+      Issue name mapped to the affected items, e.g. ``roles_ambiguous`` or ``failed``.
+
+
+.. py:function:: write_run_record(record: RunRecord, path: pathlib.Path) -> None
+
+   Write a run record as JSON, atomically.
+
+   :param record: Record to write.
+   :param path: Output file.
+
+
+.. py:function:: read_run_record(path: pathlib.Path) -> RunRecord
+
+   Read a run record.
+
+   :param path: File written by :func:`write_run_record`.
+
+   :returns: The record.
+
+
+.. py:function:: current_git_sha(cwd: pathlib.Path) -> str | None
+
+   Commit hash of the checkout containing ``cwd``.
+
+   :param cwd: Any folder inside the checkout.
+
+   :returns: The 40-character hash, None if ``cwd`` is not in a git repository or git is missing.
+
+
+.. py:function:: installed_version(package: str) -> str | None
+
+   Installed version of a package.
+
+   :param package: Distribution name.
+
+   :returns: The version string, None if the package is not installed.
+
+

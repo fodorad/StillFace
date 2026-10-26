@@ -1,0 +1,136 @@
+stillface.features.timeline
+===========================
+
+.. py:module:: stillface.features.timeline
+
+.. autoapi-nested-parse::
+
+   Frame-wise feature timelines and their CSV format.
+
+   All feature extractors write the same long format: one row per sampled frame and person.
+   Times are phase-local, i.e. seconds from the start of the phase clip, so they stay
+   consistent with the cut and stacked overview videos.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.timeline.COLUMNS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.timeline.TimelineRow
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.timeline.write_timeline
+   stillface.features.timeline.read_timeline
+   stillface.features.timeline.sample_frame_indices
+
+
+Module Contents
+---------------
+
+.. py:data:: COLUMNS
+   :type:  tuple[str, ...]
+   :value: ('session_id', 'camera', 'phase', 'frame_index', 'time_s', 'person', 'gaze_x', 'gaze_y',...
+
+
+   Timeline CSV columns, in file order.
+
+.. py:class:: TimelineRow
+
+   One person at one sampled frame.
+
+   .. attribute:: session_id
+
+      Session identifier.
+
+   .. attribute:: camera
+
+      Camera name.
+
+   .. attribute:: phase
+
+      Experiment phase.
+
+   .. attribute:: frame_index
+
+      Index of the frame in the phase clip.
+
+   .. attribute:: time_s
+
+      Phase-local time, ``frame_index / clip_fps``.
+
+   .. attribute:: person
+
+      ``mother`` or ``baby``.
+
+   .. attribute:: gaze_x
+
+      Gaze target x in normalized image coordinates, None if not codable.
+
+   .. attribute:: gaze_y
+
+      Gaze target y in normalized image coordinates, None if not codable.
+
+   .. attribute:: inout
+
+      Probability that the gaze target is inside the frame, None if not codable.
+
+   .. attribute:: partner_mass
+
+      Share of the gaze heatmap on the partner (head box or zone).
+
+   .. attribute:: gaze_class
+
+      Target class from the plan codes, ``NK`` if not codable.
+
+   .. attribute:: reason
+
+      Why the row is not codable (``occluded``, ``no_head``, ...), else empty.
+
+
+.. py:function:: write_timeline(rows: list[TimelineRow], path: pathlib.Path) -> None
+
+   Write a timeline CSV atomically.
+
+   :param rows: Timeline rows; may be empty.
+   :param path: Output file, parent folders are created.
+
+
+.. py:function:: read_timeline(path: pathlib.Path) -> list[TimelineRow]
+
+   Read a timeline CSV.
+
+   :param path: File written by :func:`write_timeline`.
+
+   :returns: Timeline rows.
+
+   :raises ValueError: If the header does not match :data:`COLUMNS`.
+
+
+.. py:function:: sample_frame_indices(n_frames: int, clip_fps: float, sample_rate_hz: float) -> list[int]
+
+   Choose the frames of a clip that lie on a regular time grid.
+
+   :param n_frames: Number of frames in the clip.
+   :param clip_fps: Frame rate of the clip.
+   :param sample_rate_hz: Requested sampling rate, at most ``clip_fps``.
+
+   :returns: Ascending, unique frame indices. At 30 Hz on a 60 fps clip every second frame.
+
+   :raises ValueError: If ``sample_rate_hz`` exceeds ``clip_fps``.
+
+

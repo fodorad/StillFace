@@ -1,0 +1,56 @@
+stillface.features.io
+=====================
+
+.. py:module:: stillface.features.io
+
+.. autoapi-nested-parse::
+
+   Crash-safe output writing shared by the feature extractors.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.io.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.io.write_atomic
+   stillface.features.io.is_finished
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: write_atomic(path: pathlib.Path, writer: collections.abc.Callable[[pathlib.Path], object]) -> None
+
+   Produce a file so that it never exists half-written under its final name.
+
+   ``writer`` fills a temporary file in the same folder, which is renamed to ``path`` once
+   the writer returned. The temporary name keeps the extension, so ffmpeg can infer the
+   container from it.
+
+   :param path: Final output path, parent folders are created.
+   :param writer: Callable receiving the temporary path to write to.
+
+
+.. py:function:: is_finished(path: pathlib.Path, overwrite: bool = False) -> bool
+
+   Tell whether an output can be skipped.
+
+   :param path: Final output path; only complete outputs exist under it (see
+                :func:`write_atomic`).
+   :param overwrite: Recompute even if the output exists.
+
+   :returns: True if the output exists and no recomputation was requested.
+
+

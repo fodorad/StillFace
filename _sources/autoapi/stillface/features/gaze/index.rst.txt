@@ -1,0 +1,20 @@
+stillface.features.gaze
+=======================
+
+.. py:module:: stillface.features.gaze
+
+.. autoapi-nested-parse::
+
+   Gaze extraction: where the mother and the baby look.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/stillface/features/gaze/config/index
+
+

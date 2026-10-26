@@ -1,0 +1,58 @@
+stillface.features.config
+=========================
+
+.. py:module:: stillface.features.config
+
+.. autoapi-nested-parse::
+
+   Versioned, strictly validated TOML configuration for feature extractors.
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   stillface.features.config.ConfigError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.config.load_config
+
+
+Module Contents
+---------------
+
+.. py:exception:: ConfigError
+
+   Bases: :py:obj:`ValueError`
+
+
+   The configuration file is invalid.
+
+   Initialize self.  See help(type(self)) for accurate signature.
+
+
+.. py:function:: load_config[T](path: pathlib.Path, cls: type[T], supported_version: int) -> T
+
+   Load a configuration dataclass from a TOML file.
+
+   Unknown keys, wrong types and a missing or unsupported ``version`` are errors; absent
+   keys take the dataclass defaults. Supported field types are ``int``, ``float``, ``str``,
+   ``bool``, nested dataclasses, ``tuple[float, ...]``, ``dict[str, X]`` and ``X | None``.
+
+   :param path: TOML file.
+   :param cls: Configuration dataclass to build.
+   :param supported_version: The only accepted value of the ``version`` key.
+
+   :returns: The configuration instance.
+
+   :raises FileNotFoundError: If ``path`` does not exist.
+   :raises ConfigError: If the content is invalid.
+
+
