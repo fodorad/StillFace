@@ -58,8 +58,10 @@ class ExordiumHeadTracker:
         detections = VideoDetections()
         with open_video(clip) as video:
             width, height = video.width, video.height
-            for start in range(0, len(frame_indices), self.batch_size):
-                chunk = list(frame_indices[start : start + self.batch_size])
+            # Frame counts from different decoders can differ by one on the last frame.
+            decodable = [i for i in frame_indices if i < video.num_frames]
+            for start in range(0, len(decodable), self.batch_size):
+                chunk = decodable[start : start + self.batch_size]
                 frames = video.get_frames_at(chunk)
                 per_frame = self.detector.run_detector(list(frames))
                 for frame_id, frame_det in zip(chunk, per_frame, strict=True):

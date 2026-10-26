@@ -1,7 +1,8 @@
 """Command line interface.
 
 ``stillface prepare <sync|cut|thumbnails|check-missing>`` runs the data preparation,
-``stillface features heads`` the head and role pilot of the gaze extraction.
+``stillface features heads`` the head and role pilot of the gaze extraction and
+``stillface features gaze`` the gaze extraction itself.
 """
 
 import argparse
@@ -16,8 +17,10 @@ from stillface.data_preparation.metadata import load_metadata, missing_recording
 from stillface.data_preparation.sync import sync, sync_all
 from stillface.data_preparation.thumbnails import generate_thumbnails
 from stillface.features.gaze.config import DEFAULT_CONFIG_PATH, load_gaze_config
+from stillface.features.gaze.estimator import GazeEstimator
 from stillface.features.gaze.heads import HeadTracker
 from stillface.features.gaze.pilot import run_heads
+from stillface.features.gaze.pipeline import run_gaze
 
 logger = logging.getLogger(__name__)
 
@@ -50,13 +53,17 @@ def build_parser() -> argparse.ArgumentParser:
     features = groups.add_parser("features", help="Feature extraction").add_subparsers(
         dest="command", required=True
     )
-    heads = features.add_parser("heads", help="Head detection, roles and overlays (no gaze model)")
-    heads.add_argument("--session-id", nargs="+", required=True, help="Sessions to process")
-    heads.add_argument("--camera", nargs="+", choices=CAMERAS, default=list(CAMERAS))
-    heads.add_argument("--phase", nargs="+", choices=PHASES, default=list(PHASES))
-    heads.add_argument("--no-overlay", action="store_true", help="Skip the overlay videos")
-    heads.add_argument("--overwrite", action="store_true", help="Recompute existing outputs")
-    heads.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="Gaze config file")
+    for name, help_text in (
+        ("heads", "Head detection, roles and overlays (no gaze model)"),
+        ("gaze", "Gaze extraction"),
+    ):
+        step = features.add_parser(name, help=help_text)
+        step.add_argument("--session-id", nargs="+", required=True, help="Sessions to process")
+        step.add_argument("--camera", nargs="+", choices=CAMERAS, default=list(CAMERAS))
+        step.add_argument("--phase", nargs="+", choices=PHASES, default=list(PHASES))
+        step.add_argument("--no-overlay", action="store_true", help="Skip the overlay videos")
+        step.add_argument("--overwrite", action="store_true", help="Recompute existing outputs")
+        step.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="Gaze config")
     return parser
 
 
@@ -67,9 +74,17 @@ def _exordium_head_tracker() -> HeadTracker:
     return ExordiumHeadTracker(device_id=0)
 
 
+def _gaze_estimator(variant: str) -> GazeEstimator:
+    """Build the Gaze-LLE estimator of a model variant."""
+    raise RuntimeError(
+        "The Gaze-LLE adapter is not available yet: it needs the exordium Gaze-LLE wrapper"
+    )
+
+
 def main(
     argv: Sequence[str] | None = None,
     head_tracker_factory: Callable[[], HeadTracker] = _exordium_head_tracker,
+    gaze_estimator_factory: Callable[[str], GazeEstimator] = _gaze_estimator,
 ) -> int:
     """Run the command line interface.
 
@@ -77,6 +92,8 @@ def main(
         argv: Arguments, ``sys.argv[1:]`` if None.
         head_tracker_factory: Builds the head tracker for ``features heads``; replaceable so
             the command can run without exordium models.
+        gaze_estimator_factory: Builds the gaze estimator for a model variant, for
+            ``features gaze``; replaceable for the same reason.
 
     Returns:
         Process exit code.
@@ -94,11 +111,22 @@ def main(
     if args.group == "features":
         config = load_gaze_config(args.config)
         tracker = head_tracker_factory()
+        estimator = gaze_estimator_factory(config.model_variant) if args.command == "gaze" else None
         for session_id in args.session_id:
-            run_heads(
-                paths, session_id, tracker, config, args.camera, args.phase,
-                overlay=not args.no_overlay, overwrite=args.overwrite,
-            )  # fmt: skip
+            options = dict(overlay=not args.no_overlay, overwrite=args.overwrite)
+            if estimator is None:
+                run_heads(paths, session_id, tracker, config, args.camera, args.phase, **options)
+            else:
+                run_gaze(
+                    paths,
+                    session_id,
+                    tracker,
+                    estimator,
+                    config,
+                    args.camera,
+                    args.phase,
+                    **options,
+                )
     elif args.command == "sync":
         if args.session_id:
             sync(paths, args.session_id, args.visualize)
