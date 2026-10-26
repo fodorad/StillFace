@@ -33,9 +33,11 @@ def read_frames(clip: Path, frame_indices: Sequence[int]) -> Iterator[np.ndarray
 
     Yields:
         RGB ``uint8`` frames of shape ``(height, width, 3)``, in the order of the indices.
+        The stream ends early if the clip has fewer decodable frames than its metadata
+        claims (decoders disagree by a frame on real clips); callers must handle that.
 
     Raises:
-        RuntimeError: If the clip cannot be read or ends before the last index.
+        RuntimeError: If the clip cannot be read.
     """
     cap = cv2.VideoCapture(str(clip))
     if not cap.isOpened():
@@ -46,7 +48,8 @@ def read_frames(clip: Path, frame_indices: Sequence[int]) -> Iterator[np.ndarray
         index = 0
         while target is not None:
             if not cap.grab():
-                raise RuntimeError(f"{clip} ended at frame {index}, before frame {target}")
+                logger.warning("%s ended at frame %d, before frame %d", clip.name, index, target)
+                return
             if index == target:
                 ok, frame = cap.retrieve()
                 if not ok:
@@ -75,8 +78,14 @@ def _decide(
     ]  # fmt: skip
     frames = read_frames(clip, [prepared.frame_indices[k] for k in with_head])
 
+    decoded: set[int] = set()
     for positions in itertools.batched(with_head, batch_size, strict=False):
-        batch = np.stack([next(frames) for _ in positions])
+        images = list(itertools.islice(frames, len(positions)))
+        positions = positions[: len(images)]
+        if not images:
+            break
+        decoded.update(positions)
+        batch = np.stack(images)
         boxes: list[list[HeadBox | None]] = [
             [prepared.heads[p][k] for p in persons] for k in positions
         ]
@@ -93,6 +102,11 @@ def _decide(
                 decisions[(k, person)] = classify(
                     person, camera, estimate.heatmap[b, slot], inout, partner, config
                 )
+    for k in with_head:
+        if k not in decoded:
+            for person in persons:
+                if prepared.heads[person][k] is not None:
+                    decisions[(k, person)] = GazeDecision.not_codable("no_frame")
     return decisions
 
 
