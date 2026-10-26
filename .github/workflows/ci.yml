@@ -48,6 +48,14 @@ jobs:
       - name: Test and coverage
         run: make test
 
+      - name: Debug ffmpeg (temporary)
+        if: failure()
+        run: |
+          ffmpeg -version | head -2
+          ffmpeg -hide_banner -y -f lavfi -i testsrc=size=64x48:rate=25:duration=1 -pix_fmt yuv420p /tmp/w.MTS 2>&1 | tail -5
+          ffprobe -hide_banner /tmp/w.MTS 2>&1 | tail -5
+          ffmpeg -hide_banner -y -i /tmp/w.MTS -r 60 /tmp/o.mp4 2>&1 | tail -8
+
       - name: Upload coverage to Codecov
         if: matrix.python-version == '3.13'
         uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac  # v5
