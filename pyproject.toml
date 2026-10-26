@@ -38,6 +38,9 @@ dev = [
   "ruff",
   "ty",
 ]
+features = [
+  "exordium[video]>=2.11",
+]
 docs = [
   "furo",
   "myst-parser",
@@ -100,3 +103,10 @@ directory = "coverage_html"
 
 [tool.ty.environment]
 python-version = "3.13"
+
+# The exordium adapter needs the optional `features` extra, which CI does not install.
+[[tool.ty.overrides]]
+include = ["stillface/features/gaze/exordium_heads.py"]
+
+[tool.ty.overrides.rules]
+unresolved-import = "ignore"

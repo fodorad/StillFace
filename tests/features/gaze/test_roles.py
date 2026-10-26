@@ -8,6 +8,7 @@ from stillface.features.gaze.heads import HeadBox, HeadTrack
 from stillface.features.gaze.roles import (
     RoleReferences,
     assign_roles,
+    camera_persons,
     head_per_frame,
     load_role_overrides,
     missing_reason,
@@ -161,6 +162,12 @@ class TestHeadPerFrame(unittest.TestCase):
     def test_unassigned_person_has_no_heads(self) -> None:
         heads = head_per_frame(assign([]), [], [0, 1])
         self.assertEqual(heads, {"mother": [None, None], "baby": [None, None]})
+
+    def test_camera_persons(self) -> None:
+        self.assertEqual(camera_persons("window"), ("mother", "baby"))
+        self.assertEqual(camera_persons("door"), ("mother", "baby"))
+        self.assertEqual(camera_persons("baby"), ("baby",))
+        self.assertEqual(camera_persons("mother"), ("mother",))
 
     def test_missing_reason(self) -> None:
         self.assertEqual(missing_reason("door", "mother"), "occluded")
