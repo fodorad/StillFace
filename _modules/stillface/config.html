@@ -254,9 +254,14 @@
 <span class="sd">every generated file is written below the processed root.</span>
 <span class="sd">"""</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CAMERAS</span><span class="p">,</span> <span class="n">PHASES</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">DATASET_NAME</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"ELTE-PPK_StillFace"</span>
 <span class="sd">"""Directory name of the dataset below the raw and processed roots."""</span>
@@ -311,6 +316,53 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dir</span> <span class="o">/</span> <span class="s2">"Sessions"</span> <span class="o">/</span> <span class="n">session_id</span> <span class="o">/</span> <span class="s2">"original"</span></div>
 
 
+<div class="viewcode-block" id="DatasetPaths.phase_clip">
+<a class="viewcode-back" href="../../autoapi/stillface/config/index.html#stillface.config.DatasetPaths.phase_clip">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">phase_clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">camera</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Path of a camera's clip of one phase in the original dataset (read-only).</span>
+
+<span class="sd">        These per-camera, per-phase clips are the input of every feature extractor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            session_id: Session identifier.</span>
+<span class="sd">            camera: One of :data:`stillface.constants.CAMERAS`.</span>
+<span class="sd">            phase: One of :data:`stillface.constants.PHASES`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Path of ``&lt;camera&gt;_&lt;phase&gt;.mp4``; the file may not exist.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If ``camera`` or ``phase`` is unknown.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">camera</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CAMERAS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown camera </span><span class="si">{</span><span class="n">camera</span><span class="si">!r}</span><span class="s2">, expected one of </span><span class="si">{</span><span class="n">CAMERAS</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">phase</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PHASES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown phase </span><span class="si">{</span><span class="n">phase</span><span class="si">!r}</span><span class="s2">, expected one of </span><span class="si">{</span><span class="n">PHASES</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dir</span> <span class="o">/</span> <span class="s2">"Sessions"</span> <span class="o">/</span> <span class="n">session_id</span> <span class="o">/</span> <span class="s2">"processed"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">camera</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.mp4"</span></div>
+
+
+<div class="viewcode-block" id="DatasetPaths.available_phase_clips">
+<a class="viewcode-back" href="../../autoapi/stillface/config/index.html#stillface.config.DatasetPaths.available_phase_clips">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">available_phase_clips</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Path</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Find the existing phase clips of a session.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            session_id: Session identifier.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ``(camera, phase)`` mapped to the clip path. Missing clips are logged and omitted.</span>
+<span class="sd">        """</span>
+        <span class="n">clips</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">camera</span> <span class="ow">in</span> <span class="n">CAMERAS</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">PHASES</span><span class="p">:</span>
+                <span class="n">clip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_clip</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="n">camera</span><span class="p">,</span> <span class="n">phase</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">clip</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="n">clips</span><span class="p">[(</span><span class="n">camera</span><span class="p">,</span> <span class="n">phase</span><span class="p">)]</span> <span class="o">=</span> <span class="n">clip</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Phase clip not found: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">clip</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">clips</span></div>
+
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_processed_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_dir</span> <span class="o">/</span> <span class="s2">"Sessions"</span> <span class="o">/</span> <span class="n">session_id</span>
 
@@ -347,6 +399,27 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">thumbnail_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Overview image of a session."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processed_session</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"thumbnail.png"</span></div>
+
+
+<div class="viewcode-block" id="DatasetPaths.features_dir">
+<a class="viewcode-back" href="../../autoapi/stillface/config/index.html#stillface.config.DatasetPaths.features_dir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">features_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">feature</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Folder receiving the output of one feature extractor."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processed_session</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"features"</span> <span class="o">/</span> <span class="n">feature</span></div>
+
+
+<div class="viewcode-block" id="DatasetPaths.gaze_dir">
+<a class="viewcode-back" href="../../autoapi/stillface/config/index.html#stillface.config.DatasetPaths.gaze_dir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gaze_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Gaze timelines and run record of a session."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_dir</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="s2">"gaze"</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DatasetPaths.gaze_overlay_dir">
+<a class="viewcode-back" href="../../autoapi/stillface/config/index.html#stillface.config.DatasetPaths.gaze_overlay_dir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gaze_overlay_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Gaze overlay clips of a session."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gaze_dir</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"overlay"</span></div>
 
 
     <span class="nd">@property</span>

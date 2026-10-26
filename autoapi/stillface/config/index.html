@@ -264,13 +264,16 @@ every generated file is written below the processed root.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.config.DATASET_NAME" title="stillface.config.DATASET_NAME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DATASET_NAME</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.config.logger" title="stillface.config.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.config.DATASET_NAME" title="stillface.config.DATASET_NAME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DATASET_NAME</span></code></a></p></td>
 <td><p>Directory name of the dataset below the raw and processed roots.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#stillface.config.RAW_ENV_VAR" title="stillface.config.RAW_ENV_VAR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RAW_ENV_VAR</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.config.RAW_ENV_VAR" title="stillface.config.RAW_ENV_VAR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RAW_ENV_VAR</span></code></a></p></td>
 <td><p>Environment variable overriding the raw dataset directory.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.config.PROCESSED_ENV_VAR" title="stillface.config.PROCESSED_ENV_VAR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PROCESSED_ENV_VAR</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.config.PROCESSED_ENV_VAR" title="stillface.config.PROCESSED_ENV_VAR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PROCESSED_ENV_VAR</span></code></a></p></td>
 <td><p>Environment variable overriding the processed dataset directory.</p></td>
 </tr>
 </tbody>
@@ -291,6 +294,11 @@ every generated file is written below the processed root.</p>
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.config.logger">
+<span class="sig-prename descclassname"><span class="pre">stillface.config.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#stillface.config.logger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py data">
 <dt class="sig sig-object py" id="stillface.config.DATASET_NAME">
 <span class="sig-prename descclassname"><span class="pre">stillface.config.</span></span><span class="sig-name descname"><span class="pre">DATASET_NAME</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ELTE-PPK_StillFace'</span></span><a class="headerlink" href="#stillface.config.DATASET_NAME" title="Link to this definition">¶</a></dt>
@@ -352,6 +360,42 @@ every generated file is written below the processed root.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="stillface.config.DatasetPaths.phase_clip">
+<span class="sig-name descname"><span class="pre">phase_clip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pathlib.Path</span></span></span><a class="reference internal" href="../../../_modules/stillface/config.html#DatasetPaths.phase_clip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.config.DatasetPaths.phase_clip" title="Link to this definition">¶</a></dt>
+<dd><p>Path of a camera’s clip of one phase in the original dataset (read-only).</p>
+<p>These per-camera, per-phase clips are the input of every feature extractor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session_id</strong> – Session identifier.</p></li>
+<li><p><strong>camera</strong> – One of <a class="reference internal" href="../constants/index.html#stillface.constants.CAMERAS" title="stillface.constants.CAMERAS"><code class="xref py py-data docutils literal notranslate"><span class="pre">stillface.constants.CAMERAS</span></code></a>.</p></li>
+<li><p><strong>phase</strong> – One of <a class="reference internal" href="../constants/index.html#stillface.constants.PHASES" title="stillface.constants.PHASES"><code class="xref py py-data docutils literal notranslate"><span class="pre">stillface.constants.PHASES</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path of <code class="docutils literal notranslate"><span class="pre">&lt;camera&gt;_&lt;phase&gt;.mp4</span></code>; the file may not exist.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">camera</span></code> or <code class="docutils literal notranslate"><span class="pre">phase</span></code> is unknown.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.config.DatasetPaths.available_phase_clips">
+<span class="sig-name descname"><span class="pre">available_phase_clips</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/stillface/config.html#DatasetPaths.available_phase_clips"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.config.DatasetPaths.available_phase_clips" title="Link to this definition">¶</a></dt>
+<dd><p>Find the existing phase clips of a session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>session_id</strong> – Session identifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(camera,</span> <span class="pre">phase)</span></code> mapped to the clip path. Missing clips are logged and omitted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="stillface.config.DatasetPaths.normalized_dir">
 <span class="sig-name descname"><span class="pre">normalized_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pathlib.Path</span></span></span><a class="reference internal" href="../../../_modules/stillface/config.html#DatasetPaths.normalized_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.config.DatasetPaths.normalized_dir" title="Link to this definition">¶</a></dt>
 <dd><p>Original sources converted to a common container and frame rate.</p>
@@ -379,6 +423,24 @@ every generated file is written below the processed root.</p>
 <dt class="sig sig-object py" id="stillface.config.DatasetPaths.thumbnail_path">
 <span class="sig-name descname"><span class="pre">thumbnail_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pathlib.Path</span></span></span><a class="reference internal" href="../../../_modules/stillface/config.html#DatasetPaths.thumbnail_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.config.DatasetPaths.thumbnail_path" title="Link to this definition">¶</a></dt>
 <dd><p>Overview image of a session.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.config.DatasetPaths.features_dir">
+<span class="sig-name descname"><span class="pre">features_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pathlib.Path</span></span></span><a class="reference internal" href="../../../_modules/stillface/config.html#DatasetPaths.features_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.config.DatasetPaths.features_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Folder receiving the output of one feature extractor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.config.DatasetPaths.gaze_dir">
+<span class="sig-name descname"><span class="pre">gaze_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pathlib.Path</span></span></span><a class="reference internal" href="../../../_modules/stillface/config.html#DatasetPaths.gaze_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.config.DatasetPaths.gaze_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Gaze timelines and run record of a session.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.config.DatasetPaths.gaze_overlay_dir">
+<span class="sig-name descname"><span class="pre">gaze_overlay_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pathlib.Path</span></span></span><a class="reference internal" href="../../../_modules/stillface/config.html#DatasetPaths.gaze_overlay_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.config.DatasetPaths.gaze_overlay_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Gaze overlay clips of a session.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -457,6 +519,7 @@ every generated file is written below the processed root.</p>
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#stillface.config.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DATASET_NAME"><code class="docutils literal notranslate"><span class="pre">DATASET_NAME</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.RAW_ENV_VAR"><code class="docutils literal notranslate"><span class="pre">RAW_ENV_VAR</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.PROCESSED_ENV_VAR"><code class="docutils literal notranslate"><span class="pre">PROCESSED_ENV_VAR</span></code></a></li>
@@ -466,11 +529,16 @@ every generated file is written below the processed root.</p>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.default"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.default()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.metadata_path"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.metadata_path</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.original_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.original_dir()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.config.DatasetPaths.phase_clip"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.phase_clip()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.config.DatasetPaths.available_phase_clips"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.available_phase_clips()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.normalized_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.normalized_dir()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.synced_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.synced_dir()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.cut_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.cut_dir()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.visualize_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.visualize_dir()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.thumbnail_path"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.thumbnail_path()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.config.DatasetPaths.features_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.features_dir()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.config.DatasetPaths.gaze_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.gaze_dir()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.config.DatasetPaths.gaze_overlay_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.gaze_overlay_dir()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.thumbnails_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.thumbnails_dir</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.logs_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.logs_dir</span></code></a></li>
 </ul>

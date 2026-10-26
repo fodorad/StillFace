@@ -18,6 +18,7 @@ Attributes
 
 .. autoapisummary::
 
+   stillface.config.logger
    stillface.config.DATASET_NAME
    stillface.config.RAW_ENV_VAR
    stillface.config.PROCESSED_ENV_VAR
@@ -33,6 +34,8 @@ Classes
 
 Module Contents
 ---------------
+
+.. py:data:: logger
 
 .. py:data:: DATASET_NAME
    :type:  str
@@ -93,6 +96,32 @@ Module Contents
 
 
 
+   .. py:method:: phase_clip(session_id: str, camera: str, phase: str) -> pathlib.Path
+
+      Path of a camera's clip of one phase in the original dataset (read-only).
+
+      These per-camera, per-phase clips are the input of every feature extractor.
+
+      :param session_id: Session identifier.
+      :param camera: One of :data:`stillface.constants.CAMERAS`.
+      :param phase: One of :data:`stillface.constants.PHASES`.
+
+      :returns: Path of ``<camera>_<phase>.mp4``; the file may not exist.
+
+      :raises ValueError: If ``camera`` or ``phase`` is unknown.
+
+
+
+   .. py:method:: available_phase_clips(session_id: str) -> dict[tuple[str, str], pathlib.Path]
+
+      Find the existing phase clips of a session.
+
+      :param session_id: Session identifier.
+
+      :returns: ``(camera, phase)`` mapped to the clip path. Missing clips are logged and omitted.
+
+
+
    .. py:method:: normalized_dir(session_id: str) -> pathlib.Path
 
       Original sources converted to a common container and frame rate.
@@ -120,6 +149,24 @@ Module Contents
    .. py:method:: thumbnail_path(session_id: str) -> pathlib.Path
 
       Overview image of a session.
+
+
+
+   .. py:method:: features_dir(session_id: str, feature: str) -> pathlib.Path
+
+      Folder receiving the output of one feature extractor.
+
+
+
+   .. py:method:: gaze_dir(session_id: str) -> pathlib.Path
+
+      Gaze timelines and run record of a session.
+
+
+
+   .. py:method:: gaze_overlay_dir(session_id: str) -> pathlib.Path
+
+      Gaze overlay clips of a session.
 
 
 
