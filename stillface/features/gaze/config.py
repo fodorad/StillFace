@@ -56,12 +56,15 @@ class RoleRules:
         min_side_separation: Smaller horizontal distance between the two candidates than this
             (normalized) makes the side prior ambiguous.
         min_identity_similarity: Cosine similarity needed to accept an identity match.
+        min_relative_head_area: A head found without a text prompt must be at least this share
+            of the prompted partner's head area, which rejects background people.
     """
 
     min_presence: float = 0.2
     size_ambiguity_ratio: float = 0.8
     min_side_separation: float = 0.05
     min_identity_similarity: float = 0.3
+    min_relative_head_area: float = 0.4
 
 
 @dataclass(frozen=True)

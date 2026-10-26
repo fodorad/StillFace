@@ -18,3 +18,4 @@ min_presence = 0.2
 size_ambiguity_ratio = 0.8
 min_side_separation = 0.05
 min_identity_similarity = 0.3
+min_relative_head_area = 0.4

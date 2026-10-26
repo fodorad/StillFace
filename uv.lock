@@ -2361,6 +2361,8 @@ docs = [
 ]
 features = [
     { name = "exordium", extra = ["video"] },
+    { name = "pillow" },
+    { name = "transformers" },
 ]
 
 [package.metadata]
@@ -2374,12 +2376,14 @@ requires-dist = [
     { name = "opencv-python" },
     { name = "openpyxl" },
     { name = "pandas" },
+    { name = "pillow", marker = "extra == 'features'" },
     { name = "pre-commit", marker = "extra == 'dev'" },
     { name = "ruff", marker = "extra == 'dev'" },
     { name = "sphinx", marker = "extra == 'docs'", specifier = ">=8.0" },
     { name = "sphinx-autoapi", marker = "extra == 'docs'" },
     { name = "sphinx-autobuild", marker = "extra == 'docs'" },
     { name = "tqdm" },
+    { name = "transformers", marker = "extra == 'features'" },
     { name = "ty", marker = "extra == 'dev'" },
 ]
 provides-extras = ["dev", "features", "docs"]
