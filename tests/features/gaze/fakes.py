@@ -3,6 +3,9 @@
 from collections.abc import Sequence
 from pathlib import Path
 
+import numpy as np
+
+from stillface.features.gaze.estimator import GazeEstimate
 from stillface.features.gaze.heads import HeadBox, HeadTrack
 
 
@@ -33,3 +36,33 @@ class FakeHeadTracker:
     def track(self, clip: Path, frame_indices: Sequence[int]) -> list[HeadTrack]:
         self.calls.append((clip, list(frame_indices)))
         return self.tracks_by_clip.get(clip.name, [])
+
+
+def peak_heatmap(x: float, y: float, size: int = 64, sigma: float = 0.02) -> np.ndarray:
+    """Gaussian heatmap with its peak at normalized ``(x, y)``, values in [0, 1]."""
+    coords = (np.arange(size) + 0.5) / size
+    gx = np.exp(-((coords - x) ** 2) / (2 * sigma**2))
+    gy = np.exp(-((coords - y) ** 2) / (2 * sigma**2))
+    return (gy[:, None] * gx[None, :]).astype(np.float32)
+
+
+class FakeGazeEstimator:
+    """GazeEstimator placing each person's heatmap peak at a scripted point.
+
+    Args:
+        targets: Person index (order of the boxes of a frame) mapped to the gaze point.
+        inout: In/out score returned for everyone.
+    """
+
+    def __init__(self, targets: dict[int, tuple[float, float]], inout: float = 0.9) -> None:
+        self.targets = targets
+        self.inout = inout
+        self.calls: list[int] = []
+
+    def estimate(self, frames: np.ndarray, boxes: Sequence[Sequence[HeadBox | None]]):
+        self.calls.append(len(frames))
+        n_people = max(len(b) for b in boxes)
+        heatmaps = np.zeros((len(frames), n_people, 64, 64), dtype=np.float32)
+        for person, (x, y) in self.targets.items():
+            heatmaps[:, person] = peak_heatmap(x, y)
+        return GazeEstimate(heatmaps, np.full((len(frames), n_people), self.inout, np.float32))
