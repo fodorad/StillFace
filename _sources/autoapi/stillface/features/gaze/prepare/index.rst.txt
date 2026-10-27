@@ -83,7 +83,7 @@ Module Contents
    :raises RuntimeError: If the clip cannot be read.
 
 
-.. py:function:: prepare_clip(clip: pathlib.Path, camera: str, phase: str, tracker: stillface.features.gaze.heads.HeadTracker, config: stillface.features.gaze.config.GazeConfig, references: stillface.features.gaze.roles.RoleReferences | None = None, overrides: collections.abc.Mapping[tuple[str, str], collections.abc.Mapping[str, int]] | None = None) -> ClipHeads
+.. py:function:: prepare_clip(clip: pathlib.Path, camera: str, phase: str, tracker: stillface.features.gaze.heads.HeadTracker, config: stillface.features.gaze.config.GazeConfig, overrides: collections.abc.Mapping[tuple[str, str], collections.abc.Mapping[str, int]] | None = None) -> ClipHeads
 
    Track the heads of a clip and assign them to the mother and the baby.
 
@@ -92,7 +92,6 @@ Module Contents
    :param phase: Experiment phase.
    :param tracker: Head detector and tracker.
    :param config: Gaze configuration (sample rate, role rules).
-   :param references: Identity embeddings of the participants, if available.
    :param overrides: Pinned role assignments.
 
    :returns: Sampled frames, role assignment and per-frame heads.

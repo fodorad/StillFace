@@ -1,0 +1,105 @@
+stillface.features.gaze.gdino_heads
+===================================
+
+.. py:module:: stillface.features.gaze.gdino_heads
+
+.. autoapi-nested-parse::
+
+   Head detection with Grounding DINO prompted by "a human head".
+
+   Grounding DINO (IDEA Research, Apache-2.0, safetensors) detects objects described in
+   words. The single prompt "a human head." puts tight boxes on every visible head, adult or
+   infant, frontal, in profile, from behind or partly occluded, which a face detector misses.
+   Needs the ``features`` extra (``transformers``).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.gaze.gdino_heads.logger
+   stillface.features.gaze.gdino_heads.DEFAULT_MODEL
+   stillface.features.gaze.gdino_heads.HEAD_PROMPT
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: DEFAULT_MODEL
+   :type:  str
+   :value: 'IDEA-Research/grounding-dino-base'
+
+
+   Hugging Face Grounding DINO checkpoint.
+
+.. py:data:: HEAD_PROMPT
+   :type:  str
+   :value: 'a human head.'
+
+
+   Text prompt; Grounding DINO expects lower case phrases ending with a period.
+
+.. py:class:: GroundingDinoHeadTracker(prompt: str = HEAD_PROMPT, model_name: str = DEFAULT_MODEL, rate_hz: float = 2.0, box_threshold: float = 0.25, text_threshold: float = 0.25, max_gap_s: float = 1.5, stitch_gap_s: float = 3.0, batch_size: int = 4, device: str | None = None, cache_dir: pathlib.Path | None = None)
+
+   :class:`~stillface.features.gaze.heads.HeadTracker` based on Grounding DINO.
+
+   The detector runs on a sparse time grid (``rate_hz``), its detections are linked into
+   tracks, and the tracks are interpolated to the requested frames.
+
+   :param prompt: Text prompt.
+   :param model_name: Hugging Face checkpoint.
+   :param rate_hz: Detection rate.
+   :param box_threshold: Minimum box confidence.
+   :param text_threshold: Minimum phrase confidence.
+   :param max_gap_s: Longest gap between detections that is interpolated.
+   :param stitch_gap_s: Longest detection dropout after which a head's track is continued.
+   :param batch_size: Frames per model call.
+   :param device: Torch device name, the best available if None.
+   :param cache_dir: Folder caching the raw detections per clip, so re-running the role and
+                     fusion logic does not run the model again; no caching if None.
+
+
+   .. py:method:: detect(frames: list[numpy.ndarray]) -> list[list[stillface.features.gaze.tracking.Candidate]]
+
+      Head candidates on RGB frames, in normalized coordinates.
+
+      :param frames: RGB ``uint8`` frames of equal size.
+
+      :returns: Candidates per frame.
+
+
+
+   .. py:method:: detect_clip(clip: pathlib.Path, anchors: list[int]) -> list[list[stillface.features.gaze.tracking.Candidate]]
+
+      Detect heads on the anchor frames of a clip, using the cache when possible.
+
+      :param clip: Video clip.
+      :param anchors: Frames to detect on, ascending.
+
+      :returns: Candidates per decodable anchor frame.
+
+
+
+   .. py:method:: track(clip: pathlib.Path, frame_indices: collections.abc.Sequence[int]) -> list[stillface.features.gaze.heads.HeadTrack]
+
+      Detect heads on a sparse grid, link them and interpolate to the requested frames.
+
+      :param clip: Video clip.
+      :param frame_indices: Frames to produce boxes for, ascending.
+
+      :returns: One track per head.
+
+
+

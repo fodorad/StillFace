@@ -214,18 +214,18 @@
 <li class="toctree-l4"><a class="reference internal" href="../../autoapi/stillface/features/config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../autoapi/stillface/features/gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/classes/index.html">stillface.features.gaze.classes</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/combined/index.html">stillface.features.gaze.combined</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/estimator/index.html">stillface.features.gaze.estimator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/fusion/index.html">stillface.features.gaze.fusion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/gdino_heads/index.html">stillface.features.gaze.gdino_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/heads/index.html">stillface.features.gaze.heads</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/owl_heads/index.html">stillface.features.gaze.owl_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/pilot/index.html">stillface.features.gaze.pilot</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/roles/index.html">stillface.features.gaze.roles</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/runner/index.html">stillface.features.gaze.runner</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/selection/index.html">stillface.features.gaze.selection</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../autoapi/stillface/features/gaze/tracking/index.html">stillface.features.gaze.tracking</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../autoapi/stillface/features/io/index.html">stillface.features.io</a></li>
@@ -343,19 +343,21 @@
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_exordium_head_tracker</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">HeadTracker</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Build the head tracker used on real data.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_exordium_head_tracker</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="n">DatasetPaths</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HeadTracker</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build the head tracker used on real data, the same for every camera.</span>
 
-<span class="sd">    Close cameras use the face detector. Side cameras combine OWLv2, prompted with the</span>
-<span class="sd">    baby's head (reclined, in profile or half hidden, where face detectors fail), with the</span>
-<span class="sd">    same face detector for the mother.</span>
+<span class="sd">    Two detectors run on every clip: Grounding DINO prompted with "a human head." finds the</span>
+<span class="sd">    heads of both participants in any pose, the YOLO11 face detector adds precise face</span>
+<span class="sd">    boxes; their tracks are fused into one track per head.</span>
 <span class="sd">    """</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.combined</span><span class="w"> </span><span class="kn">import</span> <span class="n">CombinedHeadTracker</span><span class="p">,</span> <span class="n">PerCameraTracker</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.exordium_heads</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExordiumHeadTracker</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.owl_heads</span><span class="w"> </span><span class="kn">import</span> <span class="n">OwlHeadTracker</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.fusion</span><span class="w"> </span><span class="kn">import</span> <span class="n">FusedHeadTracker</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.gdino_heads</span><span class="w"> </span><span class="kn">import</span> <span class="n">GroundingDinoHeadTracker</span>
 
-    <span class="n">faces</span> <span class="o">=</span> <span class="n">ExordiumHeadTracker</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">PerCameraTracker</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="n">CombinedHeadTracker</span><span class="p">(</span><span class="n">OwlHeadTracker</span><span class="p">(),</span> <span class="n">faces</span><span class="p">),</span> <span class="n">close</span><span class="o">=</span><span class="n">faces</span><span class="p">)</span>
+    <span class="n">cache</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">processed_dir</span> <span class="o">/</span> <span class="s2">"cache"</span> <span class="o">/</span> <span class="s2">"grounding_dino"</span>
+    <span class="k">return</span> <span class="n">FusedHeadTracker</span><span class="p">(</span>
+        <span class="n">GroundingDinoHeadTracker</span><span class="p">(</span><span class="n">cache_dir</span><span class="o">=</span><span class="n">cache</span><span class="p">),</span> <span class="n">ExordiumHeadTracker</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_gaze_estimator</span><span class="p">(</span><span class="n">variant</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GazeEstimator</span><span class="p">:</span>
@@ -369,14 +371,15 @@
 <a class="viewcode-back" href="../../autoapi/stillface/cli/index.html#stillface.cli.main">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span>
     <span class="n">argv</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">head_tracker_factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">HeadTracker</span><span class="p">]</span> <span class="o">=</span> <span class="n">_exordium_head_tracker</span><span class="p">,</span>
+    <span class="n">head_tracker_factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">DatasetPaths</span><span class="p">],</span> <span class="n">HeadTracker</span><span class="p">]</span> <span class="o">=</span> <span class="n">_exordium_head_tracker</span><span class="p">,</span>
     <span class="n">gaze_estimator_factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">GazeEstimator</span><span class="p">]</span> <span class="o">=</span> <span class="n">_gaze_estimator</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Run the command line interface.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        argv: Arguments, ``sys.argv[1:]`` if None.</span>
-<span class="sd">        head_tracker_factory: Builds the head tracker for ``features heads``; replaceable so</span>
+<span class="sd">        head_tracker_factory: Builds the head tracker from the dataset paths (for its cache);</span>
+<span class="sd">            replaceable so</span>
 <span class="sd">            the command can run without exordium models.</span>
 <span class="sd">        gaze_estimator_factory: Builds the gaze estimator for a model variant, for</span>
 <span class="sd">            ``features gaze``; replaceable for the same reason.</span>
@@ -396,7 +399,7 @@
 
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="s2">"features"</span><span class="p">:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">load_gaze_config</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
-        <span class="n">tracker</span> <span class="o">=</span> <span class="n">head_tracker_factory</span><span class="p">()</span>
+        <span class="n">tracker</span> <span class="o">=</span> <span class="n">head_tracker_factory</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
         <span class="n">estimator</span> <span class="o">=</span> <span class="n">gaze_estimator_factory</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">model_variant</span><span class="p">)</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"gaze"</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">session_id</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">session_id</span><span class="p">:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">overlay</span><span class="o">=</span><span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">no_overlay</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">overwrite</span><span class="p">)</span>

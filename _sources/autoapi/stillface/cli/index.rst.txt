@@ -42,12 +42,13 @@ Module Contents
    :returns: The configured parser.
 
 
-.. py:function:: main(argv: collections.abc.Sequence[str] | None = None, head_tracker_factory: collections.abc.Callable[[], stillface.features.gaze.heads.HeadTracker] = _exordium_head_tracker, gaze_estimator_factory: collections.abc.Callable[[str], stillface.features.gaze.estimator.GazeEstimator] = _gaze_estimator) -> int
+.. py:function:: main(argv: collections.abc.Sequence[str] | None = None, head_tracker_factory: collections.abc.Callable[[stillface.config.DatasetPaths], stillface.features.gaze.heads.HeadTracker] = _exordium_head_tracker, gaze_estimator_factory: collections.abc.Callable[[str], stillface.features.gaze.estimator.GazeEstimator] = _gaze_estimator) -> int
 
    Run the command line interface.
 
    :param argv: Arguments, ``sys.argv[1:]`` if None.
-   :param head_tracker_factory: Builds the head tracker for ``features heads``; replaceable so
+   :param head_tracker_factory: Builds the head tracker from the dataset paths (for its cache);
+                                replaceable so
                                 the command can run without exordium models.
    :param gaze_estimator_factory: Builds the gaze estimator for a model variant, for
                                   ``features gaze``; replaceable for the same reason.

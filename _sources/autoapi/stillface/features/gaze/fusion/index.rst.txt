@@ -1,0 +1,99 @@
+stillface.features.gaze.fusion
+==============================
+
+.. py:module:: stillface.features.gaze.fusion
+
+.. autoapi-nested-parse::
+
+   Fusing the head tracks of two detectors into one track per head.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.gaze.fusion.SECONDARY_ID_OFFSET
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.fusion.FusedHeadTracker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.gaze.fusion.merge_duplicates
+   stillface.features.gaze.fusion.fuse_tracks
+
+
+Module Contents
+---------------
+
+.. py:data:: SECONDARY_ID_OFFSET
+   :type:  int
+   :value: 1000
+
+
+   Ids of secondary tracks without a primary partner start here.
+
+.. py:function:: merge_duplicates(tracks: collections.abc.Sequence[stillface.features.gaze.heads.HeadTrack], min_containment: float = 0.6, min_share: float = 0.5) -> list[stillface.features.gaze.heads.HeadTrack]
+
+   Merge tracks that follow the same head (e.g. a head box and a box of its face part).
+
+   Two tracks are duplicates if on at least ``min_share`` of their shared frames the
+   smaller box lies mostly (``min_containment``) inside the other. A merged track keeps,
+   per frame, the box with the higher score.
+
+   :param tracks: Head tracks of one detector.
+   :param min_containment: Share of the smaller box inside the other.
+   :param min_share: Share of shared frames that must agree.
+
+   :returns: Tracks without duplicates; a merged track keeps the id of the longer one.
+
+
+.. py:function:: fuse_tracks(primary: collections.abc.Sequence[stillface.features.gaze.heads.HeadTrack], secondary: collections.abc.Sequence[stillface.features.gaze.heads.HeadTrack], min_iou: float = 0.1, min_share: float = 0.5) -> list[stillface.features.gaze.heads.HeadTrack]
+
+   Merge the tracks of a head detector (primary) and a face detector (secondary).
+
+   A secondary track that follows the same person as a primary track (overlapping boxes on
+   most shared frames) is merged into it: on frames where both exist the box is their union
+   (a face box lies inside the head box, so the head box mostly wins) and the score is the
+   larger one; frames only one detector saw are taken from that detector. Secondary tracks
+   without a partner are kept as additional heads.
+
+   :param primary: Head tracks.
+   :param secondary: Face tracks.
+   :param min_iou: Boxes overlapping at least this much belong to the same person.
+   :param min_share: Share of shared frames that must overlap.
+
+   :returns: Fused tracks; ids of unmatched secondary tracks are offset by
+             :data:`SECONDARY_ID_OFFSET`.
+
+
+.. py:class:: FusedHeadTracker(primary: stillface.features.gaze.heads.HeadTracker, secondary: stillface.features.gaze.heads.HeadTracker)
+
+   Runs a head detector and a face detector on a clip and fuses their tracks.
+
+   :param primary: Head tracker (text-prompted head detector).
+   :param secondary: Face tracker.
+
+
+   .. py:method:: track(clip: pathlib.Path, frame_indices: collections.abc.Sequence[int]) -> list[stillface.features.gaze.heads.HeadTrack]
+
+      Track heads with both detectors and fuse the tracks.
+
+      :param clip: Video clip.
+      :param frame_indices: Frames to analyze, ascending.
+
+      :returns: Fused head tracks; duplicate head tracks are merged first.
+
+
+

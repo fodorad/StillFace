@@ -1,0 +1,101 @@
+stillface.features.gaze.tracking
+================================
+
+.. py:module:: stillface.features.gaze.tracking
+
+.. autoapi-nested-parse::
+
+   Linking per-frame head candidates into tracks.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.gaze.tracking.Candidate
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.gaze.tracking.link_candidates
+   stillface.features.gaze.tracking.stitch_tracks
+   stillface.features.gaze.tracking.densify
+   stillface.features.gaze.tracking.anchor_frames
+
+
+Module Contents
+---------------
+
+.. py:class:: Candidate
+
+   One detected box on one frame.
+
+   .. attribute:: box
+
+      Head box in normalized coordinates.
+
+   .. attribute:: score
+
+      Detection confidence.
+
+
+.. py:function:: link_candidates(candidates: list[list[Candidate]], frames: list[int], max_distance: float = 1.5, max_missed: int = 2) -> list[stillface.features.gaze.heads.HeadTrack]
+
+   Link the candidates of consecutive frames into tracks.
+
+   Each frame's candidates are matched to the open tracks by the Hungarian algorithm on the
+   distance between box centers, measured in head sizes (a head moves less than about one
+   and a half of its own size between neighboring samples). Unmatched candidates start new
+   tracks; a track is closed after ``max_missed`` consecutive frames without a match.
+
+   :param candidates: Candidates of each frame.
+   :param frames: Frame index of each entry of ``candidates``.
+   :param max_distance: Largest accepted center distance, in head sizes.
+   :param max_missed: Frames a track may stay unmatched before it is closed.
+
+   :returns: One track per head, with boxes and scores on the frames it was matched.
+
+
+.. py:function:: stitch_tracks(tracks: list[stillface.features.gaze.heads.HeadTrack], max_gap: int, max_distance: float = 1.5) -> list[stillface.features.gaze.heads.HeadTrack]
+
+   Join track pieces of the same head that a detection dropout split.
+
+   A track that starts after another one ended, within ``max_gap`` frames and close to
+   where the other ended (in head sizes), continues it. Pieces are joined greedily, the
+   closest pair first.
+
+   :param tracks: Tracks from :func:`link_candidates`.
+   :param max_gap: Largest gap in frames between the end of one piece and the start of the next.
+   :param max_distance: Largest center distance between the two ends, in head sizes.
+
+   :returns: The stitched tracks; a stitched track keeps the id of its first piece.
+
+
+.. py:function:: densify(track: stillface.features.gaze.heads.HeadTrack, frame_indices: list[int], max_gap: int) -> stillface.features.gaze.heads.HeadTrack
+
+   Fill a track between its detected frames by interpolation.
+
+   :param track: Track detected on a sparse set of frames.
+   :param frame_indices: Frames to produce boxes for.
+   :param max_gap: Longest gap in frames that is bridged.
+
+   :returns: The track on the requested frames; interpolated frames carry the lower score of
+             the two neighboring detections.
+
+
+.. py:function:: anchor_frames(frame_indices: collections.abc.Sequence[int], clip_fps: float, rate_hz: float) -> list[int]
+
+   Choose the requested frames closest to a regular, slower time grid.
+
+   :param frame_indices: Ascending frames that will be asked for.
+   :param clip_fps: Frame rate of the clip.
+   :param rate_hz: Rate of the anchor grid, at most the clip rate.
+
+   :returns: Unique anchor frames out of ``frame_indices``; empty if there are none.
+
+

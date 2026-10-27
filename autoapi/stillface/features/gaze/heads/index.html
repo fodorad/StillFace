@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.gaze.owl_heads" href="../owl_heads/index.html"><link rel="prev" title="stillface.features.gaze.exordium_heads" href="../exordium_heads/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.gaze.pilot" href="../pilot/index.html"><link rel="prev" title="stillface.features.gaze.gdino_heads" href="../gdino_heads/index.html">
         <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/gaze/heads/index.html">
         <link rel="prefetch" href="../../../../../_static/logo.svg" as="image">
 
@@ -215,18 +215,18 @@
 <li class="toctree-l4"><a class="reference internal" href="../../config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5"><a class="reference internal" href="../classes/index.html">stillface.features.gaze.classes</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../combined/index.html">stillface.features.gaze.combined</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../estimator/index.html">stillface.features.gaze.estimator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../fusion/index.html">stillface.features.gaze.fusion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../gdino_heads/index.html">stillface.features.gaze.gdino_heads</a></li>
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.gaze.heads</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../owl_heads/index.html">stillface.features.gaze.owl_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../pilot/index.html">stillface.features.gaze.pilot</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../roles/index.html">stillface.features.gaze.roles</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../runner/index.html">stillface.features.gaze.runner</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../selection/index.html">stillface.features.gaze.selection</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../tracking/index.html">stillface.features.gaze.tracking</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../io/index.html">stillface.features.io</a></li>
@@ -305,6 +305,15 @@
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.heads.interpolate_boxes" title="stillface.features.gaze.heads.interpolate_boxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate_boxes</span></code></a>(→ dict[int, HeadBox])</p></td>
 <td><p>Fill the frames between detected anchor frames by linear interpolation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.heads.iou" title="stillface.features.gaze.heads.iou"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iou</span></code></a>(→ float)</p></td>
+<td><p>Intersection over union of two boxes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.heads.containment" title="stillface.features.gaze.heads.containment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">containment</span></code></a>(→ float)</p></td>
+<td><p>Share of the smaller box covered by the other box.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.heads.overlaps" title="stillface.features.gaze.heads.overlaps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">overlaps</span></code></a>(→ bool)</p></td>
+<td><p>Whether two tracks mostly follow the same head.</p></td>
 </tr>
 </tbody>
 </table>
@@ -397,17 +406,31 @@
 as fully confident.</p>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="stillface.features.gaze.heads.HeadTrack.role">
-<span class="sig-name descname"><span class="pre">role</span></span><a class="headerlink" href="#stillface.features.gaze.heads.HeadTrack.role" title="Link to this definition">¶</a></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">mother</span></code> or <code class="docutils literal notranslate"><span class="pre">baby</span></code> if the detector knows whose head it is (text-prompted
-detectors do), None for anonymous tracks.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.features.gaze.heads.HeadTrack.evidence">
+<span class="sig-name descname"><span class="pre">evidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">centrality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/heads.html#HeadTrack.evidence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.heads.HeadTrack.evidence" title="Link to this definition">¶</a></dt>
+<dd><p>Confidence-weighted presence: the sum of the detection scores over the frames.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>centrality</strong> – Also weight each frame by how close the box center is to the image
+center (1 at the center, 0 at the edge midpoints and beyond).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The weighted sum.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="stillface.features.gaze.heads.HeadTrack.evidence">
-<span class="sig-name descname"><span class="pre">evidence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/heads.html#HeadTrack.evidence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.heads.HeadTrack.evidence" title="Link to this definition">¶</a></dt>
-<dd><p>Confidence-weighted presence: the sum of the detection scores over the frames.</p>
+<dt class="sig sig-object py" id="stillface.features.gaze.heads.HeadTrack.median_score">
+<span class="sig-name descname"><span class="pre">median_score</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/heads.html#HeadTrack.median_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.heads.HeadTrack.median_score" title="Link to this definition">¶</a></dt>
+<dd><p>Median detection score of the track (frames without a score count as 1).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.features.gaze.heads.HeadTrack.median_area">
+<span class="sig-name descname"><span class="pre">median_area</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/heads.html#HeadTrack.median_area"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.heads.HeadTrack.median_area" title="Link to this definition">¶</a></dt>
+<dd><p>Median box area of the track, 0 for an empty track.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -462,6 +485,37 @@ are further apart than <code class="docutils literal notranslate"><span class="p
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.gaze.heads.iou">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.heads.</span></span><span class="sig-name descname"><span class="pre">iou</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stillface.features.gaze.heads.HeadBox" title="stillface.features.gaze.heads.HeadBox"><span class="pre">HeadBox</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stillface.features.gaze.heads.HeadBox" title="stillface.features.gaze.heads.HeadBox"><span class="pre">HeadBox</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/heads.html#iou"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.heads.iou" title="Link to this definition">¶</a></dt>
+<dd><p>Intersection over union of two boxes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.gaze.heads.containment">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.heads.</span></span><span class="sig-name descname"><span class="pre">containment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stillface.features.gaze.heads.HeadBox" title="stillface.features.gaze.heads.HeadBox"><span class="pre">HeadBox</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stillface.features.gaze.heads.HeadBox" title="stillface.features.gaze.heads.HeadBox"><span class="pre">HeadBox</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/heads.html#containment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.heads.containment" title="Link to this definition">¶</a></dt>
+<dd><p>Share of the smaller box covered by the other box.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.gaze.heads.overlaps">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.heads.</span></span><span class="sig-name descname"><span class="pre">overlaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">HeadTrack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">HeadTrack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_iou</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_share</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/heads.html#overlaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.heads.overlaps" title="Link to this definition">¶</a></dt>
+<dd><p>Whether two tracks mostly follow the same head.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>track</strong> – First track.</p></li>
+<li><p><strong>other</strong> – Second track.</p></li>
+<li><p><strong>min_iou</strong> – Boxes of the same frame with at least this IoU count as the same head.</p></li>
+<li><p><strong>min_share</strong> – Share of the shared frames that must agree.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the tracks share frames and agree on at least <code class="docutils literal notranslate"><span class="pre">min_share</span></code> of them.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -470,23 +524,23 @@ are further apart than <code class="docutils literal notranslate"><span class="p
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../owl_heads/index.html">
+          <a class="next-page" href="../pilot/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">stillface.features.gaze.owl_heads</div>
+                <div class="title">stillface.features.gaze.pilot</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../exordium_heads/index.html">
+          <a class="prev-page" href="../gdino_heads/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">stillface.features.gaze.exordium_heads</div>
+                <div class="title">stillface.features.gaze.gdino_heads</div>
                 
               </div>
             </a>
@@ -539,8 +593,9 @@ are further apart than <code class="docutils literal notranslate"><span class="p
 <li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.boxes"><code class="docutils literal notranslate"><span class="pre">HeadTrack.boxes</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.embedding"><code class="docutils literal notranslate"><span class="pre">HeadTrack.embedding</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.scores"><code class="docutils literal notranslate"><span class="pre">HeadTrack.scores</span></code></a></li>
-<li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.role"><code class="docutils literal notranslate"><span class="pre">HeadTrack.role</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.evidence"><code class="docutils literal notranslate"><span class="pre">HeadTrack.evidence()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.median_score"><code class="docutils literal notranslate"><span class="pre">HeadTrack.median_score()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.median_area"><code class="docutils literal notranslate"><span class="pre">HeadTrack.median_area()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.heads.HeadTrack.weight"><code class="docutils literal notranslate"><span class="pre">HeadTrack.weight()</span></code></a></li>
 </ul>
 </li>
@@ -549,6 +604,9 @@ are further apart than <code class="docutils literal notranslate"><span class="p
 </ul>
 </li>
 <li><a class="reference internal" href="#stillface.features.gaze.heads.interpolate_boxes"><code class="docutils literal notranslate"><span class="pre">interpolate_boxes()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.heads.iou"><code class="docutils literal notranslate"><span class="pre">iou()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.heads.containment"><code class="docutils literal notranslate"><span class="pre">containment()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.heads.overlaps"><code class="docutils literal notranslate"><span class="pre">overlaps()</span></code></a></li>
 </ul>
 </li>
 </ul>

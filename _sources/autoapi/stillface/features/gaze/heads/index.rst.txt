@@ -25,6 +25,9 @@ Functions
 .. autoapisummary::
 
    stillface.features.gaze.heads.interpolate_boxes
+   stillface.features.gaze.heads.iou
+   stillface.features.gaze.heads.containment
+   stillface.features.gaze.heads.overlaps
 
 
 Module Contents
@@ -96,15 +99,27 @@ Module Contents
       Frame index mapped to the detection confidence; frames without a score count
       as fully confident.
 
-   .. attribute:: role
 
-      ``mother`` or ``baby`` if the detector knows whose head it is (text-prompted
-      detectors do), None for anonymous tracks.
-
-
-   .. py:method:: evidence() -> float
+   .. py:method:: evidence(centrality: bool = False) -> float
 
       Confidence-weighted presence: the sum of the detection scores over the frames.
+
+      :param centrality: Also weight each frame by how close the box center is to the image
+                         center (1 at the center, 0 at the edge midpoints and beyond).
+
+      :returns: The weighted sum.
+
+
+
+   .. py:method:: median_score() -> float
+
+      Median detection score of the track (frames without a score count as 1).
+
+
+
+   .. py:method:: median_area() -> float
+
+      Median box area of the track, 0 for an empty track.
 
 
 
@@ -145,5 +160,27 @@ Module Contents
    :param max_gap: Largest distance in frames between two anchors that is still bridged.
 
    :returns: Frame index mapped to a box, for every requested frame that could be filled.
+
+
+.. py:function:: iou(a: HeadBox, b: HeadBox) -> float
+
+   Intersection over union of two boxes.
+
+
+.. py:function:: containment(a: HeadBox, b: HeadBox) -> float
+
+   Share of the smaller box covered by the other box.
+
+
+.. py:function:: overlaps(track: HeadTrack, other: HeadTrack, min_iou: float, min_share: float) -> bool
+
+   Whether two tracks mostly follow the same head.
+
+   :param track: First track.
+   :param other: Second track.
+   :param min_iou: Boxes of the same frame with at least this IoU count as the same head.
+   :param min_share: Share of the shared frames that must agree.
+
+   :returns: True if the tracks share frames and agree on at least ``min_share`` of them.
 
 

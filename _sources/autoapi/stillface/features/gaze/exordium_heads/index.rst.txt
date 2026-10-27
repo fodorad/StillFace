@@ -49,7 +49,8 @@ Module Contents
    :param start_score: A track needs confident detections (at least this score) to be kept.
    :param min_confident: Number of confident detections a track needs.
    :param batch_size: Frames per detector call.
-   :param max_lost: Frames a track may be missing before it is closed.
+   :param max_lost: Frames a track may be missing before it is closed; at sparse sampling at
+                    least three sampling steps are allowed.
    :param iou_threshold: Minimum box overlap to continue a track.
 
 

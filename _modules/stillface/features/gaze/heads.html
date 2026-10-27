@@ -214,18 +214,18 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/classes/index.html">stillface.features.gaze.classes</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/combined/index.html">stillface.features.gaze.combined</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/estimator/index.html">stillface.features.gaze.estimator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/fusion/index.html">stillface.features.gaze.fusion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/gdino_heads/index.html">stillface.features.gaze.gdino_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/heads/index.html">stillface.features.gaze.heads</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/owl_heads/index.html">stillface.features.gaze.owl_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pilot/index.html">stillface.features.gaze.pilot</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/roles/index.html">stillface.features.gaze.roles</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/runner/index.html">stillface.features.gaze.runner</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/selection/index.html">stillface.features.gaze.selection</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/tracking/index.html">stillface.features.gaze.tracking</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/io/index.html">stillface.features.io</a></li>
@@ -343,21 +343,49 @@
 <span class="sd">        embedding: Mean face-identity embedding of the track, None if not computed.</span>
 <span class="sd">        scores: Frame index mapped to the detection confidence; frames without a score count</span>
 <span class="sd">            as fully confident.</span>
-<span class="sd">        role: ``mother`` or ``baby`` if the detector knows whose head it is (text-prompted</span>
-<span class="sd">            detectors do), None for anonymous tracks.</span>
 <span class="sd">    """</span>
 
     <span class="n">track_id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">boxes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">HeadBox</span><span class="p">]</span>
     <span class="n">embedding</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">scores</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-    <span class="n">role</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="HeadTrack.evidence">
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack.evidence">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">evidence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Confidence-weighted presence: the sum of the detection scores over the frames."""</span>
-        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">boxes</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evidence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">centrality</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Confidence-weighted presence: the sum of the detection scores over the frames.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            centrality: Also weight each frame by how close the box center is to the image</span>
+<span class="sd">                center (1 at the center, 0 at the edge midpoints and beyond).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The weighted sum.</span>
+<span class="sd">        """</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">frame</span><span class="p">,</span> <span class="n">box</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">centrality</span><span class="p">:</span>
+                <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">box</span><span class="o">.</span><span class="n">center</span>
+                <span class="n">weight</span> <span class="o">*=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">cx</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">cy</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)))</span>
+            <span class="n">total</span> <span class="o">+=</span> <span class="n">weight</span>
+        <span class="k">return</span> <span class="n">total</span></div>
+
+
+<div class="viewcode-block" id="HeadTrack.median_score">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack.median_score">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">median_score</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Median detection score of the track (frames without a score count as 1)."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">boxes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">boxes</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="HeadTrack.median_area">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack.median_area">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">median_area</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Median box area of the track, 0 for an empty track."""</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">([</span><span class="n">b</span><span class="o">.</span><span class="n">area</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">values</span><span class="p">()]))</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boxes</span> <span class="k">else</span> <span class="mf">0.0</span></div>
 
 
 <div class="viewcode-block" id="HeadTrack.weight">
@@ -425,6 +453,53 @@
         <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">weight</span><span class="p">)</span> <span class="o">*</span> <span class="n">coords</span><span class="p">[</span><span class="n">right</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">coords</span><span class="p">[</span><span class="n">right</span><span class="p">]</span>
         <span class="n">boxes</span><span class="p">[</span><span class="n">frame</span><span class="p">]</span> <span class="o">=</span> <span class="n">HeadBox</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x0</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">y0</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">y1</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">boxes</span></div>
+
+
+
+<div class="viewcode-block" id="iou">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.iou">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">iou</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">HeadBox</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">HeadBox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Intersection over union of two boxes."""</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">x1</span><span class="p">)</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">x0</span><span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">y1</span><span class="p">)</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">y0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">h</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="n">inter</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">h</span>
+    <span class="k">return</span> <span class="n">inter</span> <span class="o">/</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">area</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">area</span> <span class="o">-</span> <span class="n">inter</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="containment">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.containment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">containment</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">HeadBox</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">HeadBox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Share of the smaller box covered by the other box."""</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">x1</span><span class="p">)</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">x0</span><span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">y1</span><span class="p">)</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">y0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">h</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">w</span> <span class="o">*</span> <span class="n">h</span> <span class="o">/</span> <span class="nb">min</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">area</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">area</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overlaps">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.overlaps">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlaps</span><span class="p">(</span><span class="n">track</span><span class="p">:</span> <span class="n">HeadTrack</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">HeadTrack</span><span class="p">,</span> <span class="n">min_iou</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">min_share</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Whether two tracks mostly follow the same head.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        track: First track.</span>
+<span class="sd">        other: Second track.</span>
+<span class="sd">        min_iou: Boxes of the same frame with at least this IoU count as the same head.</span>
+<span class="sd">        min_share: Share of the shared frames that must agree.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if the tracks share frames and agree on at least ``min_share`` of them.</span>
+<span class="sd">    """</span>
+    <span class="n">shared</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">track</span><span class="o">.</span><span class="n">boxes</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">boxes</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">shared</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">same</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">iou</span><span class="p">(</span><span class="n">track</span><span class="o">.</span><span class="n">boxes</span><span class="p">[</span><span class="n">f</span><span class="p">],</span> <span class="n">other</span><span class="o">.</span><span class="n">boxes</span><span class="p">[</span><span class="n">f</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">min_iou</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">shared</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">same</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">shared</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_share</span></div>
 
 </pre></div>
         </article>

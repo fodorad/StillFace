@@ -214,18 +214,18 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/classes/index.html">stillface.features.gaze.classes</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/combined/index.html">stillface.features.gaze.combined</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/estimator/index.html">stillface.features.gaze.estimator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/fusion/index.html">stillface.features.gaze.fusion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/gdino_heads/index.html">stillface.features.gaze.gdino_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/heads/index.html">stillface.features.gaze.heads</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/owl_heads/index.html">stillface.features.gaze.owl_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pilot/index.html">stillface.features.gaze.pilot</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/roles/index.html">stillface.features.gaze.roles</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/runner/index.html">stillface.features.gaze.runner</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/selection/index.html">stillface.features.gaze.selection</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/tracking/index.html">stillface.features.gaze.tracking</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/io/index.html">stillface.features.io</a></li>
@@ -294,15 +294,29 @@
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.SidePriors">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SidePriors</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Where the mother sits in the side cameras' image.</span>
+<span class="w">    </span><span class="sd">"""Which side of the side cameras' image the mother sits on, from the fixed seating.</span>
+
+<span class="sd">    During the baseline the mother sits on a different chair, which flips her side in the</span>
+<span class="sd">    window camera; the door camera sees her on the left in every phase.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        window: ``left`` or ``right`` half of the window camera image.</span>
-<span class="sd">        door: ``left`` or ``right`` half of the door camera image.</span>
+<span class="sd">        window: ``left`` or ``right``, play, still face and reunion.</span>
+<span class="sd">        window_baseline: ``left`` or ``right``, baseline.</span>
+<span class="sd">        door: ``left`` or ``right``, play, still face and reunion.</span>
+<span class="sd">        door_baseline: ``left`` or ``right``, baseline.</span>
 <span class="sd">    """</span>
 
     <span class="n">window</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"right"</span>
-    <span class="n">door</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"left"</span></div>
+    <span class="n">window_baseline</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"left"</span>
+    <span class="n">door</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"left"</span>
+    <span class="n">door_baseline</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"left"</span>
+
+<div class="viewcode-block" id="SidePriors.side">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.SidePriors.side">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">side</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">camera</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Side of the mother in a camera during a phase."""</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">camera</span><span class="si">}</span><span class="s2">_baseline"</span> <span class="k">if</span> <span class="n">phase</span> <span class="o">==</span> <span class="s2">"baseline"</span> <span class="k">else</span> <span class="n">camera</span><span class="p">)</span></div>
+</div>
 
 
 
@@ -332,20 +346,21 @@
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        min_presence: Share of the sampled frames a track must appear in to be a candidate.</span>
-<span class="sd">        size_ambiguity_ratio: Two candidates whose head areas differ by less than this ratio</span>
-<span class="sd">            (smaller over larger) cannot be told apart by size.</span>
 <span class="sd">        min_side_separation: Smaller horizontal distance between the two candidates than this</span>
 <span class="sd">            (normalized) makes the side prior ambiguous.</span>
-<span class="sd">        min_identity_similarity: Cosine similarity needed to accept an identity match.</span>
-<span class="sd">        min_relative_head_area: A head found without a text prompt must be at least this share</span>
-<span class="sd">            of the prompted partner's head area, which rejects background people.</span>
+<span class="sd">        min_relative_head_area: On the side cameras a head must be at least this share of the</span>
+<span class="sd">            largest head's area; smaller heads are far-away background people.</span>
+<span class="sd">        min_owner_score: On the close cameras the owner's track needs at least this median</span>
+<span class="sd">            detection score (rejects head-like drawings when the person is away).</span>
+<span class="sd">        min_owner_area: On the close cameras the owner's track needs at least this median</span>
+<span class="sd">            box area (the owner sits close to the camera).</span>
 <span class="sd">    """</span>
 
     <span class="n">min_presence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span>
-    <span class="n">size_ambiguity_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span>
     <span class="n">min_side_separation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span>
-    <span class="n">min_identity_similarity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span>
-    <span class="n">min_relative_head_area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span></div>
+    <span class="n">min_relative_head_area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">min_owner_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">min_owner_area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.005</span></div>
 
 
 

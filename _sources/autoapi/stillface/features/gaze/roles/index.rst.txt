@@ -30,7 +30,6 @@ Classes
 
 .. autoapisummary::
 
-   stillface.features.gaze.roles.RoleReferences
    stillface.features.gaze.roles.RoleAssignment
 
 
@@ -69,19 +68,6 @@ Module Contents
 
    ``(camera, phase)`` mapped to ``{person: track_id}``, from a ``roles.json`` file.
 
-.. py:class:: RoleReferences
-
-   Face-identity embeddings of the two participants of a session.
-
-   .. attribute:: mother
-
-      Mean embedding from the mother camera.
-
-   .. attribute:: baby
-
-      Mean embedding from the baby camera.
-
-
 .. py:class:: RoleAssignment
 
    Outcome of the role assignment for one clip.
@@ -106,16 +92,20 @@ Module Contents
 
 
 
-.. py:function:: assign_roles(tracks: collections.abc.Sequence[stillface.features.gaze.heads.HeadTrack], camera: str, phase: str, n_frames: int, config: stillface.features.gaze.config.GazeConfig, references: RoleReferences | None = None, overrides: collections.abc.Mapping[tuple[str, str], collections.abc.Mapping[str, int]] | None = None) -> RoleAssignment
+.. py:function:: assign_roles(tracks: collections.abc.Sequence[stillface.features.gaze.heads.HeadTrack], camera: str, phase: str, n_frames: int, config: stillface.features.gaze.config.GazeConfig, overrides: collections.abc.Mapping[tuple[str, str], collections.abc.Mapping[str, int]] | None = None) -> RoleAssignment
 
    Assign head tracks to the mother and the baby.
+
+   Close cameras: the owner is the confident, large track with the most evidence near the
+   image centre. Side cameras: the two strongest persistent heads, excluding far-away
+   background people, are told apart by the fixed seating (side prior per camera and
+   phase).
 
    :param tracks: Head tracks of the clip.
    :param camera: Camera name.
    :param phase: Experiment phase.
    :param n_frames: Number of sampled frames in the clip.
    :param config: Gaze configuration (side priors, role rules).
-   :param references: Identity embeddings of the participants, if available.
    :param overrides: Pinned assignments that win over the automatic decision.
 
    :returns: The assignment; people that cannot be assigned are None.

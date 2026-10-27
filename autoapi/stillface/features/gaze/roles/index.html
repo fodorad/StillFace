@@ -215,18 +215,18 @@
 <li class="toctree-l4"><a class="reference internal" href="../../config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5"><a class="reference internal" href="../classes/index.html">stillface.features.gaze.classes</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../combined/index.html">stillface.features.gaze.combined</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../estimator/index.html">stillface.features.gaze.estimator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../fusion/index.html">stillface.features.gaze.fusion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../gdino_heads/index.html">stillface.features.gaze.gdino_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../heads/index.html">stillface.features.gaze.heads</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../owl_heads/index.html">stillface.features.gaze.owl_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../pilot/index.html">stillface.features.gaze.pilot</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.gaze.roles</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../runner/index.html">stillface.features.gaze.runner</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../selection/index.html">stillface.features.gaze.selection</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../tracking/index.html">stillface.features.gaze.tracking</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../io/index.html">stillface.features.io</a></li>
@@ -310,10 +310,7 @@ the baseline phase the positions may change, so size and face identity decide th
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.RoleReferences" title="stillface.features.gaze.roles.RoleReferences"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RoleReferences</span></code></a></p></td>
-<td><p>Face-identity embeddings of the two participants of a session.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.RoleAssignment" title="stillface.features.gaze.roles.RoleAssignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RoleAssignment</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.RoleAssignment" title="stillface.features.gaze.roles.RoleAssignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RoleAssignment</span></code></a></p></td>
 <td><p>Outcome of the role assignment for one clip.</p></td>
 </tr>
 </tbody>
@@ -370,24 +367,6 @@ the baseline phase the positions may change, so size and face identity decide th
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="stillface.features.gaze.roles.RoleReferences">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.roles.</span></span><span class="sig-name descname"><span class="pre">RoleReferences</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/roles.html#RoleReferences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.roles.RoleReferences" title="Link to this definition">¶</a></dt>
-<dd><p>Face-identity embeddings of the two participants of a session.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="stillface.features.gaze.roles.RoleReferences.mother">
-<span class="sig-name descname"><span class="pre">mother</span></span><a class="headerlink" href="#stillface.features.gaze.roles.RoleReferences.mother" title="Link to this definition">¶</a></dt>
-<dd><p>Mean embedding from the mother camera.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="stillface.features.gaze.roles.RoleReferences.baby">
-<span class="sig-name descname"><span class="pre">baby</span></span><a class="headerlink" href="#stillface.features.gaze.roles.RoleReferences.baby" title="Link to this definition">¶</a></dt>
-<dd><p>Mean embedding from the baby camera.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="stillface.features.gaze.roles.RoleAssignment">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.roles.</span></span><span class="sig-name descname"><span class="pre">RoleAssignment</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/roles.html#RoleAssignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.roles.RoleAssignment" title="Link to this definition">¶</a></dt>
 <dd><p>Outcome of the role assignment for one clip.</p>
@@ -420,8 +399,12 @@ the baseline phase the positions may change, so size and face identity decide th
 
 <dl class="py function">
 <dt class="sig sig-object py" id="stillface.features.gaze.roles.assign_roles">
-<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.roles.</span></span><span class="sig-name descname"><span class="pre">assign_roles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tracks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">stillface.features.gaze.heads.HeadTrack</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../config/index.html#stillface.features.gaze.config.GazeConfig" title="stillface.features.gaze.config.GazeConfig"><span class="pre">stillface.features.gaze.config.GazeConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">references</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stillface.features.gaze.roles.RoleReferences" title="stillface.features.gaze.roles.RoleReferences"><span class="pre">RoleReferences</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overrides</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">collections.abc.Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stillface.features.gaze.roles.RoleAssignment" title="stillface.features.gaze.roles.RoleAssignment"><span class="pre">RoleAssignment</span></a></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/roles.html#assign_roles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.roles.assign_roles" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.roles.</span></span><span class="sig-name descname"><span class="pre">assign_roles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tracks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">stillface.features.gaze.heads.HeadTrack</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../config/index.html#stillface.features.gaze.config.GazeConfig" title="stillface.features.gaze.config.GazeConfig"><span class="pre">stillface.features.gaze.config.GazeConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">overrides</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">collections.abc.Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stillface.features.gaze.roles.RoleAssignment" title="stillface.features.gaze.roles.RoleAssignment"><span class="pre">RoleAssignment</span></a></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/roles.html#assign_roles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.roles.assign_roles" title="Link to this definition">¶</a></dt>
 <dd><p>Assign head tracks to the mother and the baby.</p>
+<p>Close cameras: the owner is the confident, large track with the most evidence near the
+image centre. Side cameras: the two strongest persistent heads, excluding far-away
+background people, are told apart by the fixed seating (side prior per camera and
+phase).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -430,7 +413,6 @@ the baseline phase the positions may change, so size and face identity decide th
 <li><p><strong>phase</strong> – Experiment phase.</p></li>
 <li><p><strong>n_frames</strong> – Number of sampled frames in the clip.</p></li>
 <li><p><strong>config</strong> – Gaze configuration (side priors, role rules).</p></li>
-<li><p><strong>references</strong> – Identity embeddings of the participants, if available.</p></li>
 <li><p><strong>overrides</strong> – Pinned assignments that win over the automatic decision.</p></li>
 </ul>
 </dd>
@@ -578,11 +560,6 @@ track id.</p>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.PERSONS"><code class="docutils literal notranslate"><span class="pre">PERSONS</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.SIDE_CAMERAS"><code class="docutils literal notranslate"><span class="pre">SIDE_CAMERAS</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.RoleOverrides"><code class="docutils literal notranslate"><span class="pre">RoleOverrides</span></code></a></li>
-<li><a class="reference internal" href="#stillface.features.gaze.roles.RoleReferences"><code class="docutils literal notranslate"><span class="pre">RoleReferences</span></code></a><ul>
-<li><a class="reference internal" href="#stillface.features.gaze.roles.RoleReferences.mother"><code class="docutils literal notranslate"><span class="pre">RoleReferences.mother</span></code></a></li>
-<li><a class="reference internal" href="#stillface.features.gaze.roles.RoleReferences.baby"><code class="docutils literal notranslate"><span class="pre">RoleReferences.baby</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.RoleAssignment"><code class="docutils literal notranslate"><span class="pre">RoleAssignment</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.RoleAssignment.mother"><code class="docutils literal notranslate"><span class="pre">RoleAssignment.mother</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.RoleAssignment.baby"><code class="docutils literal notranslate"><span class="pre">RoleAssignment.baby</span></code></a></li>

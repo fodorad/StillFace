@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.io" href="../../io/index.html"><link rel="prev" title="stillface.features.gaze.runner" href="../runner/index.html">
-        <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/gaze/selection/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.gaze.gdino_heads" href="../gdino_heads/index.html"><link rel="prev" title="stillface.features.gaze.exordium_heads" href="../exordium_heads/index.html">
+        <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/gaze/fusion/index.html">
         <link rel="prefetch" href="../../../../../_static/logo.svg" as="image">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>stillface.features.gaze.selection - StillFace latest documentation</title>
+        <title>stillface.features.gaze.fusion - StillFace latest documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -215,18 +215,18 @@
 <li class="toctree-l4"><a class="reference internal" href="../../config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5"><a class="reference internal" href="../classes/index.html">stillface.features.gaze.classes</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../combined/index.html">stillface.features.gaze.combined</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../estimator/index.html">stillface.features.gaze.estimator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
+<li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.gaze.fusion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../gdino_heads/index.html">stillface.features.gaze.gdino_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../heads/index.html">stillface.features.gaze.heads</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../owl_heads/index.html">stillface.features.gaze.owl_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../pilot/index.html">stillface.features.gaze.pilot</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../roles/index.html">stillface.features.gaze.roles</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../runner/index.html">stillface.features.gaze.runner</a></li>
-<li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.gaze.selection</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../tracking/index.html">stillface.features.gaze.tracking</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../io/index.html">stillface.features.io</a></li>
@@ -259,7 +259,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../../../../../_sources/autoapi/stillface/features/gaze/selection/index.rst.txt" title="View this page">
+  <a class="muted-link" href="../../../../../_sources/autoapi/stillface/features/gaze/fusion/index.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -277,16 +277,28 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-stillface.features.gaze.selection">
-<span id="stillface-features-gaze-selection"></span><h1>stillface.features.gaze.selection<a class="headerlink" href="#module-stillface.features.gaze.selection" title="Link to this heading">¶</a></h1>
-<p>Choosing one head box per frame from noisy candidates.</p>
+          <section id="module-stillface.features.gaze.fusion">
+<span id="stillface-features-gaze-fusion"></span><h1>stillface.features.gaze.fusion<a class="headerlink" href="#module-stillface.features.gaze.fusion" title="Link to this heading">¶</a></h1>
+<p>Fusing the head tracks of two detectors into one track per head.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.fusion.SECONDARY_ID_OFFSET" title="stillface.features.gaze.fusion.SECONDARY_ID_OFFSET"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SECONDARY_ID_OFFSET</span></code></a></p></td>
+<td><p>Ids of secondary tracks without a primary partner start here.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.selection.Candidate" title="stillface.features.gaze.selection.Candidate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Candidate</span></code></a></p></td>
-<td><p>One detected box on one frame.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.fusion.FusedHeadTracker" title="stillface.features.gaze.fusion.FusedHeadTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FusedHeadTracker</span></code></a></p></td>
+<td><p>Runs a head detector and a face detector on a clip and fuses their tracks.</p></td>
 </tr>
 </tbody>
 </table>
@@ -297,8 +309,11 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.selection.select_path" title="stillface.features.gaze.selection.select_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_path</span></code></a>(→ list[Candidate | None])</p></td>
-<td><p>Pick the candidate sequence with the best scores and the smoothest motion.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.fusion.merge_duplicates" title="stillface.features.gaze.fusion.merge_duplicates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_duplicates</span></code></a>(...)</p></td>
+<td><p>Merge tracks that follow the same head (e.g. a head box and a box of its face part).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.fusion.fuse_tracks" title="stillface.features.gaze.fusion.fuse_tracks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fuse_tracks</span></code></a>(...)</p></td>
+<td><p>Merge the tracks of a head detector (primary) and a face detector (secondary).</p></td>
 </tr>
 </tbody>
 </table>
@@ -306,45 +321,87 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="stillface.features.gaze.selection.Candidate">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.selection.</span></span><span class="sig-name descname"><span class="pre">Candidate</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/selection.html#Candidate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.selection.Candidate" title="Link to this definition">¶</a></dt>
-<dd><p>One detected box on one frame.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="stillface.features.gaze.selection.Candidate.box">
-<span class="sig-name descname"><span class="pre">box</span></span><a class="headerlink" href="#stillface.features.gaze.selection.Candidate.box" title="Link to this definition">¶</a></dt>
-<dd><p>Head box in normalized coordinates.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="stillface.features.gaze.selection.Candidate.score">
-<span class="sig-name descname"><span class="pre">score</span></span><a class="headerlink" href="#stillface.features.gaze.selection.Candidate.score" title="Link to this definition">¶</a></dt>
-<dd><p>Detection confidence.</p>
-</dd></dl>
-
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.features.gaze.fusion.SECONDARY_ID_OFFSET">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.fusion.</span></span><span class="sig-name descname"><span class="pre">SECONDARY_ID_OFFSET</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1000</span></span><a class="headerlink" href="#stillface.features.gaze.fusion.SECONDARY_ID_OFFSET" title="Link to this definition">¶</a></dt>
+<dd><p>Ids of secondary tracks without a primary partner start here.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="stillface.features.gaze.selection.select_path">
-<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.selection.</span></span><span class="sig-name descname"><span class="pre">select_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stillface.features.gaze.selection.Candidate" title="stillface.features.gaze.selection.Candidate"><span class="pre">Candidate</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jump_penalty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stillface.features.gaze.selection.Candidate" title="stillface.features.gaze.selection.Candidate"><span class="pre">Candidate</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/selection.html#select_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.selection.select_path" title="Link to this definition">¶</a></dt>
-<dd><p>Pick the candidate sequence with the best scores and the smoothest motion.</p>
-<p>A head moves little between neighboring samples, so a weaker box next to the previous
-one beats a strong box elsewhere (another person, an object). Dynamic programming over
-the candidates of all frames maximizes the sum of scores minus <code class="docutils literal notranslate"><span class="pre">jump_penalty</span></code> times
-the distance the box center travels (normalized image units); a frame may also be left
-empty at no gain.</p>
+<dt class="sig sig-object py" id="stillface.features.gaze.fusion.merge_duplicates">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.fusion.</span></span><span class="sig-name descname"><span class="pre">merge_duplicates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tracks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">stillface.features.gaze.heads.HeadTrack</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_containment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_share</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">stillface.features.gaze.heads.HeadTrack</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/fusion.html#merge_duplicates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.fusion.merge_duplicates" title="Link to this definition">¶</a></dt>
+<dd><p>Merge tracks that follow the same head (e.g. a head box and a box of its face part).</p>
+<p>Two tracks are duplicates if on at least <code class="docutils literal notranslate"><span class="pre">min_share</span></code> of their shared frames the
+smaller box lies mostly (<code class="docutils literal notranslate"><span class="pre">min_containment</span></code>) inside the other. A merged track keeps,
+per frame, the box with the higher score.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>frames</strong> – Candidates of each frame, possibly empty.</p></li>
-<li><p><strong>jump_penalty</strong> – Cost per unit of center distance between consecutive chosen boxes.</p></li>
-<li><p><strong>min_score</strong> – Candidates below this score are ignored.</p></li>
+<li><p><strong>tracks</strong> – Head tracks of one detector.</p></li>
+<li><p><strong>min_containment</strong> – Share of the smaller box inside the other.</p></li>
+<li><p><strong>min_share</strong> – Share of shared frames that must agree.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>One chosen candidate per frame, None where the frame stays empty.</p>
+<dd class="field-even"><p>Tracks without duplicates; a merged track keeps the id of the longer one.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.gaze.fusion.fuse_tracks">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.fusion.</span></span><span class="sig-name descname"><span class="pre">fuse_tracks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">stillface.features.gaze.heads.HeadTrack</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secondary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">stillface.features.gaze.heads.HeadTrack</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_iou</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_share</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">stillface.features.gaze.heads.HeadTrack</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/fusion.html#fuse_tracks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.fusion.fuse_tracks" title="Link to this definition">¶</a></dt>
+<dd><p>Merge the tracks of a head detector (primary) and a face detector (secondary).</p>
+<p>A secondary track that follows the same person as a primary track (overlapping boxes on
+most shared frames) is merged into it: on frames where both exist the box is their union
+(a face box lies inside the head box, so the head box mostly wins) and the score is the
+larger one; frames only one detector saw are taken from that detector. Secondary tracks
+without a partner are kept as additional heads.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>primary</strong> – Head tracks.</p></li>
+<li><p><strong>secondary</strong> – Face tracks.</p></li>
+<li><p><strong>min_iou</strong> – Boxes overlapping at least this much belong to the same person.</p></li>
+<li><p><strong>min_share</strong> – Share of shared frames that must overlap.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fused tracks; ids of unmatched secondary tracks are offset by
+<a class="reference internal" href="#stillface.features.gaze.fusion.SECONDARY_ID_OFFSET" title="stillface.features.gaze.fusion.SECONDARY_ID_OFFSET"><code class="xref py py-data docutils literal notranslate"><span class="pre">SECONDARY_ID_OFFSET</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.gaze.fusion.FusedHeadTracker">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.fusion.</span></span><span class="sig-name descname"><span class="pre">FusedHeadTracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTracker" title="stillface.features.gaze.heads.HeadTracker"><span class="pre">stillface.features.gaze.heads.HeadTracker</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">secondary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTracker" title="stillface.features.gaze.heads.HeadTracker"><span class="pre">stillface.features.gaze.heads.HeadTracker</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/fusion.html#FusedHeadTracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.fusion.FusedHeadTracker" title="Link to this definition">¶</a></dt>
+<dd><p>Runs a head detector and a face detector on a clip and fuses their tracks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>primary</strong> – Head tracker (text-prompted head detector).</p></li>
+<li><p><strong>secondary</strong> – Face tracker.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.features.gaze.fusion.FusedHeadTracker.track">
+<span class="sig-name descname"><span class="pre">track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">stillface.features.gaze.heads.HeadTrack</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/fusion.html#FusedHeadTracker.track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.fusion.FusedHeadTracker.track" title="Link to this definition">¶</a></dt>
+<dd><p>Track heads with both detectors and fuse the tracks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clip</strong> – Video clip.</p></li>
+<li><p><strong>frame_indices</strong> – Frames to analyze, ascending.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fused head tracks; duplicate head tracks are merged first.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -355,23 +412,23 @@ empty at no gain.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../../io/index.html">
+          <a class="next-page" href="../gdino_heads/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">stillface.features.io</div>
+                <div class="title">stillface.features.gaze.gdino_heads</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../runner/index.html">
+          <a class="prev-page" href="../exordium_heads/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">stillface.features.gaze.runner</div>
+                <div class="title">stillface.features.gaze.exordium_heads</div>
                 
               </div>
             </a>
@@ -405,16 +462,18 @@ empty at no gain.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">stillface.features.gaze.selection</a><ul>
+<li><a class="reference internal" href="#">stillface.features.gaze.fusion</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#stillface.features.gaze.selection.Candidate"><code class="docutils literal notranslate"><span class="pre">Candidate</span></code></a><ul>
-<li><a class="reference internal" href="#stillface.features.gaze.selection.Candidate.box"><code class="docutils literal notranslate"><span class="pre">Candidate.box</span></code></a></li>
-<li><a class="reference internal" href="#stillface.features.gaze.selection.Candidate.score"><code class="docutils literal notranslate"><span class="pre">Candidate.score</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.fusion.SECONDARY_ID_OFFSET"><code class="docutils literal notranslate"><span class="pre">SECONDARY_ID_OFFSET</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.fusion.merge_duplicates"><code class="docutils literal notranslate"><span class="pre">merge_duplicates()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.fusion.fuse_tracks"><code class="docutils literal notranslate"><span class="pre">fuse_tracks()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.fusion.FusedHeadTracker"><code class="docutils literal notranslate"><span class="pre">FusedHeadTracker</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.gaze.fusion.FusedHeadTracker.track"><code class="docutils literal notranslate"><span class="pre">FusedHeadTracker.track()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#stillface.features.gaze.selection.select_path"><code class="docutils literal notranslate"><span class="pre">select_path()</span></code></a></li>
 </ul>
 </li>
 </ul>

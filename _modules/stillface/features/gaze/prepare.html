@@ -214,18 +214,18 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/classes/index.html">stillface.features.gaze.classes</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/combined/index.html">stillface.features.gaze.combined</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/estimator/index.html">stillface.features.gaze.estimator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/fusion/index.html">stillface.features.gaze.fusion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/gdino_heads/index.html">stillface.features.gaze.gdino_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/heads/index.html">stillface.features.gaze.heads</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/owl_heads/index.html">stillface.features.gaze.owl_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pilot/index.html">stillface.features.gaze.pilot</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/roles/index.html">stillface.features.gaze.roles</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/runner/index.html">stillface.features.gaze.runner</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/selection/index.html">stillface.features.gaze.selection</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/tracking/index.html">stillface.features.gaze.tracking</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/io/index.html">stillface.features.io</a></li>
@@ -284,7 +284,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.heads</span><span class="w"> </span><span class="kn">import</span> <span class="n">HeadBox</span><span class="p">,</span> <span class="n">HeadTracker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.gaze.roles</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">RoleAssignment</span><span class="p">,</span>
-    <span class="n">RoleReferences</span><span class="p">,</span>
     <span class="n">assign_roles</span><span class="p">,</span>
     <span class="n">head_per_frame</span><span class="p">,</span>
     <span class="n">missing_reason</span><span class="p">,</span>
@@ -364,7 +363,6 @@
     <span class="n">phase</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">tracker</span><span class="p">:</span> <span class="n">HeadTracker</span><span class="p">,</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">GazeConfig</span><span class="p">,</span>
-    <span class="n">references</span><span class="p">:</span> <span class="n">RoleReferences</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">overrides</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClipHeads</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Track the heads of a clip and assign them to the mother and the baby.</span>
@@ -375,7 +373,6 @@
 <span class="sd">        phase: Experiment phase.</span>
 <span class="sd">        tracker: Head detector and tracker.</span>
 <span class="sd">        config: Gaze configuration (sample rate, role rules).</span>
-<span class="sd">        references: Identity embeddings of the participants, if available.</span>
 <span class="sd">        overrides: Pinned role assignments.</span>
 
 <span class="sd">    Returns:</span>
@@ -384,9 +381,7 @@
     <span class="n">n_frames</span><span class="p">,</span> <span class="n">fps</span> <span class="o">=</span> <span class="n">clip_properties</span><span class="p">(</span><span class="n">clip</span><span class="p">)</span>
     <span class="n">indices</span> <span class="o">=</span> <span class="n">sample_frame_indices</span><span class="p">(</span><span class="n">n_frames</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">sample_rate_hz</span><span class="p">)</span>
     <span class="n">tracks</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="n">clip</span><span class="p">,</span> <span class="n">indices</span><span class="p">)</span>
-    <span class="n">assignment</span> <span class="o">=</span> <span class="n">assign_roles</span><span class="p">(</span>
-        <span class="n">tracks</span><span class="p">,</span> <span class="n">camera</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">),</span> <span class="n">config</span><span class="p">,</span> <span class="n">references</span><span class="o">=</span><span class="n">references</span><span class="p">,</span> <span class="n">overrides</span><span class="o">=</span><span class="n">overrides</span>
-    <span class="p">)</span>
+    <span class="n">assignment</span> <span class="o">=</span> <span class="n">assign_roles</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">camera</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">),</span> <span class="n">config</span><span class="p">,</span> <span class="n">overrides</span><span class="o">=</span><span class="n">overrides</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">assignment</span><span class="o">.</span><span class="n">flags</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">camera</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">assignment</span><span class="o">.</span><span class="n">flags</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">ClipHeads</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">assignment</span><span class="p">,</span> <span class="n">head_per_frame</span><span class="p">(</span><span class="n">assignment</span><span class="p">,</span> <span class="n">tracks</span><span class="p">,</span> <span class="n">indices</span><span class="p">))</span></div>

@@ -214,18 +214,18 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/classes/index.html">stillface.features.gaze.classes</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/combined/index.html">stillface.features.gaze.combined</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/estimator/index.html">stillface.features.gaze.estimator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/fusion/index.html">stillface.features.gaze.fusion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/gdino_heads/index.html">stillface.features.gaze.gdino_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/heads/index.html">stillface.features.gaze.heads</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/owl_heads/index.html">stillface.features.gaze.owl_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pilot/index.html">stillface.features.gaze.pilot</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/roles/index.html">stillface.features.gaze.roles</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/runner/index.html">stillface.features.gaze.runner</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/selection/index.html">stillface.features.gaze.selection</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/tracking/index.html">stillface.features.gaze.tracking</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/io/index.html">stillface.features.io</a></li>
@@ -303,22 +303,6 @@
 <span class="sd">"""``(camera, phase)`` mapped to ``{person: track_id}``, from a ``roles.json`` file."""</span>
 
 
-<div class="viewcode-block" id="RoleReferences">
-<a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.RoleReferences">[docs]</a>
-<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">RoleReferences</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Face-identity embeddings of the two participants of a session.</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        mother: Mean embedding from the mother camera.</span>
-<span class="sd">        baby: Mean embedding from the baby camera.</span>
-<span class="sd">    """</span>
-
-    <span class="n">mother</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-    <span class="n">baby</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span></div>
-
-
-
 <div class="viewcode-block" id="RoleAssignment">
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.RoleAssignment">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -356,10 +340,14 @@
     <span class="n">phase</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">n_frames</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">GazeConfig</span><span class="p">,</span>
-    <span class="n">references</span><span class="p">:</span> <span class="n">RoleReferences</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">overrides</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RoleAssignment</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Assign head tracks to the mother and the baby.</span>
+
+<span class="sd">    Close cameras: the owner is the confident, large track with the most evidence near the</span>
+<span class="sd">    image centre. Side cameras: the two strongest persistent heads, excluding far-away</span>
+<span class="sd">    background people, are told apart by the fixed seating (side prior per camera and</span>
+<span class="sd">    phase).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tracks: Head tracks of the clip.</span>
@@ -367,7 +355,6 @@
 <span class="sd">        phase: Experiment phase.</span>
 <span class="sd">        n_frames: Number of sampled frames in the clip.</span>
 <span class="sd">        config: Gaze configuration (side priors, role rules).</span>
-<span class="sd">        references: Identity embeddings of the participants, if available.</span>
 <span class="sd">        overrides: Pinned assignments that win over the automatic decision.</span>
 
 <span class="sd">    Returns:</span>
@@ -377,67 +364,32 @@
     <span class="k">if</span> <span class="n">pinned</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">RoleAssignment</span><span class="p">(</span><span class="n">pinned</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"mother"</span><span class="p">),</span> <span class="n">pinned</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"baby"</span><span class="p">))</span>
 
+    <span class="n">rules</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">roles</span>
     <span class="k">if</span> <span class="n">camera</span> <span class="ow">in</span> <span class="n">PERSONS</span><span class="p">:</span>
-        <span class="c1"># the camera's owner is the most confidently present face, not the biggest box: the</span>
-        <span class="c1"># partner's face partly enters the close-up views as a large, weak detection</span>
-        <span class="n">dominant</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">evidence</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">track_id</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">dominant</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">dominant</span><span class="o">.</span><span class="n">track_id</span>
+        <span class="c1"># the camera frames its owner: a confident, large head near the image centre, not</span>
+        <span class="c1"># the partner's head entering from an edge or a head-like drawing on the wall</span>
+        <span class="n">owners</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tracks</span>
+            <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">median_score</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">rules</span><span class="o">.</span><span class="n">min_owner_score</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">median_area</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">rules</span><span class="o">.</span><span class="n">min_owner_area</span>
+        <span class="p">]</span>  <span class="c1"># fmt: skip</span>
+        <span class="n">owner</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">owners</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">evidence</span><span class="p">(</span><span class="n">centrality</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">track_id</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">owner</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">owner</span><span class="o">.</span><span class="n">track_id</span>
         <span class="k">return</span> <span class="n">RoleAssignment</span><span class="p">(</span><span class="o">*</span><span class="p">((</span><span class="n">track_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">if</span> <span class="n">camera</span> <span class="o">==</span> <span class="s2">"mother"</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">track_id</span><span class="p">)))</span>
 
-    <span class="n">rules</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">roles</span>
-    <span class="n">tagged</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">role</span><span class="p">:</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tracks</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">role</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">role</span> <span class="ow">in</span> <span class="n">PERSONS</span><span class="p">}</span>
-    <span class="k">if</span> <span class="n">tagged</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_with_tagged</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">tagged</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+    <span class="n">present</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tracks</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">boxes</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">rules</span><span class="o">.</span><span class="n">min_presence</span> <span class="o">*</span> <span class="n">n_frames</span><span class="p">]</span>
+    <span class="n">largest</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="n">t</span><span class="o">.</span><span class="n">median_area</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">present</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
     <span class="n">candidates</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-        <span class="p">(</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tracks</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">boxes</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">rules</span><span class="o">.</span><span class="n">min_presence</span> <span class="o">*</span> <span class="n">n_frames</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">present</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">median_area</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">rules</span><span class="o">.</span><span class="n">min_relative_head_area</span> <span class="o">*</span> <span class="n">largest</span><span class="p">),</span>
         <span class="n">key</span><span class="o">=</span><span class="n">_weight</span><span class="p">,</span>
         <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">candidates</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">RoleAssignment</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="n">prior</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">side_priors</span><span class="p">,</span> <span class="n">camera</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="c1"># one visible participant cannot be told from the other by position alone: the mother</span>
-        <span class="c1"># leans over the baby, and the baby's face is often missed</span>
+        <span class="c1"># one visible participant cannot be told from the other by position alone</span>
         <span class="k">return</span> <span class="n">RoleAssignment</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="s2">"single_track"</span><span class="p">,</span> <span class="s2">"roles_ambiguous"</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">phase</span> <span class="o">==</span> <span class="s2">"baseline"</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_by_identity_or_size</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">references</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">_by_side</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">prior</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_by_side</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">side_priors</span><span class="o">.</span><span class="n">side</span><span class="p">(</span><span class="n">camera</span><span class="p">,</span> <span class="n">phase</span><span class="p">),</span> <span class="n">config</span><span class="p">)</span></div>
 
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_with_tagged</span><span class="p">(</span>
-    <span class="n">tracks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">HeadTrack</span><span class="p">],</span>
-    <span class="n">tagged</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">HeadTrack</span><span class="p">],</span>
-    <span class="n">n_frames</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">config</span><span class="p">:</span> <span class="n">GazeConfig</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RoleAssignment</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Assignment when a text-prompted detector already named some of the heads.</span>
-
-<span class="sd">    The missing role takes the most confident anonymous head that is not tiny compared with</span>
-<span class="sd">    the named partner's (background people are small).</span>
-<span class="sd">    """</span>
-    <span class="n">ids</span> <span class="o">=</span> <span class="p">{</span><span class="n">person</span><span class="p">:</span> <span class="n">tagged</span><span class="p">[</span><span class="n">person</span><span class="p">]</span><span class="o">.</span><span class="n">track_id</span> <span class="k">if</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">tagged</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">PERSONS</span><span class="p">}</span>
-    <span class="n">rules</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">roles</span>
-    <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">PERSONS</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">ids</span><span class="p">[</span><span class="n">person</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">partner</span> <span class="o">=</span> <span class="n">tagged</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"baby"</span> <span class="k">if</span> <span class="n">person</span> <span class="o">==</span> <span class="s2">"mother"</span> <span class="k">else</span> <span class="s2">"mother"</span><span class="p">)</span>
-        <span class="n">floor</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="k">if</span> <span class="n">partner</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">partner</span><span class="o">.</span><span class="n">boxes</span><span class="p">:</span>
-            <span class="n">floor</span> <span class="o">=</span> <span class="n">rules</span><span class="o">.</span><span class="n">min_relative_head_area</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">([</span><span class="n">box</span><span class="o">.</span><span class="n">area</span> <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">partner</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
-            <span class="p">)</span>
-        <span class="n">used</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ids</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
-        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tracks</span>
-            <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">role</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">track_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">used</span>
-            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">boxes</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">rules</span><span class="o">.</span><span class="n">min_presence</span> <span class="o">*</span> <span class="n">n_frames</span>
-            <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">b</span><span class="o">.</span><span class="n">area</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">values</span><span class="p">()]))</span> <span class="o">&gt;=</span> <span class="n">floor</span>
-        <span class="p">]</span>  <span class="c1"># fmt: skip</span>
-        <span class="k">if</span> <span class="n">candidates</span><span class="p">:</span>
-            <span class="n">ids</span><span class="p">[</span><span class="n">person</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">weight</span><span class="p">())</span><span class="o">.</span><span class="n">track_id</span>
-    <span class="k">return</span> <span class="n">RoleAssignment</span><span class="p">(</span><span class="n">ids</span><span class="p">[</span><span class="s2">"mother"</span><span class="p">],</span> <span class="n">ids</span><span class="p">[</span><span class="s2">"baby"</span><span class="p">])</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_weight</span><span class="p">(</span><span class="n">track</span><span class="p">:</span> <span class="n">HeadTrack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -454,42 +406,6 @@
         <span class="k">return</span> <span class="n">_AMBIGUOUS</span>
     <span class="n">mother</span><span class="p">,</span> <span class="n">baby</span> <span class="o">=</span> <span class="p">(</span><span class="n">second</span><span class="p">,</span> <span class="n">first</span><span class="p">)</span> <span class="k">if</span> <span class="n">prior</span> <span class="o">==</span> <span class="s2">"right"</span> <span class="k">else</span> <span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">RoleAssignment</span><span class="p">(</span><span class="n">mother</span><span class="o">.</span><span class="n">track_id</span><span class="p">,</span> <span class="n">baby</span><span class="o">.</span><span class="n">track_id</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_by_identity_or_size</span><span class="p">(</span>
-    <span class="n">candidates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HeadTrack</span><span class="p">],</span> <span class="n">config</span><span class="p">:</span> <span class="n">GazeConfig</span><span class="p">,</span> <span class="n">references</span><span class="p">:</span> <span class="n">RoleReferences</span> <span class="o">|</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RoleAssignment</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">references</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">matched</span> <span class="o">=</span> <span class="n">_by_identity</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">roles</span><span class="o">.</span><span class="n">min_identity_similarity</span><span class="p">,</span> <span class="n">references</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">matched</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">matched</span>
-    <span class="n">larger</span><span class="p">,</span> <span class="n">smaller</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">_weight</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">_weight</span><span class="p">(</span><span class="n">smaller</span><span class="p">)</span> <span class="o">/</span> <span class="n">_weight</span><span class="p">(</span><span class="n">larger</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">config</span><span class="o">.</span><span class="n">roles</span><span class="o">.</span><span class="n">size_ambiguity_ratio</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_AMBIGUOUS</span>
-    <span class="k">return</span> <span class="n">RoleAssignment</span><span class="p">(</span><span class="n">larger</span><span class="o">.</span><span class="n">track_id</span><span class="p">,</span> <span class="n">smaller</span><span class="o">.</span><span class="n">track_id</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_by_identity</span><span class="p">(</span>
-    <span class="n">candidates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HeadTrack</span><span class="p">],</span> <span class="n">min_similarity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">references</span><span class="p">:</span> <span class="n">RoleReferences</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RoleAssignment</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">embeddings</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">embedding</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">embedding</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">embeddings</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    <span class="n">similarity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-        <span class="p">[[</span><span class="n">_cosine</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">references</span><span class="o">.</span><span class="n">mother</span><span class="p">),</span> <span class="n">_cosine</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">references</span><span class="o">.</span><span class="n">baby</span><span class="p">)]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">embeddings</span><span class="p">]</span>
-    <span class="p">)</span>
-    <span class="n">as_mother</span><span class="p">,</span> <span class="n">as_baby</span> <span class="o">=</span> <span class="n">similarity</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">as_mother</span> <span class="o">==</span> <span class="n">as_baby</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="n">similarity</span><span class="p">[</span><span class="n">as_mother</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_similarity</span> <span class="ow">or</span> <span class="n">similarity</span><span class="p">[</span><span class="n">as_baby</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_similarity</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">return</span> <span class="n">RoleAssignment</span><span class="p">(</span><span class="n">candidates</span><span class="p">[</span><span class="n">as_mother</span><span class="p">]</span><span class="o">.</span><span class="n">track_id</span><span class="p">,</span> <span class="n">candidates</span><span class="p">[</span><span class="n">as_baby</span><span class="p">]</span><span class="o">.</span><span class="n">track_id</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_cosine</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">b</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-    <span class="n">va</span><span class="p">,</span> <span class="n">vb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">denominator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">va</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vb</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">va</span> <span class="o">@</span> <span class="n">vb</span> <span class="o">/</span> <span class="n">denominator</span><span class="p">)</span> <span class="k">if</span> <span class="n">denominator</span> <span class="k">else</span> <span class="mf">0.0</span>
 
 
 <div class="viewcode-block" id="head_per_frame">

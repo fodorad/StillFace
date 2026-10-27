@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.gaze.pilot" href="../pilot/index.html"><link rel="prev" title="stillface.features.gaze.heads" href="../heads/index.html">
-        <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/gaze/owl_heads/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.gaze.heads" href="../heads/index.html"><link rel="prev" title="stillface.features.gaze.fusion" href="../fusion/index.html">
+        <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/gaze/gdino_heads/index.html">
         <link rel="prefetch" href="../../../../../_static/logo.svg" as="image">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>stillface.features.gaze.owl_heads - StillFace latest documentation</title>
+        <title>stillface.features.gaze.gdino_heads - StillFace latest documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -215,18 +215,18 @@
 <li class="toctree-l4"><a class="reference internal" href="../../config/index.html">stillface.features.config</a></li>
 <li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5"><a class="reference internal" href="../classes/index.html">stillface.features.gaze.classes</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../combined/index.html">stillface.features.gaze.combined</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../estimator/index.html">stillface.features.gaze.estimator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../fusion/index.html">stillface.features.gaze.fusion</a></li>
+<li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.gaze.gdino_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../heads/index.html">stillface.features.gaze.heads</a></li>
-<li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.gaze.owl_heads</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../pilot/index.html">stillface.features.gaze.pilot</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../pipeline/index.html">stillface.features.gaze.pipeline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../prepare/index.html">stillface.features.gaze.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../roles/index.html">stillface.features.gaze.roles</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../runner/index.html">stillface.features.gaze.runner</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../selection/index.html">stillface.features.gaze.selection</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../tracking/index.html">stillface.features.gaze.tracking</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../io/index.html">stillface.features.io</a></li>
@@ -259,7 +259,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../../../../../_sources/autoapi/stillface/features/gaze/owl_heads/index.rst.txt" title="View this page">
+  <a class="muted-link" href="../../../../../_sources/autoapi/stillface/features/gaze/gdino_heads/index.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -277,26 +277,26 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-stillface.features.gaze.owl_heads">
-<span id="stillface-features-gaze-owl-heads"></span><h1>stillface.features.gaze.owl_heads<a class="headerlink" href="#module-stillface.features.gaze.owl_heads" title="Link to this heading">¶</a></h1>
-<p>Text-prompted head detection with OWLv2.</p>
-<p>OWLv2 (Google, Apache-2.0, safetensors) finds objects described in words. Prompted with
-“a baby’s head” it puts a tight box on the baby’s head even when the face is turned away,
-reclined in profile or partly hidden, where face detectors fail. Because the prompt names
-the person, the track carries its role. Needs the <code class="docutils literal notranslate"><span class="pre">features</span></code> extra (<code class="docutils literal notranslate"><span class="pre">transformers</span></code>).</p>
+          <section id="module-stillface.features.gaze.gdino_heads">
+<span id="stillface-features-gaze-gdino-heads"></span><h1>stillface.features.gaze.gdino_heads<a class="headerlink" href="#module-stillface.features.gaze.gdino_heads" title="Link to this heading">¶</a></h1>
+<p>Head detection with Grounding DINO prompted by “a human head”.</p>
+<p>Grounding DINO (IDEA Research, Apache-2.0, safetensors) detects objects described in
+words. The single prompt “a human head.” puts tight boxes on every visible head, adult or
+infant, frontal, in profile, from behind or partly occluded, which a face detector misses.
+Needs the <code class="docutils literal notranslate"><span class="pre">features</span></code> extra (<code class="docutils literal notranslate"><span class="pre">transformers</span></code>).</p>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.owl_heads.logger" title="stillface.features.gaze.owl_heads.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.gdino_heads.logger" title="stillface.features.gaze.gdino_heads.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.owl_heads.DEFAULT_MODEL" title="stillface.features.gaze.owl_heads.DEFAULT_MODEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_MODEL</span></code></a></p></td>
-<td><p>Hugging Face model used for the text-prompted detection.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.gdino_heads.DEFAULT_MODEL" title="stillface.features.gaze.gdino_heads.DEFAULT_MODEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_MODEL</span></code></a></p></td>
+<td><p>Hugging Face Grounding DINO checkpoint.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.owl_heads.BABY_QUERY" title="stillface.features.gaze.owl_heads.BABY_QUERY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BABY_QUERY</span></code></a></p></td>
-<td><p>Text prompt that finds the baby's head.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.gdino_heads.HEAD_PROMPT" title="stillface.features.gaze.gdino_heads.HEAD_PROMPT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HEAD_PROMPT</span></code></a></p></td>
+<td><p>Text prompt; Grounding DINO expects lower case phrases ending with a period.</p></td>
 </tr>
 </tbody>
 </table>
@@ -307,8 +307,8 @@ the person, the track carries its role. Needs the <code class="docutils literal 
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.owl_heads.OwlHeadTracker" title="stillface.features.gaze.owl_heads.OwlHeadTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OwlHeadTracker</span></code></a></p></td>
-<td><p><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTracker" title="stillface.features.gaze.heads.HeadTracker"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeadTracker</span></code></a> for one prompted person.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker" title="stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GroundingDinoHeadTracker</span></code></a></p></td>
+<td><p><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTracker" title="stillface.features.gaze.heads.HeadTracker"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeadTracker</span></code></a> based on Grounding DINO.</p></td>
 </tr>
 </tbody>
 </table>
@@ -317,49 +317,80 @@ the person, the track carries its role. Needs the <code class="docutils literal 
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py data">
-<dt class="sig sig-object py" id="stillface.features.gaze.owl_heads.logger">
-<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.owl_heads.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#stillface.features.gaze.owl_heads.logger" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stillface.features.gaze.gdino_heads.logger">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.gdino_heads.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#stillface.features.gaze.gdino_heads.logger" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
-<dt class="sig sig-object py" id="stillface.features.gaze.owl_heads.DEFAULT_MODEL">
-<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.owl_heads.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_MODEL</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'google/owlv2-base-patch16-ensemble'</span></span><a class="headerlink" href="#stillface.features.gaze.owl_heads.DEFAULT_MODEL" title="Link to this definition">¶</a></dt>
-<dd><p>Hugging Face model used for the text-prompted detection.</p>
+<dt class="sig sig-object py" id="stillface.features.gaze.gdino_heads.DEFAULT_MODEL">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.gdino_heads.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_MODEL</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'IDEA-Research/grounding-dino-base'</span></span><a class="headerlink" href="#stillface.features.gaze.gdino_heads.DEFAULT_MODEL" title="Link to this definition">¶</a></dt>
+<dd><p>Hugging Face Grounding DINO checkpoint.</p>
 </dd></dl>
 
 <dl class="py data">
-<dt class="sig sig-object py" id="stillface.features.gaze.owl_heads.BABY_QUERY">
-<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.owl_heads.</span></span><span class="sig-name descname"><span class="pre">BABY_QUERY</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;a</span> <span class="pre">baby's</span> <span class="pre">head&quot;</span></span><a class="headerlink" href="#stillface.features.gaze.owl_heads.BABY_QUERY" title="Link to this definition">¶</a></dt>
-<dd><p>Text prompt that finds the baby’s head.</p>
+<dt class="sig sig-object py" id="stillface.features.gaze.gdino_heads.HEAD_PROMPT">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.gdino_heads.</span></span><span class="sig-name descname"><span class="pre">HEAD_PROMPT</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'a</span> <span class="pre">human</span> <span class="pre">head.'</span></span><a class="headerlink" href="#stillface.features.gaze.gdino_heads.HEAD_PROMPT" title="Link to this definition">¶</a></dt>
+<dd><p>Text prompt; Grounding DINO expects lower case phrases ending with a period.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="stillface.features.gaze.owl_heads.OwlHeadTracker">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.owl_heads.</span></span><span class="sig-name descname"><span class="pre">OwlHeadTracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">BABY_QUERY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'baby'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">DEFAULT_MODEL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_hz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_candidates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jump_penalty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_gap_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/owl_heads.html#OwlHeadTracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.owl_heads.OwlHeadTracker" title="Link to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTracker" title="stillface.features.gaze.heads.HeadTracker"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeadTracker</span></code></a> for one prompted person.</p>
-<p>The model runs on a sparse time grid (<code class="docutils literal notranslate"><span class="pre">rate_hz</span></code>); per anchor frame the candidate
-boxes are reduced to one smooth path (see <code class="xref py py-func docutils literal notranslate"><span class="pre">select_path()</span></code>), and the frames between
-anchors are interpolated.</p>
+<dt class="sig sig-object py" id="stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.gdino_heads.</span></span><span class="sig-name descname"><span class="pre">GroundingDinoHeadTracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">HEAD_PROMPT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">DEFAULT_MODEL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_hz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_gap_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stitch_gap_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/gdino_heads.html#GroundingDinoHeadTracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker" title="Link to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTracker" title="stillface.features.gaze.heads.HeadTracker"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeadTracker</span></code></a> based on Grounding DINO.</p>
+<p>The detector runs on a sparse time grid (<code class="docutils literal notranslate"><span class="pre">rate_hz</span></code>), its detections are linked into
+tracks, and the tracks are interpolated to the requested frames.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> – Text prompt describing the head.</p></li>
-<li><p><strong>role</strong> – <code class="docutils literal notranslate"><span class="pre">mother</span></code> or <code class="docutils literal notranslate"><span class="pre">baby</span></code>, stored on the returned track.</p></li>
-<li><p><strong>model_name</strong> – Hugging Face OWLv2 checkpoint.</p></li>
-<li><p><strong>rate_hz</strong> – Anchor rate of the detector.</p></li>
-<li><p><strong>max_candidates</strong> – Candidate boxes kept per frame.</p></li>
-<li><p><strong>min_score</strong> – Candidates below this score are ignored.</p></li>
-<li><p><strong>jump_penalty</strong> – Smoothness weight of the path selection.</p></li>
-<li><p><strong>max_gap_s</strong> – Longest gap between anchors that is interpolated.</p></li>
+<li><p><strong>prompt</strong> – Text prompt.</p></li>
+<li><p><strong>model_name</strong> – Hugging Face checkpoint.</p></li>
+<li><p><strong>rate_hz</strong> – Detection rate.</p></li>
+<li><p><strong>box_threshold</strong> – Minimum box confidence.</p></li>
+<li><p><strong>text_threshold</strong> – Minimum phrase confidence.</p></li>
+<li><p><strong>max_gap_s</strong> – Longest gap between detections that is interpolated.</p></li>
+<li><p><strong>stitch_gap_s</strong> – Longest detection dropout after which a head’s track is continued.</p></li>
 <li><p><strong>batch_size</strong> – Frames per model call.</p></li>
 <li><p><strong>device</strong> – Torch device name, the best available if None.</p></li>
+<li><p><strong>cache_dir</strong> – Folder caching the raw detections per clip, so re-running the role and
+fusion logic does not run the model again; no caching if None.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="stillface.features.gaze.owl_heads.OwlHeadTracker.track">
-<span class="sig-name descname"><span class="pre">track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">stillface.features.gaze.heads.HeadTrack</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/owl_heads.html#OwlHeadTracker.track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.owl_heads.OwlHeadTracker.track" title="Link to this definition">¶</a></dt>
-<dd><p>Find the prompted head on a sparse grid and interpolate to the requested frames.</p>
+<dt class="sig sig-object py" id="stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker.detect">
+<span class="sig-name descname"><span class="pre">detect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../tracking/index.html#stillface.features.gaze.tracking.Candidate" title="stillface.features.gaze.tracking.Candidate"><span class="pre">stillface.features.gaze.tracking.Candidate</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/gdino_heads.html#GroundingDinoHeadTracker.detect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker.detect" title="Link to this definition">¶</a></dt>
+<dd><p>Head candidates on RGB frames, in normalized coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>frames</strong> – RGB <code class="docutils literal notranslate"><span class="pre">uint8</span></code> frames of equal size.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Candidates per frame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker.detect_clip">
+<span class="sig-name descname"><span class="pre">detect_clip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anchors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../tracking/index.html#stillface.features.gaze.tracking.Candidate" title="stillface.features.gaze.tracking.Candidate"><span class="pre">stillface.features.gaze.tracking.Candidate</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/gdino_heads.html#GroundingDinoHeadTracker.detect_clip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker.detect_clip" title="Link to this definition">¶</a></dt>
+<dd><p>Detect heads on the anchor frames of a clip, using the cache when possible.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clip</strong> – Video clip.</p></li>
+<li><p><strong>anchors</strong> – Frames to detect on, ascending.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Candidates per decodable anchor frame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker.track">
+<span class="sig-name descname"><span class="pre">track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">stillface.features.gaze.heads.HeadTrack</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/gdino_heads.html#GroundingDinoHeadTracker.track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker.track" title="Link to this definition">¶</a></dt>
+<dd><p>Detect heads on a sparse grid, link them and interpolate to the requested frames.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -368,7 +399,7 @@ anchors are interpolated.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>One role-tagged track, empty of boxes if the head was never found.</p>
+<dd class="field-even"><p>One track per head.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -383,23 +414,23 @@ anchors are interpolated.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../pilot/index.html">
+          <a class="next-page" href="../heads/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">stillface.features.gaze.pilot</div>
+                <div class="title">stillface.features.gaze.heads</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../heads/index.html">
+          <a class="prev-page" href="../fusion/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">stillface.features.gaze.heads</div>
+                <div class="title">stillface.features.gaze.fusion</div>
                 
               </div>
             </a>
@@ -433,15 +464,17 @@ anchors are interpolated.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">stillface.features.gaze.owl_heads</a><ul>
+<li><a class="reference internal" href="#">stillface.features.gaze.gdino_heads</a><ul>
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#stillface.features.gaze.owl_heads.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
-<li><a class="reference internal" href="#stillface.features.gaze.owl_heads.DEFAULT_MODEL"><code class="docutils literal notranslate"><span class="pre">DEFAULT_MODEL</span></code></a></li>
-<li><a class="reference internal" href="#stillface.features.gaze.owl_heads.BABY_QUERY"><code class="docutils literal notranslate"><span class="pre">BABY_QUERY</span></code></a></li>
-<li><a class="reference internal" href="#stillface.features.gaze.owl_heads.OwlHeadTracker"><code class="docutils literal notranslate"><span class="pre">OwlHeadTracker</span></code></a><ul>
-<li><a class="reference internal" href="#stillface.features.gaze.owl_heads.OwlHeadTracker.track"><code class="docutils literal notranslate"><span class="pre">OwlHeadTracker.track()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.gdino_heads.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.gdino_heads.DEFAULT_MODEL"><code class="docutils literal notranslate"><span class="pre">DEFAULT_MODEL</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.gdino_heads.HEAD_PROMPT"><code class="docutils literal notranslate"><span class="pre">HEAD_PROMPT</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker"><code class="docutils literal notranslate"><span class="pre">GroundingDinoHeadTracker</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker.detect"><code class="docutils literal notranslate"><span class="pre">GroundingDinoHeadTracker.detect()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker.detect_clip"><code class="docutils literal notranslate"><span class="pre">GroundingDinoHeadTracker.detect_clip()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker.track"><code class="docutils literal notranslate"><span class="pre">GroundingDinoHeadTracker.track()</span></code></a></li>
 </ul>
 </li>
 </ul>
