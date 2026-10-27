@@ -99,6 +99,17 @@ Module Contents
       Frame index mapped to the detection confidence; frames without a score count
       as fully confident.
 
+   .. attribute:: faces
+
+      Frame index mapped to the face detector's confidence, for the frames on which a
+      face was detected in this head (the face is visible).
+
+
+   .. py:method:: face_share() -> float
+
+      Share of the track's frames on which the face was detected.
+
+
 
    .. py:method:: evidence(centrality: bool = False) -> float
 

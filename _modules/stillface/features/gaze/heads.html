@@ -343,12 +343,22 @@
 <span class="sd">        embedding: Mean face-identity embedding of the track, None if not computed.</span>
 <span class="sd">        scores: Frame index mapped to the detection confidence; frames without a score count</span>
 <span class="sd">            as fully confident.</span>
+<span class="sd">        faces: Frame index mapped to the face detector's confidence, for the frames on which a</span>
+<span class="sd">            face was detected in this head (the face is visible).</span>
 <span class="sd">    """</span>
 
     <span class="n">track_id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">boxes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">HeadBox</span><span class="p">]</span>
     <span class="n">embedding</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">scores</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">faces</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HeadTrack.face_share">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack.face_share">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">face_share</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Share of the track's frames on which the face was detected."""</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">faces</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boxes</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boxes</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boxes</span> <span class="k">else</span> <span class="mf">0.0</span></div>
+
 
 <div class="viewcode-block" id="HeadTrack.evidence">
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack.evidence">[docs]</a>

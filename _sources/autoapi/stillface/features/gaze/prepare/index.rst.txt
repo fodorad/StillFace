@@ -59,6 +59,16 @@ Module Contents
 
       Person mapped to one box per sampled frame, None where not found.
 
+   .. attribute:: faces
+
+      Person mapped to one flag per sampled frame, True where the face was detected.
+
+
+   .. py:method:: face_visible(person: str, position: int) -> bool | None
+
+      Face flag of a person on a sampled frame, None if there is no head.
+
+
 
    .. py:method:: reason_missing(camera: str, person: str) -> str
 

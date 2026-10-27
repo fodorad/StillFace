@@ -344,10 +344,10 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RoleAssignment</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Assign head tracks to the mother and the baby.</span>
 
-<span class="sd">    Close cameras: the owner is the confident, large track with the most evidence near the</span>
-<span class="sd">    image centre. Side cameras: the two strongest persistent heads, excluding far-away</span>
-<span class="sd">    background people, are told apart by the fixed seating (side prior per camera and</span>
-<span class="sd">    phase).</span>
+<span class="sd">    Close cameras: the owner is the track whose face is detected on enough of its frames,</span>
+<span class="sd">    with the most evidence near the image centre. Side cameras: the two strongest persistent</span>
+<span class="sd">    heads, excluding far-away background people, are told apart by the fixed seating (side</span>
+<span class="sd">    prior per camera and phase).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tracks: Head tracks of the clip.</span>
@@ -366,12 +366,9 @@
 
     <span class="n">rules</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">roles</span>
     <span class="k">if</span> <span class="n">camera</span> <span class="ow">in</span> <span class="n">PERSONS</span><span class="p">:</span>
-        <span class="c1"># the camera frames its owner: a confident, large head near the image centre, not</span>
-        <span class="c1"># the partner's head entering from an edge or a head-like drawing on the wall</span>
-        <span class="n">owners</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tracks</span>
-            <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">median_score</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">rules</span><span class="o">.</span><span class="n">min_owner_score</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">median_area</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">rules</span><span class="o">.</span><span class="n">min_owner_area</span>
-        <span class="p">]</span>  <span class="c1"># fmt: skip</span>
+        <span class="c1"># the camera frames its owner: a head whose face is seen, near the image centre; the</span>
+        <span class="c1"># partner's head entering from above or a drawing on the wall shows no face</span>
+        <span class="n">owners</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tracks</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">face_share</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">rules</span><span class="o">.</span><span class="n">min_owner_face_share</span><span class="p">]</span>
         <span class="n">owner</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">owners</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">evidence</span><span class="p">(</span><span class="n">centrality</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">track_id</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">owner</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">owner</span><span class="o">.</span><span class="n">track_id</span>
         <span class="k">return</span> <span class="n">RoleAssignment</span><span class="p">(</span><span class="o">*</span><span class="p">((</span><span class="n">track_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">if</span> <span class="n">camera</span> <span class="o">==</span> <span class="s2">"mother"</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">track_id</span><span class="p">)))</span>
@@ -430,6 +427,31 @@
         <span class="n">boxes</span> <span class="o">=</span> <span class="n">by_id</span><span class="p">[</span><span class="n">track_id</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span> <span class="k">if</span> <span class="n">track_id</span> <span class="ow">in</span> <span class="n">by_id</span> <span class="k">else</span> <span class="p">{}</span>
         <span class="n">heads</span><span class="p">[</span><span class="n">person</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">boxes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frame_indices</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">heads</span></div>
+
+
+
+<div class="viewcode-block" id="face_per_frame">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.face_per_frame">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">face_per_frame</span><span class="p">(</span>
+    <span class="n">assignment</span><span class="p">:</span> <span class="n">RoleAssignment</span><span class="p">,</span> <span class="n">tracks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">HeadTrack</span><span class="p">],</span> <span class="n">frame_indices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Whether each person's face was detected on every sampled frame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        assignment: Role assignment of the clip.</span>
+<span class="sd">        tracks: Head tracks of the clip.</span>
+<span class="sd">        frame_indices: Sampled frames.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Person mapped to one flag per frame.</span>
+<span class="sd">    """</span>
+    <span class="n">by_id</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">track_id</span><span class="p">:</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">}</span>
+    <span class="n">faces</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">PERSONS</span><span class="p">:</span>
+        <span class="n">track_id</span> <span class="o">=</span> <span class="n">assignment</span><span class="o">.</span><span class="n">track_id</span><span class="p">(</span><span class="n">person</span><span class="p">)</span>
+        <span class="n">seen</span> <span class="o">=</span> <span class="n">by_id</span><span class="p">[</span><span class="n">track_id</span><span class="p">]</span><span class="o">.</span><span class="n">faces</span> <span class="k">if</span> <span class="n">track_id</span> <span class="ow">in</span> <span class="n">by_id</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">faces</span><span class="p">[</span><span class="n">person</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">frame</span> <span class="ow">in</span> <span class="n">seen</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frame_indices</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">faces</span></div>
 
 
 

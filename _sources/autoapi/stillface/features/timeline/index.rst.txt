@@ -101,6 +101,11 @@ Module Contents
 
       Why the row is not codable (``occluded``, ``no_head``, ...), else empty.
 
+   .. attribute:: face_visible
+
+      Whether the face was detected inside the head box on this frame (the
+      frame-wise usability mask for face-based analyses), None if there is no head.
+
 
 .. py:function:: write_timeline(rows: list[TimelineRow], path: pathlib.Path) -> None
 

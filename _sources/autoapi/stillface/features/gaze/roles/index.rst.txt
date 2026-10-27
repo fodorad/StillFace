@@ -40,6 +40,7 @@ Functions
 
    stillface.features.gaze.roles.assign_roles
    stillface.features.gaze.roles.head_per_frame
+   stillface.features.gaze.roles.face_per_frame
    stillface.features.gaze.roles.camera_persons
    stillface.features.gaze.roles.missing_reason
    stillface.features.gaze.roles.load_role_overrides
@@ -96,10 +97,10 @@ Module Contents
 
    Assign head tracks to the mother and the baby.
 
-   Close cameras: the owner is the confident, large track with the most evidence near the
-   image centre. Side cameras: the two strongest persistent heads, excluding far-away
-   background people, are told apart by the fixed seating (side prior per camera and
-   phase).
+   Close cameras: the owner is the track whose face is detected on enough of its frames,
+   with the most evidence near the image centre. Side cameras: the two strongest persistent
+   heads, excluding far-away background people, are told apart by the fixed seating (side
+   prior per camera and phase).
 
    :param tracks: Head tracks of the clip.
    :param camera: Camera name.
@@ -120,6 +121,17 @@ Module Contents
    :param frame_indices: Sampled frames.
 
    :returns: Person mapped to one box per frame, None where the head was not found.
+
+
+.. py:function:: face_per_frame(assignment: RoleAssignment, tracks: collections.abc.Sequence[stillface.features.gaze.heads.HeadTrack], frame_indices: collections.abc.Sequence[int]) -> dict[str, list[bool]]
+
+   Whether each person's face was detected on every sampled frame.
+
+   :param assignment: Role assignment of the clip.
+   :param tracks: Head tracks of the clip.
+   :param frame_indices: Sampled frames.
+
+   :returns: Person mapped to one flag per frame.
 
 
 .. py:function:: camera_persons(camera: str) -> tuple[str, ...]

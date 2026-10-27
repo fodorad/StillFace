@@ -328,13 +328,16 @@ the baseline phase the positions may change, so size and face identity decide th
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.head_per_frame" title="stillface.features.gaze.roles.head_per_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">head_per_frame</span></code></a>(→ dict[str, ...)</p></td>
 <td><p>Look up each person's head box on every sampled frame.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.camera_persons" title="stillface.features.gaze.roles.camera_persons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">camera_persons</span></code></a>(→ tuple[str, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.face_per_frame" title="stillface.features.gaze.roles.face_per_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">face_per_frame</span></code></a>(→ dict[str, list[bool]])</p></td>
+<td><p>Whether each person's face was detected on every sampled frame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.camera_persons" title="stillface.features.gaze.roles.camera_persons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">camera_persons</span></code></a>(→ tuple[str, ...])</p></td>
 <td><p>People whose gaze a camera can show.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.missing_reason" title="stillface.features.gaze.roles.missing_reason"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_reason</span></code></a>(→ str)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.missing_reason" title="stillface.features.gaze.roles.missing_reason"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_reason</span></code></a>(→ str)</p></td>
 <td><p>Why a person has no head on a frame.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.load_role_overrides" title="stillface.features.gaze.roles.load_role_overrides"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_role_overrides</span></code></a>(→ RoleOverrides)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.gaze.roles.load_role_overrides" title="stillface.features.gaze.roles.load_role_overrides"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_role_overrides</span></code></a>(→ RoleOverrides)</p></td>
 <td><p>Read a per-session <code class="docutils literal notranslate"><span class="pre">roles.json</span></code>.</p></td>
 </tr>
 </tbody>
@@ -401,10 +404,10 @@ the baseline phase the positions may change, so size and face identity decide th
 <dt class="sig sig-object py" id="stillface.features.gaze.roles.assign_roles">
 <span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.roles.</span></span><span class="sig-name descname"><span class="pre">assign_roles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tracks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">stillface.features.gaze.heads.HeadTrack</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../config/index.html#stillface.features.gaze.config.GazeConfig" title="stillface.features.gaze.config.GazeConfig"><span class="pre">stillface.features.gaze.config.GazeConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">overrides</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">collections.abc.Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stillface.features.gaze.roles.RoleAssignment" title="stillface.features.gaze.roles.RoleAssignment"><span class="pre">RoleAssignment</span></a></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/roles.html#assign_roles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.roles.assign_roles" title="Link to this definition">¶</a></dt>
 <dd><p>Assign head tracks to the mother and the baby.</p>
-<p>Close cameras: the owner is the confident, large track with the most evidence near the
-image centre. Side cameras: the two strongest persistent heads, excluding far-away
-background people, are told apart by the fixed seating (side prior per camera and
-phase).</p>
+<p>Close cameras: the owner is the track whose face is detected on enough of its frames,
+with the most evidence near the image centre. Side cameras: the two strongest persistent
+heads, excluding far-away background people, are told apart by the fixed seating (side
+prior per camera and phase).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -436,6 +439,24 @@ phase).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Person mapped to one box per frame, None where the head was not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.gaze.roles.face_per_frame">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.gaze.roles.</span></span><span class="sig-name descname"><span class="pre">face_per_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assignment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stillface.features.gaze.roles.RoleAssignment" title="stillface.features.gaze.roles.RoleAssignment"><span class="pre">RoleAssignment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../heads/index.html#stillface.features.gaze.heads.HeadTrack" title="stillface.features.gaze.heads.HeadTrack"><span class="pre">stillface.features.gaze.heads.HeadTrack</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/roles.html#face_per_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.roles.face_per_frame" title="Link to this definition">¶</a></dt>
+<dd><p>Whether each person’s face was detected on every sampled frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>assignment</strong> – Role assignment of the clip.</p></li>
+<li><p><strong>tracks</strong> – Head tracks of the clip.</p></li>
+<li><p><strong>frame_indices</strong> – Sampled frames.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Person mapped to one flag per frame.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -569,6 +590,7 @@ track id.</p>
 </li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.assign_roles"><code class="docutils literal notranslate"><span class="pre">assign_roles()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.head_per_frame"><code class="docutils literal notranslate"><span class="pre">head_per_frame()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.roles.face_per_frame"><code class="docutils literal notranslate"><span class="pre">face_per_frame()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.camera_persons"><code class="docutils literal notranslate"><span class="pre">camera_persons()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.missing_reason"><code class="docutils literal notranslate"><span class="pre">missing_reason()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.roles.load_role_overrides"><code class="docutils literal notranslate"><span class="pre">load_role_overrides()</span></code></a></li>

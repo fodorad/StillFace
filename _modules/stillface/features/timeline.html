@@ -299,6 +299,7 @@
     <span class="s2">"partner_mass"</span><span class="p">,</span>
     <span class="s2">"gaze_class"</span><span class="p">,</span>
     <span class="s2">"reason"</span><span class="p">,</span>
+    <span class="s2">"face_visible"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="sd">"""Timeline CSV columns, in file order."""</span>
 
@@ -322,6 +323,8 @@
 <span class="sd">        partner_mass: Share of the gaze heatmap on the partner (head box or zone).</span>
 <span class="sd">        gaze_class: Target class from the plan codes, ``NK`` if not codable.</span>
 <span class="sd">        reason: Why the row is not codable (``occluded``, ``no_head``, ...), else empty.</span>
+<span class="sd">        face_visible: Whether the face was detected inside the head box on this frame (the</span>
+<span class="sd">            frame-wise usability mask for face-based analyses), None if there is no head.</span>
 <span class="sd">    """</span>
 
     <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span>
@@ -335,8 +338,21 @@
     <span class="n">inout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">partner_mass</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">gaze_class</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span></div>
+    <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">face_visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cell</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_optional_bool</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">""</span> <span class="k">else</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">"1"</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_optional_float</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -359,7 +375,7 @@
             <span class="n">writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
                 <span class="n">record</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
-                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="s2">""</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">_cell</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
 
     <span class="n">write_atomic</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">write</span><span class="p">)</span></div>
 
@@ -397,6 +413,7 @@
                 <span class="n">partner_mass</span><span class="o">=</span><span class="n">_optional_float</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">"partner_mass"</span><span class="p">]),</span>
                 <span class="n">gaze_class</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">"gaze_class"</span><span class="p">],</span>
                 <span class="n">reason</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">"reason"</span><span class="p">],</span>
+                <span class="n">face_visible</span><span class="o">=</span><span class="n">_optional_bool</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">"face_visible"</span><span class="p">]),</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">reader</span>
         <span class="p">]</span>

@@ -354,6 +354,18 @@
 <dd><p>Person mapped to one box per sampled frame, None where not found.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.gaze.prepare.ClipHeads.faces">
+<span class="sig-name descname"><span class="pre">faces</span></span><a class="headerlink" href="#stillface.features.gaze.prepare.ClipHeads.faces" title="Link to this definition">¶</a></dt>
+<dd><p>Person mapped to one flag per sampled frame, True where the face was detected.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.features.gaze.prepare.ClipHeads.face_visible">
+<span class="sig-name descname"><span class="pre">face_visible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">person</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/prepare.html#ClipHeads.face_visible"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.prepare.ClipHeads.face_visible" title="Link to this definition">¶</a></dt>
+<dd><p>Face flag of a person on a sampled frame, None if there is no head.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="stillface.features.gaze.prepare.ClipHeads.reason_missing">
 <span class="sig-name descname"><span class="pre">reason_missing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">person</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/gaze/prepare.html#ClipHeads.reason_missing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.gaze.prepare.ClipHeads.reason_missing" title="Link to this definition">¶</a></dt>
@@ -481,6 +493,8 @@
 <li><a class="reference internal" href="#stillface.features.gaze.prepare.ClipHeads.clip_fps"><code class="docutils literal notranslate"><span class="pre">ClipHeads.clip_fps</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.prepare.ClipHeads.assignment"><code class="docutils literal notranslate"><span class="pre">ClipHeads.assignment</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.prepare.ClipHeads.heads"><code class="docutils literal notranslate"><span class="pre">ClipHeads.heads</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.prepare.ClipHeads.faces"><code class="docutils literal notranslate"><span class="pre">ClipHeads.faces</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.gaze.prepare.ClipHeads.face_visible"><code class="docutils literal notranslate"><span class="pre">ClipHeads.face_visible()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.gaze.prepare.ClipHeads.reason_missing"><code class="docutils literal notranslate"><span class="pre">ClipHeads.reason_missing()</span></code></a></li>
 </ul>
 </li>

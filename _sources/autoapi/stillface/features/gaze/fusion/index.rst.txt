@@ -65,9 +65,10 @@ Module Contents
 
    A secondary track that follows the same person as a primary track (overlapping boxes on
    most shared frames) is merged into it: on frames where both exist the box is their union
-   (a face box lies inside the head box, so the head box mostly wins) and the score is the
-   larger one; frames only one detector saw are taken from that detector. Secondary tracks
-   without a partner are kept as additional heads.
+   (a face box lies inside the head box, so the head box mostly wins), the score is the
+   larger one and the frame is marked as face visible; frames only one detector saw are
+   taken from that detector. Secondary tracks without a partner are kept as additional
+   heads.
 
    :param primary: Head tracks.
    :param secondary: Face tracks.
