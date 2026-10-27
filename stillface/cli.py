@@ -67,19 +67,21 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _exordium_head_tracker() -> HeadTracker:
-    """Build the head tracker used on real data.
+def _exordium_head_tracker(paths: DatasetPaths) -> HeadTracker:
+    """Build the head tracker used on real data, the same for every camera.
 
-    Close cameras use the face detector. Side cameras combine OWLv2, prompted with the
-    baby's head (reclined, in profile or half hidden, where face detectors fail), with the
-    same face detector for the mother.
+    Two detectors run on every clip: Grounding DINO prompted with "a human head." finds the
+    heads of both participants in any pose, the YOLO11 face detector adds precise face
+    boxes; their tracks are fused into one track per head.
     """
-    from stillface.features.gaze.combined import CombinedHeadTracker, PerCameraTracker
     from stillface.features.gaze.exordium_heads import ExordiumHeadTracker
-    from stillface.features.gaze.owl_heads import OwlHeadTracker
+    from stillface.features.gaze.fusion import FusedHeadTracker
+    from stillface.features.gaze.gdino_heads import GroundingDinoHeadTracker
 
-    faces = ExordiumHeadTracker(device_id=0)
-    return PerCameraTracker(side=CombinedHeadTracker(OwlHeadTracker(), faces), close=faces)
+    cache = paths.processed_dir / "cache" / "grounding_dino"
+    return FusedHeadTracker(
+        GroundingDinoHeadTracker(cache_dir=cache), ExordiumHeadTracker(device_id=0)
+    )
 
 
 def _gaze_estimator(variant: str) -> GazeEstimator:
@@ -91,14 +93,15 @@ def _gaze_estimator(variant: str) -> GazeEstimator:
 
 def main(
     argv: Sequence[str] | None = None,
-    head_tracker_factory: Callable[[], HeadTracker] = _exordium_head_tracker,
+    head_tracker_factory: Callable[[DatasetPaths], HeadTracker] = _exordium_head_tracker,
     gaze_estimator_factory: Callable[[str], GazeEstimator] = _gaze_estimator,
 ) -> int:
     """Run the command line interface.
 
     Args:
         argv: Arguments, ``sys.argv[1:]`` if None.
-        head_tracker_factory: Builds the head tracker for ``features heads``; replaceable so
+        head_tracker_factory: Builds the head tracker from the dataset paths (for its cache);
+            replaceable so
             the command can run without exordium models.
         gaze_estimator_factory: Builds the gaze estimator for a model variant, for
             ``features gaze``; replaceable for the same reason.
@@ -118,7 +121,7 @@ def main(
 
     if args.group == "features":
         config = load_gaze_config(args.config)
-        tracker = head_tracker_factory()
+        tracker = head_tracker_factory(paths)
         estimator = gaze_estimator_factory(config.model_variant) if args.command == "gaze" else None
         for session_id in args.session_id:
             options = dict(overlay=not args.no_overlay, overwrite=args.overwrite)

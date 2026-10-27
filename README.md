@@ -78,10 +78,28 @@ stillface prepare sync --visualize                    # synchronize all pending 
 stillface prepare sync --session-id 575613            # a single session
 stillface prepare cut --visualize                     # cut phases and render overviews
 stillface prepare thumbnails                          # session thumbnails
+stillface features heads --session-id 605317          # mother and baby head boxes, overlays
 ```
 
 Sessions are selected from `metadata_database.xlsx`: automatic processing is skipped for rows
 with `Auto = n`, and synchronization for rows with a manually entered mother-baby offset.
+
+## Head detection
+
+Gaze, affect and touch features are computed per person, so every camera clip first gets a
+head box for the mother and the baby on each analysed frame. The same pipeline runs on all
+four cameras and all phases: a text-prompted head detector (Grounding DINO, prompt
+"a human head.") and a face detector (YOLO11s) are run, their tracks are fused into one
+track per head, and simple rules decide which track is the mother and which is the baby:
+on the close-up cameras the confident head near the image centre is the camera's owner, on
+the side cameras the two strongest heads are told apart by the fixed seating of each phase.
+Frames without a reliable head box are marked as not codable with the reason.
+
+<img src="https://raw.githubusercontent.com/fodorad/StillFace/main/docs/mermaid/head_pipeline.jpg" alt="Head detection pipeline" width="100%"/>
+
+<img src="https://raw.githubusercontent.com/fodorad/StillFace/main/docs/mermaid/role_assignment.jpg" alt="Role assignment" width="100%"/>
+
+The diagram sources are in `docs/mermaid/`; `make diagrams` renders them.
 
 ## Package structure
 

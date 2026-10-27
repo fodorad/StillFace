@@ -62,19 +62,41 @@ class HeadTrack:
         embedding: Mean face-identity embedding of the track, None if not computed.
         scores: Frame index mapped to the detection confidence; frames without a score count
             as fully confident.
-        role: ``mother`` or ``baby`` if the detector knows whose head it is (text-prompted
-            detectors do), None for anonymous tracks.
     """
 
     track_id: int
     boxes: dict[int, HeadBox]
     embedding: tuple[float, ...] | None = None
     scores: dict[int, float] = field(default_factory=dict)
-    role: str | None = None
 
-    def evidence(self) -> float:
-        """Confidence-weighted presence: the sum of the detection scores over the frames."""
-        return sum(self.scores.get(frame, 1.0) for frame in self.boxes)
+    def evidence(self, centrality: bool = False) -> float:
+        """Confidence-weighted presence: the sum of the detection scores over the frames.
+
+        Args:
+            centrality: Also weight each frame by how close the box center is to the image
+                center (1 at the center, 0 at the edge midpoints and beyond).
+
+        Returns:
+            The weighted sum.
+        """
+        total = 0.0
+        for frame, box in self.boxes.items():
+            weight = self.scores.get(frame, 1.0)
+            if centrality:
+                cx, cy = box.center
+                weight *= max(0.0, 1.0 - 2.0 * float(np.hypot(cx - 0.5, cy - 0.5)))
+            total += weight
+        return total
+
+    def median_score(self) -> float:
+        """Median detection score of the track (frames without a score count as 1)."""
+        if not self.boxes:
+            return 0.0
+        return float(np.median([self.scores.get(frame, 1.0) for frame in self.boxes]))
+
+    def median_area(self) -> float:
+        """Median box area of the track, 0 for an empty track."""
+        return float(np.median([b.area for b in self.boxes.values()])) if self.boxes else 0.0
 
     def weight(self) -> float:
         """Confidence-weighted head size: the sum of box area times score over the frames."""
@@ -129,3 +151,41 @@ def interpolate_boxes(
         x0, y0, x1, y1 = (1 - weight) * coords[right - 1] + weight * coords[right]
         boxes[frame] = HeadBox(float(x0), float(y0), float(x1), float(y1))
     return boxes
+
+
+def iou(a: HeadBox, b: HeadBox) -> float:
+    """Intersection over union of two boxes."""
+    w = min(a.x1, b.x1) - max(a.x0, b.x0)
+    h = min(a.y1, b.y1) - max(a.y0, b.y0)
+    if w <= 0 or h <= 0:
+        return 0.0
+    inter = w * h
+    return inter / (a.area + b.area - inter)
+
+
+def containment(a: HeadBox, b: HeadBox) -> float:
+    """Share of the smaller box covered by the other box."""
+    w = min(a.x1, b.x1) - max(a.x0, b.x0)
+    h = min(a.y1, b.y1) - max(a.y0, b.y0)
+    if w <= 0 or h <= 0:
+        return 0.0
+    return w * h / min(a.area, b.area)
+
+
+def overlaps(track: HeadTrack, other: HeadTrack, min_iou: float, min_share: float) -> bool:
+    """Whether two tracks mostly follow the same head.
+
+    Args:
+        track: First track.
+        other: Second track.
+        min_iou: Boxes of the same frame with at least this IoU count as the same head.
+        min_share: Share of the shared frames that must agree.
+
+    Returns:
+        True if the tracks share frames and agree on at least ``min_share`` of them.
+    """
+    shared = set(track.boxes) & set(other.boxes)
+    if not shared:
+        return False
+    same = sum(iou(track.boxes[f], other.boxes[f]) >= min_iou for f in shared)
+    return same / len(shared) >= min_share

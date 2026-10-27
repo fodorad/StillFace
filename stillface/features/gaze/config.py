@@ -19,15 +19,26 @@ DEFAULT_CONFIG_PATH: Path = Path(__file__).with_name("default_config.toml")
 
 @dataclass(frozen=True)
 class SidePriors:
-    """Where the mother sits in the side cameras' image.
+    """Which side of the side cameras' image the mother sits on, from the fixed seating.
+
+    During the baseline the mother sits on a different chair, which flips her side in the
+    window camera; the door camera sees her on the left in every phase.
 
     Attributes:
-        window: ``left`` or ``right`` half of the window camera image.
-        door: ``left`` or ``right`` half of the door camera image.
+        window: ``left`` or ``right``, play, still face and reunion.
+        window_baseline: ``left`` or ``right``, baseline.
+        door: ``left`` or ``right``, play, still face and reunion.
+        door_baseline: ``left`` or ``right``, baseline.
     """
 
     window: str = "right"
+    window_baseline: str = "left"
     door: str = "left"
+    door_baseline: str = "left"
+
+    def side(self, camera: str, phase: str) -> str:
+        """Side of the mother in a camera during a phase."""
+        return getattr(self, f"{camera}_baseline" if phase == "baseline" else camera)
 
 
 @dataclass(frozen=True)
@@ -51,20 +62,21 @@ class RoleRules:
 
     Attributes:
         min_presence: Share of the sampled frames a track must appear in to be a candidate.
-        size_ambiguity_ratio: Two candidates whose head areas differ by less than this ratio
-            (smaller over larger) cannot be told apart by size.
         min_side_separation: Smaller horizontal distance between the two candidates than this
             (normalized) makes the side prior ambiguous.
-        min_identity_similarity: Cosine similarity needed to accept an identity match.
-        min_relative_head_area: A head found without a text prompt must be at least this share
-            of the prompted partner's head area, which rejects background people.
+        min_relative_head_area: On the side cameras a head must be at least this share of the
+            largest head's area; smaller heads are far-away background people.
+        min_owner_score: On the close cameras the owner's track needs at least this median
+            detection score (rejects head-like drawings when the person is away).
+        min_owner_area: On the close cameras the owner's track needs at least this median
+            box area (the owner sits close to the camera).
     """
 
     min_presence: float = 0.2
-    size_ambiguity_ratio: float = 0.8
     min_side_separation: float = 0.05
-    min_identity_similarity: float = 0.3
-    min_relative_head_area: float = 0.4
+    min_relative_head_area: float = 0.1
+    min_owner_score: float = 0.5
+    min_owner_area: float = 0.005
 
 
 @dataclass(frozen=True)

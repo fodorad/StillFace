@@ -1,0 +1,13 @@
+flowchart TD
+    A["<b>Frame sampling</b><br/>task: choose the frames to analyse<br/>method: regular time grid<br/>in: phase clip of one camera (60 fps)<br/>out: frame indices (30 Hz)"]
+    B["<b>D1 · head detector</b><br/>task: find every visible head<br/>method: Grounding DINO, prompt 'a human head.', 2 Hz anchors, cached<br/>in: anchor frames<br/>out: candidate boxes and scores per anchor"]
+    C["<b>Linking</b><br/>task: connect candidates over time<br/>method: Hungarian matching on centre distance in head sizes<br/>in: candidates per anchor<br/>out: tracklets"]
+    D["<b>Stitching</b><br/>task: repair tracks split by dropouts<br/>method: join pieces with gaps up to 3 s, closest first<br/>in: tracklets<br/>out: head tracks"]
+    E["<b>Densify</b><br/>task: a box on every sampled frame<br/>method: linear interpolation over gaps up to 1.5 s<br/>in: head tracks at anchors<br/>out: head tracks at the sampled frames"]
+    F["<b>D2 · face detector</b><br/>task: precise face boxes<br/>method: YOLO11s face model at 1280 px, IoU tracker<br/>in: sampled frames<br/>out: face tracks"]
+    G["<b>Fusion</b><br/>task: one track per person<br/>method: a face track joins the head track it overlaps; box union, max score<br/>in: head tracks and face tracks<br/>out: fused tracks"]
+    H["<b>Role assignment</b><br/>task: which track is the mother, which the baby<br/>method: rules, see the role assignment diagram<br/>in: fused tracks, camera, phase, roles.json<br/>out: mother and baby track, flags"]
+    I["<b>Per-frame heads</b><br/>task: a box or a reason per person and frame<br/>method: track lookup<br/>in: role assignment and tracks<br/>out: timeline CSV, overlay video, run record"]
+    A --> B --> C --> D --> E --> G
+    A --> F --> G
+    G --> H --> I

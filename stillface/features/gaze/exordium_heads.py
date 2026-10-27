@@ -13,6 +13,8 @@ import logging
 from collections.abc import Sequence
 from pathlib import Path
 
+import numpy as np
+
 from stillface.features.gaze.heads import HeadBox, HeadTrack
 
 logger = logging.getLogger(__name__)
@@ -29,7 +31,8 @@ class ExordiumHeadTracker:
         start_score: A track needs confident detections (at least this score) to be kept.
         min_confident: Number of confident detections a track needs.
         batch_size: Frames per detector call.
-        max_lost: Frames a track may be missing before it is closed.
+        max_lost: Frames a track may be missing before it is closed; at sparse sampling at
+            least three sampling steps are allowed.
         iou_threshold: Minimum box overlap to continue a track.
     """
 
@@ -95,8 +98,10 @@ class ExordiumHeadTracker:
                         )
                     )
 
-        tracker = IouTracker(max_lost=self.max_lost, iou_threshold=self.iou_threshold)
-        tracker.label(detections, min_score=self.conf, max_lost=self.max_lost,
+        step = int(np.median(np.diff(frame_indices))) if len(frame_indices) > 1 else 1
+        max_lost = max(self.max_lost, 3 * step)
+        tracker = IouTracker(max_lost=max_lost, iou_threshold=self.iou_threshold)
+        tracker.label(detections, min_score=self.conf, max_lost=max_lost,
                       iou_threshold=self.iou_threshold)  # fmt: skip
         tracks = []
         for track_id, found in tracker.tracks.items():

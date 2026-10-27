@@ -11,7 +11,6 @@ from stillface.features.gaze.config import GazeConfig
 from stillface.features.gaze.heads import HeadBox, HeadTracker
 from stillface.features.gaze.roles import (
     RoleAssignment,
-    RoleReferences,
     assign_roles,
     head_per_frame,
     missing_reason,
@@ -80,7 +79,6 @@ def prepare_clip(
     phase: str,
     tracker: HeadTracker,
     config: GazeConfig,
-    references: RoleReferences | None = None,
     overrides: Mapping[tuple[str, str], Mapping[str, int]] | None = None,
 ) -> ClipHeads:
     """Track the heads of a clip and assign them to the mother and the baby.
@@ -91,7 +89,6 @@ def prepare_clip(
         phase: Experiment phase.
         tracker: Head detector and tracker.
         config: Gaze configuration (sample rate, role rules).
-        references: Identity embeddings of the participants, if available.
         overrides: Pinned role assignments.
 
     Returns:
@@ -100,9 +97,7 @@ def prepare_clip(
     n_frames, fps = clip_properties(clip)
     indices = sample_frame_indices(n_frames, fps, config.sample_rate_hz)
     tracks = tracker.track(clip, indices)
-    assignment = assign_roles(
-        tracks, camera, phase, len(indices), config, references=references, overrides=overrides
-    )
+    assignment = assign_roles(tracks, camera, phase, len(indices), config, overrides=overrides)
     if assignment.flags:
         logger.warning("%s %s: %s", camera, phase, ", ".join(assignment.flags))
     return ClipHeads(indices, fps, assignment, head_per_frame(assignment, tracks, indices))
