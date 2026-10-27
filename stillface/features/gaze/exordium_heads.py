@@ -115,6 +115,6 @@ class ExordiumHeadTracker:
                 boxes[detection.frame_id] = HeadBox(
                     x0 / width, y0 / height, x1 / width, y1 / height
                 )
-            tracks.append(HeadTrack(track_id, boxes, scores=scores))
+            tracks.append(HeadTrack(track_id, boxes, scores=scores, faces=dict(scores)))
         logger.info("%s: %d face tracks on %d frames", clip.name, len(tracks), len(frame_indices))
         return tracks

@@ -26,6 +26,8 @@ class TestTimelineCsv(unittest.TestCase):
             make_row(0),
             make_row(2, gaze_x=None, gaze_y=None, inout=None, partner_mass=None,
                      gaze_class="NK", reason="occluded"),
+            make_row(4, face_visible=True),
+            make_row(6, face_visible=False),
         ]  # fmt: skip
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "out" / "t.csv"
@@ -39,9 +41,9 @@ class TestTimelineCsv(unittest.TestCase):
             self.assertEqual(
                 path.read_text().splitlines()[0],
                 "session_id,camera,phase,frame_index,time_s,person,gaze_x,gaze_y,inout,"
-                "partner_mass,gaze_class,reason",
+                "partner_mass,gaze_class,reason,face_visible",
             )
-        self.assertEqual(len(COLUMNS), 12)
+        self.assertEqual(len(COLUMNS), 13)
 
     def test_empty_timeline_still_has_a_header(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

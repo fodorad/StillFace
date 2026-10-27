@@ -2,7 +2,7 @@ flowchart TD
     S["fused tracks of one clip<br/>(duplicate tracks of one head merged)"] --> O{"roles.json pins this<br/>camera and phase?"}
     O -- yes --> P["use the pinned tracks"]
     O -- no --> K{"camera"}
-    K -- "mother / baby (close-up)" --> C1["owner candidates: median score at least 0.5,<br/>median box area at least 0.5% of the image"]
+    K -- "mother / baby (close-up)" --> C1["owner candidates: face detected on<br/>at least 30% of the track's frames"]
     C1 --> CL["owner: candidate with the highest<br/>sum of score x centrality"]
     K -- "window / door (side view)" --> F1["candidates: present in at least 20% of frames,<br/>median head area at least 10% of the largest"]
     F1 --> T2["two best by sum of area x score"]

@@ -22,10 +22,13 @@ def track(
     frames: Sequence[int] = tuple(range(10)),
     embedding: tuple[float, ...] | None = None,
     score: float | None = None,
+    face: bool = True,
 ) -> HeadTrack:
-    """Track with a constant box over ``frames`` and, optionally, a constant score."""
+    """Track with a constant box over ``frames``, optionally a constant score, and the face
+    detected on every frame unless ``face`` is False."""
     scores = {} if score is None else {f: score for f in frames}
-    return HeadTrack(track_id, {f: box(cx, width=width) for f in frames}, embedding, scores)
+    faces = {f: 0.9 for f in frames} if face else {}
+    return HeadTrack(track_id, {f: box(cx, width=width) for f in frames}, embedding, scores, faces)
 
 
 class FakeHeadTracker:

@@ -51,6 +51,20 @@ class TestRows(unittest.TestCase):
         self.assertAlmostEqual(by_key[(2, "baby")].time_s, 2 / 60)
         self.assertIsNone(missing.gaze_x)
 
+    def test_face_visibility_per_row(self) -> None:
+        prepared = ClipHeads(
+            [0, 2], 60.0, RoleAssignment(2, 1),
+            {"mother": [box(0.8), None], "baby": [box(0.3), box(0.3)]},
+            {"mother": [True, False], "baby": [False, True]},
+        )  # fmt: skip
+        rows = {
+            (r.frame_index, r.person): r.face_visible
+            for r in head_rows("7", "window", "play", prepared)
+        }
+        self.assertEqual(
+            rows, {(0, "mother"): True, (2, "mother"): None, (0, "baby"): False, (2, "baby"): True}
+        )
+
     def test_close_camera_only_has_its_owner(self) -> None:
         rows = head_rows("7", "baby", "play", self.prepared())
         self.assertEqual({r.person for r in rows}, {"baby"})

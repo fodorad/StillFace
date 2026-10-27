@@ -26,6 +26,7 @@ COLUMNS: tuple[str, ...] = (
     "partner_mass",
     "gaze_class",
     "reason",
+    "face_visible",
 )
 """Timeline CSV columns, in file order."""
 
@@ -47,6 +48,8 @@ class TimelineRow:
         partner_mass: Share of the gaze heatmap on the partner (head box or zone).
         gaze_class: Target class from the plan codes, ``NK`` if not codable.
         reason: Why the row is not codable (``occluded``, ``no_head``, ...), else empty.
+        face_visible: Whether the face was detected inside the head box on this frame (the
+            frame-wise usability mask for face-based analyses), None if there is no head.
     """
 
     session_id: str
@@ -61,6 +64,19 @@ class TimelineRow:
     partner_mass: float | None
     gaze_class: str
     reason: str
+    face_visible: bool | None = None
+
+
+def _cell(value: object) -> object:
+    if value is None:
+        return ""
+    if isinstance(value, bool):
+        return int(value)
+    return value
+
+
+def _optional_bool(text: str) -> bool | None:
+    return None if text == "" else text == "1"
 
 
 def _optional_float(text: str) -> float | None:
@@ -81,7 +97,7 @@ def write_timeline(rows: list[TimelineRow], path: Path) -> None:
             writer.writeheader()
             for row in rows:
                 record = asdict(row)
-                writer.writerow({k: "" if v is None else v for k, v in record.items()})
+                writer.writerow({k: _cell(v) for k, v in record.items()})
 
     write_atomic(path, write)
 
@@ -116,6 +132,7 @@ def read_timeline(path: Path) -> list[TimelineRow]:
                 partner_mass=_optional_float(record["partner_mass"]),
                 gaze_class=record["gaze_class"],
                 reason=record["reason"],
+                face_visible=_optional_bool(record["face_visible"]),
             )
             for record in reader
         ]

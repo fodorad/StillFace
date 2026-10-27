@@ -106,7 +106,9 @@ def stitch_tracks(
         The stitched tracks; a stitched track keeps the id of its first piece.
     """
     pieces = [
-        HeadTrack(t.track_id, dict(t.boxes), t.embedding, dict(t.scores)) for t in tracks if t.boxes
+        HeadTrack(t.track_id, dict(t.boxes), t.embedding, dict(t.scores), dict(t.faces))
+        for t in tracks
+        if t.boxes
     ]
     while True:
         best: tuple[float, int, int] | None = None
@@ -127,6 +129,7 @@ def stitch_tracks(
         _, i, j = best
         pieces[i].boxes.update(pieces[j].boxes)
         pieces[i].scores.update(pieces[j].scores)
+        pieces[i].faces.update(pieces[j].faces)
         del pieces[j]
 
 
@@ -151,7 +154,8 @@ def densify(track: HeadTrack, frame_indices: list[int], max_gap: int) -> HeadTra
         else:
             right = int(np.searchsorted(detected, frame))
             scores[frame] = min(track.scores[detected[right - 1]], track.scores[detected[right]])
-    return HeadTrack(track.track_id, boxes, track.embedding, scores)
+    faces = {frame: score for frame, score in track.faces.items() if frame in boxes}
+    return HeadTrack(track.track_id, boxes, track.embedding, scores, faces)
 
 
 def anchor_frames(frame_indices: Sequence[int], clip_fps: float, rate_hz: float) -> list[int]:

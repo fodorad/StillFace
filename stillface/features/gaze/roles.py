@@ -63,10 +63,10 @@ def assign_roles(
 ) -> RoleAssignment:
     """Assign head tracks to the mother and the baby.
 
-    Close cameras: the owner is the confident, large track with the most evidence near the
-    image centre. Side cameras: the two strongest persistent heads, excluding far-away
-    background people, are told apart by the fixed seating (side prior per camera and
-    phase).
+    Close cameras: the owner is the track whose face is detected on enough of its frames,
+    with the most evidence near the image centre. Side cameras: the two strongest persistent
+    heads, excluding far-away background people, are told apart by the fixed seating (side
+    prior per camera and phase).
 
     Args:
         tracks: Head tracks of the clip.
@@ -85,12 +85,9 @@ def assign_roles(
 
     rules = config.roles
     if camera in PERSONS:
-        # the camera frames its owner: a confident, large head near the image centre, not
-        # the partner's head entering from an edge or a head-like drawing on the wall
-        owners = [
-            t for t in tracks
-            if t.median_score() >= rules.min_owner_score and t.median_area() >= rules.min_owner_area
-        ]  # fmt: skip
+        # the camera frames its owner: a head whose face is seen, near the image centre; the
+        # partner's head entering from above or a drawing on the wall shows no face
+        owners = [t for t in tracks if t.face_share() >= rules.min_owner_face_share]
         owner = max(owners, key=lambda t: t.evidence(centrality=True), default=None)
         track_id = None if owner is None else owner.track_id
         return RoleAssignment(*((track_id, None) if camera == "mother" else (None, track_id)))
@@ -146,6 +143,28 @@ def head_per_frame(
         boxes = by_id[track_id].boxes if track_id in by_id else {}
         heads[person] = [boxes.get(frame) for frame in frame_indices]
     return heads
+
+
+def face_per_frame(
+    assignment: RoleAssignment, tracks: Sequence[HeadTrack], frame_indices: Sequence[int]
+) -> dict[str, list[bool]]:
+    """Whether each person's face was detected on every sampled frame.
+
+    Args:
+        assignment: Role assignment of the clip.
+        tracks: Head tracks of the clip.
+        frame_indices: Sampled frames.
+
+    Returns:
+        Person mapped to one flag per frame.
+    """
+    by_id = {t.track_id: t for t in tracks}
+    faces: dict[str, list[bool]] = {}
+    for person in PERSONS:
+        track_id = assignment.track_id(person)
+        seen = by_id[track_id].faces if track_id in by_id else {}
+        faces[person] = [frame in seen for frame in frame_indices]
+    return faces
 
 
 def camera_persons(camera: str) -> tuple[str, ...]:

@@ -44,6 +44,11 @@ class TestTrackMeasures(unittest.TestCase):
         self.assertAlmostEqual(t.median_score(), 0.4, msg="the unscored frame counts as 1")
         self.assertEqual(HeadTrack(1, {}).median_score(), 0.0)
 
+    def test_face_share(self) -> None:
+        t = HeadTrack(0, {f: box(0.5) for f in range(4)}, faces={0: 0.9, 3: 0.8, 99: 0.9})
+        self.assertAlmostEqual(t.face_share(), 0.5)
+        self.assertEqual(HeadTrack(1, {}).face_share(), 0.0)
+
     def test_median_area(self) -> None:
         t = HeadTrack(0, {0: box(0.5, width=0.1), 1: box(0.5, width=0.2), 2: box(0.5, width=0.3)})
         self.assertAlmostEqual(t.median_area(), box(0.5, width=0.2).area)

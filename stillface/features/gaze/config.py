@@ -66,17 +66,15 @@ class RoleRules:
             (normalized) makes the side prior ambiguous.
         min_relative_head_area: On the side cameras a head must be at least this share of the
             largest head's area; smaller heads are far-away background people.
-        min_owner_score: On the close cameras the owner's track needs at least this median
-            detection score (rejects head-like drawings when the person is away).
-        min_owner_area: On the close cameras the owner's track needs at least this median
-            box area (the owner sits close to the camera).
+        min_owner_face_share: On the close cameras the owner's face must be detected on at
+            least this share of its track's frames; heads seen from above (the partner's head
+            entering the view) and head-like drawings have no detectable face.
     """
 
     min_presence: float = 0.2
     min_side_separation: float = 0.05
     min_relative_head_area: float = 0.1
-    min_owner_score: float = 0.5
-    min_owner_area: float = 0.005
+    min_owner_face_share: float = 0.3
 
 
 @dataclass(frozen=True)

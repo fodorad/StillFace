@@ -28,6 +28,16 @@ class TestFuseTracks(unittest.TestCase):
         self.assertEqual(fused.boxes[2], face.boxes[2], "frames only the face detector saw")
         self.assertEqual(fused.scores, {0: 0.5, 1: 0.9, 2: 0.8})
 
+    def test_face_frames_mark_the_fused_head_as_face_visible(self) -> None:
+        head = HeadTrack(0, {f: box(0.3, width=0.12) for f in range(4)})
+        face = HeadTrack(
+            7, {1: box(0.3, width=0.06), 2: box(0.3, width=0.06)}, scores={1: 0.9, 2: 0.8}
+        )
+        lonely = HeadTrack(8, {0: box(0.8, width=0.06)}, scores={0: 0.7})
+        fused = {t.track_id: t for t in fuse_tracks([head], [face, lonely])}
+        self.assertEqual(fused[0].faces, {1: 0.9, 2: 0.8})
+        self.assertEqual(fused[SECONDARY_ID_OFFSET + 8].faces, {0: 0.7}, "a face track is a face")
+
     def test_union_when_boxes_only_partly_overlap(self) -> None:
         head = HeadTrack(0, {0: HeadBox(0.2, 0.2, 0.4, 0.4)})
         face = HeadTrack(1, {0: HeadBox(0.3, 0.3, 0.45, 0.45)})
