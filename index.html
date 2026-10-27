@@ -344,6 +344,114 @@ logs/                       synced / failed session bookkeeping
 <p>The locations can be overridden with the <code class="docutils literal notranslate"><span class="pre">STILLFACE_RAW_DIR</span></code> and <code class="docutils literal notranslate"><span class="pre">STILLFACE_PROCESSED_DIR</span></code>
 environment variables or the <code class="docutils literal notranslate"><span class="pre">--raw-dir</span></code> / <code class="docutils literal notranslate"><span class="pre">--processed-dir</span></code> options.</p>
 </section>
+<section id="dataset-statistics">
+<h2>Dataset statistics<a class="headerlink" href="#dataset-statistics" title="Link to this heading">¶</a></h2>
+<p>Computed from <code class="docutils literal notranslate"><span class="pre">metadata_database.xlsx</span></code> and the processed phase clips (<code class="docutils literal notranslate"><span class="pre">Sessions/&lt;id&gt;/processed/</span></code>),
+which are the only video inputs of the analysis. All processed clips are 1920x1080 at 60 fps.</p>
+<ul class="simple">
+<li><p><strong>Sessions:</strong> 78 recorded, 70 marked for analysis (<code class="docutils literal notranslate"><span class="pre">Analysis</span> <span class="pre">=</span> <span class="pre">y</span></code>).</p></li>
+<li><p><strong>Setup versions (analysed):</strong> v4: 57, v3: 5, v2: 8.</p></li>
+<li><p><strong>Excluded from analysis:</strong> 646022 (v4), 566015 (v4), 635928 (v2), 555623 (v2), 656417 (v2), 747417 (v1), 606117 (v1), 697115 (v1).</p></li>
+</ul>
+<p><strong>Camera availability</strong> (analysed sessions; a camera counts if it has at least one processed phase clip):</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Cameras</p></th>
+<th class="head"><p>Sessions</p></th>
+<th class="head"><p>Session ids</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mother + baby + window + door</p></td>
+<td><p>49</p></td>
+<td><p>all other analysed sessions</p></td>
+</tr>
+<tr class="row-odd"><td><p>mother + baby + window</p></td>
+<td><p>14</p></td>
+<td><p>124731, 210118, 595525, 606021, 615027, 616018, 626527, 635916, 636211, 674821, 686912, 696807, 888726, 920320</p></td>
+</tr>
+<tr class="row-even"><td><p>mother + baby</p></td>
+<td><p>3</p></td>
+<td><p>114754, 656531, 717115</p></td>
+</tr>
+<tr class="row-odd"><td><p>baby + window</p></td>
+<td><p>2</p></td>
+<td><p>585803, 595514</p></td>
+</tr>
+<tr class="row-even"><td><p>baby + window + door</p></td>
+<td><p>1</p></td>
+<td><p>717729</p></td>
+</tr>
+<tr class="row-odd"><td><p>mother + baby + door</p></td>
+<td><p>1</p></td>
+<td><p>726030</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Incomplete phase sets</strong> (camera present but fewer than 4 phase clips): 706922 window (3/4), 596613 window (3/4), 596613 door (3/4), 596025 baby (3/4), 646012 door (2/4), 505629 baby (1/4), 585803 baby (3/4), 114754 mother (3/4), 114754 baby (3/4).</p>
+<p><strong>Native camcorder frame rate</strong> (from the original camcorder files, where available; processed clips are all 60 fps):</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Camera</p></th>
+<th class="head"><p>50 fps progressive</p></th>
+<th class="head"><p>25 fps interlaced</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>window</p></td>
+<td><p>50</p></td>
+<td><p>15: 525222, 555820, 575716, 594801, 595813, 596613, 616205, 646302, 657006, 666921, 686527, 696707, 697426, 717729, 757314</p></td>
+</tr>
+<tr class="row-odd"><td><p>door</p></td>
+<td><p>33</p></td>
+<td><p>18: 484603, 535124, 586228, 596426, 605317, 616022, 616211, 625527, 625710, 636023, 646012, 656024, 656520, 666712, 674703, 677022, 736920, 819104</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The phone cameras (mother, baby) record at about 60 fps with a variable frame rate.</p>
+<p><strong>Play-phase clip lengths</strong> differ between the cameras of a session by a median of 9 frames; larger differences (frames): 606021 (32), 595514 (46), 706922 (53), 646721 (154).</p>
+<p><strong>Probing set</strong> (play phase, setup v4) used to choose the analysis tools:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Session</p></th>
+<th class="head"><p>Cameras</p></th>
+<th class="head"><p>Case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>605317</p></td>
+<td><p>mother, baby, window, door</p></td>
+<td><p>dev, door 25i</p></td>
+</tr>
+<tr class="row-odd"><td><p>626021</p></td>
+<td><p>mother, baby, window, door</p></td>
+<td><p>dev</p></td>
+</tr>
+<tr class="row-even"><td><p>819104</p></td>
+<td><p>mother, baby, window, door</p></td>
+<td><p>dev, door 25i</p></td>
+</tr>
+<tr class="row-odd"><td><p>594801</p></td>
+<td><p>mother, baby, window, door</p></td>
+<td><p>window 25i, door occlusion</p></td>
+</tr>
+<tr class="row-even"><td><p>636211</p></td>
+<td><p>mother, baby, window</p></td>
+<td><p>no door camera</p></td>
+</tr>
+<tr class="row-odd"><td><p>656531</p></td>
+<td><p>mother, baby</p></td>
+<td><p>close cameras only</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
 <p><a class="reference external" href="https://ffmpeg.org">ffmpeg</a> has to be available on the <code class="docutils literal notranslate"><span class="pre">PATH</span></code>.</p>
@@ -461,6 +569,7 @@ managed by <a class="reference external" href="https://github.com/googleapis/rel
 <li><a class="reference internal" href="#">StillFace</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#data-layout">Data layout</a></li>
+<li><a class="reference internal" href="#dataset-statistics">Dataset statistics</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#usage">Usage</a></li>
 <li><a class="reference internal" href="#head-detection">Head detection</a></li>
