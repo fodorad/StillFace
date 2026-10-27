@@ -2,7 +2,7 @@
 
 import logging
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import cv2
@@ -12,6 +12,7 @@ from stillface.features.gaze.heads import HeadBox, HeadTracker
 from stillface.features.gaze.roles import (
     RoleAssignment,
     assign_roles,
+    face_per_frame,
     head_per_frame,
     missing_reason,
 )
@@ -29,12 +30,21 @@ class ClipHeads:
         clip_fps: Frame rate of the clip.
         assignment: Role assignment of the head tracks.
         heads: Person mapped to one box per sampled frame, None where not found.
+        faces: Person mapped to one flag per sampled frame, True where the face was detected.
     """
 
     frame_indices: list[int]
     clip_fps: float
     assignment: RoleAssignment
     heads: dict[str, list[HeadBox | None]]
+    faces: dict[str, list[bool]] = field(default_factory=dict)
+
+    def face_visible(self, person: str, position: int) -> bool | None:
+        """Face flag of a person on a sampled frame, None if there is no head."""
+        if self.heads[person][position] is None:
+            return None
+        flags = self.faces.get(person)
+        return bool(flags[position]) if flags else False
 
     def reason_missing(self, camera: str, person: str) -> str:
         """Why a person has no head on some frame of this clip.
@@ -100,4 +110,10 @@ def prepare_clip(
     assignment = assign_roles(tracks, camera, phase, len(indices), config, overrides=overrides)
     if assignment.flags:
         logger.warning("%s %s: %s", camera, phase, ", ".join(assignment.flags))
-    return ClipHeads(indices, fps, assignment, head_per_frame(assignment, tracks, indices))
+    return ClipHeads(
+        indices,
+        fps,
+        assignment,
+        head_per_frame(assignment, tracks, indices),
+        face_per_frame(assignment, tracks, indices),
+    )

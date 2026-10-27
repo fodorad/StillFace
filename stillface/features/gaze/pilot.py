@@ -58,6 +58,7 @@ def head_rows(session_id: str, camera: str, phase: str, prepared: ClipHeads) -> 
                     partner_mass=None,
                     gaze_class="" if found else NK,
                     reason="" if found else prepared.reason_missing(camera, person),
+                    face_visible=prepared.face_visible(person, position),
                 )
             )
     return rows

@@ -83,6 +83,12 @@ class TestStitchTracks(unittest.TestCase):
         self.assertIn(27, stitched[0].boxes)
         self.assertAlmostEqual(stitched[0].boxes[16].center[0], 0.31)
 
+    def test_face_flags_are_joined_too(self) -> None:
+        a = HeadTrack(0, {f: box(0.3) for f in range(5)}, faces={1: 0.9})
+        b = HeadTrack(1, {f: box(0.3) for f in range(8, 12)}, faces={9: 0.8})
+        (stitched,) = stitch_tracks([a, b], max_gap=10)
+        self.assertEqual(stitched.faces, {1: 0.9, 9: 0.8})
+
     def test_empty_tracks_are_dropped(self) -> None:
         self.assertEqual(stitch_tracks([HeadTrack(0, {})], max_gap=5), [])
 
@@ -95,6 +101,13 @@ class TestDensify(unittest.TestCase):
         self.assertAlmostEqual(dense.boxes[10].center[0], 0.4)
         self.assertEqual(dense.scores, {0: 0.4, 10: 0.4, 20: 0.8})
         self.assertEqual(dense.track_id, 3)
+
+    def test_faces_stay_on_detected_frames_only(self) -> None:
+        sparse = HeadTrack(
+            3, {0: box(0.3), 20: box(0.5)}, scores={0: 0.4, 20: 0.8}, faces={20: 0.9}
+        )
+        dense = densify(sparse, [0, 10, 20, 30], max_gap=20)
+        self.assertEqual(dense.faces, {20: 0.9})
 
 
 class TestAnchorFrames(unittest.TestCase):

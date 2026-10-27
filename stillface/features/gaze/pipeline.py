@@ -152,6 +152,7 @@ def gaze_outputs(
                     partner_mass=decision.partner_mass,
                     gaze_class=decision.gaze_class,
                     reason=decision.reason,
+                    face_visible=prepared.face_visible(person, k),
                 )
             )
             gaze = None if decision.gaze_x is None else (decision.gaze_x, decision.gaze_y or 0.0)

@@ -91,9 +91,10 @@ head box for the mother and the baby on each analysed frame. The same pipeline r
 four cameras and all phases: a text-prompted head detector (Grounding DINO, prompt
 "a human head.") and a face detector (YOLO11s) are run, their tracks are fused into one
 track per head, and simple rules decide which track is the mother and which is the baby:
-on the close-up cameras the confident head near the image centre is the camera's owner, on
-the side cameras the two strongest heads are told apart by the fixed seating of each phase.
-Frames without a reliable head box are marked as not codable with the reason.
+on the close-up cameras the owner is the head whose face is detected and lies near the image
+centre, on the side cameras the two strongest heads are told apart by the fixed seating of
+each phase. Frames without a reliable head box are marked as not codable with the reason, and
+every row records whether the face was visible (the frame-wise usability mask).
 
 <img src="https://raw.githubusercontent.com/fodorad/StillFace/main/docs/mermaid/head_pipeline.jpg" alt="Head detection pipeline" width="100%"/>
 

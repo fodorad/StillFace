@@ -19,5 +19,4 @@ box_margin = 0.25
 min_presence = 0.2
 min_side_separation = 0.05
 min_relative_head_area = 0.1
-min_owner_score = 0.5
-min_owner_area = 0.005
+min_owner_face_share = 0.3

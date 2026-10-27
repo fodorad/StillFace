@@ -38,7 +38,10 @@ def merge_duplicates(
     Returns:
         Tracks without duplicates; a merged track keeps the id of the longer one.
     """
-    merged = [HeadTrack(t.track_id, dict(t.boxes), t.embedding, dict(t.scores)) for t in tracks]
+    merged = [
+        HeadTrack(t.track_id, dict(t.boxes), t.embedding, dict(t.scores), dict(t.faces))
+        for t in tracks
+    ]
     merged.sort(key=lambda t: -len(t.boxes))
     result: list[HeadTrack] = []
     for track in merged:
@@ -52,6 +55,7 @@ def merge_duplicates(
             score = track.scores.get(frame, 1.0)
             if frame not in target.boxes or score > target.scores.get(frame, 1.0):
                 target.boxes[frame], target.scores[frame] = box, score
+        target.faces.update(track.faces)
     return result
 
 
@@ -65,9 +69,10 @@ def fuse_tracks(
 
     A secondary track that follows the same person as a primary track (overlapping boxes on
     most shared frames) is merged into it: on frames where both exist the box is their union
-    (a face box lies inside the head box, so the head box mostly wins) and the score is the
-    larger one; frames only one detector saw are taken from that detector. Secondary tracks
-    without a partner are kept as additional heads.
+    (a face box lies inside the head box, so the head box mostly wins), the score is the
+    larger one and the frame is marked as face visible; frames only one detector saw are
+    taken from that detector. Secondary tracks without a partner are kept as additional
+    heads.
 
     Args:
         primary: Head tracks.
@@ -82,24 +87,26 @@ def fuse_tracks(
     merged: list[HeadTrack] = []
     used: set[int] = set()
     for head in primary:
-        boxes, scores = dict(head.boxes), dict(head.scores)
+        boxes, scores, faces = dict(head.boxes), dict(head.scores), dict(head.faces)
         for face in secondary:
             if face.track_id in used or not overlaps(head, face, min_iou, min_share):
                 continue
             used.add(face.track_id)
             for frame, box in face.boxes.items():
                 score = face.scores.get(frame, 1.0)
+                faces[frame] = face.faces.get(frame, score)
                 if frame in boxes:
                     boxes[frame] = _union(boxes[frame], box)
                     scores[frame] = max(scores.get(frame, 1.0), score)
                 else:
                     boxes[frame], scores[frame] = box, score
-        merged.append(HeadTrack(head.track_id, boxes, head.embedding, scores))
+        merged.append(HeadTrack(head.track_id, boxes, head.embedding, scores, faces))
     for face in secondary:
         if face.track_id not in used:
+            faces = dict(face.faces) or dict(face.scores)  # a face track is all faces
             merged.append(
-                HeadTrack(SECONDARY_ID_OFFSET + face.track_id, dict(face.boxes),
-                          face.embedding, dict(face.scores))
+                HeadTrack(SECONDARY_ID_OFFSET + face.track_id, dict(face.boxes), face.embedding,
+                          dict(face.scores), faces)
             )  # fmt: skip
     return merged
 

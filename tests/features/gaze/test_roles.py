@@ -102,8 +102,11 @@ class TestCloseCameras(unittest.TestCase):
 
     def test_partner_head_entering_from_the_edge_is_not_the_owner(self) -> None:
         owner = track(1, 0.5, width=0.2, score=0.6)
-        partner = HeadTrack(2, {f: box(0.08, 0.5, width=0.3) for f in range(10)},
-                            scores={f: 0.9 for f in range(10)})  # fmt: skip
+        frames = range(10)
+        confident = {f: 0.9 for f in frames}
+        partner = HeadTrack(
+            2, {f: box(0.08, 0.5, width=0.3) for f in frames}, scores=confident, faces=confident
+        )
         result = assign([partner, owner], camera="baby")
         self.assertEqual(result.baby, 1)
 
@@ -114,13 +117,19 @@ class TestCloseCameras(unittest.TestCase):
         self.assertEqual((result.mother, result.baby), (None, 1))
 
     def test_head_like_drawing_is_not_the_owner_when_the_person_is_away(self) -> None:
-        drawing = track(3, 0.7, width=0.12, score=0.35)  # e.g. a painted animal on the wall
+        drawing = track(3, 0.7, width=0.12, score=0.35, face=False)  # e.g. a painted animal
         result = assign([drawing], camera="mother", phase="baseline")
         self.assertEqual((result.mother, result.baby), (None, None))
 
-    def test_tiny_box_is_not_the_owner(self) -> None:
-        result = assign([track(3, 0.5, width=0.03, score=0.9)], camera="baby")
-        self.assertEqual(result.baby, None)
+    def test_partner_head_seen_from_above_is_not_the_owner(self) -> None:
+        # in the baseline the mother is away and the top of the baby's head enters her camera
+        top_of_head = track(3, 0.5, width=0.15, score=0.8, face=False)
+        result = assign([top_of_head], camera="mother", phase="baseline")
+        self.assertIsNone(result.mother)
+
+    def test_owner_turning_away_keeps_its_track(self) -> None:
+        owner = HeadTrack(1, {f: box(0.5) for f in range(10)}, faces={f: 0.9 for f in range(6)})
+        self.assertEqual(assign([owner], camera="baby").baby, 1)
 
     def test_close_camera_without_head(self) -> None:
         result = assign([], camera="baby")

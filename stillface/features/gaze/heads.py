@@ -62,12 +62,19 @@ class HeadTrack:
         embedding: Mean face-identity embedding of the track, None if not computed.
         scores: Frame index mapped to the detection confidence; frames without a score count
             as fully confident.
+        faces: Frame index mapped to the face detector's confidence, for the frames on which a
+            face was detected in this head (the face is visible).
     """
 
     track_id: int
     boxes: dict[int, HeadBox]
     embedding: tuple[float, ...] | None = None
     scores: dict[int, float] = field(default_factory=dict)
+    faces: dict[int, float] = field(default_factory=dict)
+
+    def face_share(self) -> float:
+        """Share of the track's frames on which the face was detected."""
+        return len(set(self.faces) & set(self.boxes)) / len(self.boxes) if self.boxes else 0.0
 
     def evidence(self, centrality: bool = False) -> float:
         """Confidence-weighted presence: the sum of the detection scores over the frames.
