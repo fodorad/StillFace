@@ -110,7 +110,7 @@ python-version = "3.13"
 [[tool.ty.overrides]]
 include = [
   "stillface/features/gaze/exordium_heads.py",
-  "stillface/features/gaze/owl_heads.py",
+  "stillface/features/gaze/gdino_heads.py",
 ]
 
 [tool.ty.overrides.rules]

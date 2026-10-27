@@ -6,7 +6,9 @@ model_variant = "vitl14_inout_childplay"
 
 [side_priors]
 window = "right"
+window_baseline = "left"
 door = "left"
+door_baseline = "left"
 
 [thresholds]
 partner_mass = 0.3
@@ -15,7 +17,7 @@ box_margin = 0.25
 
 [roles]
 min_presence = 0.2
-size_ambiguity_ratio = 0.8
 min_side_separation = 0.05
-min_identity_similarity = 0.3
-min_relative_head_area = 0.4
+min_relative_head_area = 0.1
+min_owner_score = 0.5
+min_owner_area = 0.005

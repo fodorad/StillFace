@@ -87,7 +87,7 @@ class TestFeaturesCli(unittest.TestCase):
             args = ["--raw-dir", str(raw), "--processed-dir", str(out), "features", "heads"]
             args += ["--session-id", "9", "--camera", "window", "--phase", "play", "--no-overlay"]
 
-            self.assertEqual(main(args, head_tracker_factory=lambda: tracker), 0)
+            self.assertEqual(main(args, head_tracker_factory=lambda _: tracker), 0)
 
             folder = out / "Sessions" / "9" / "features" / "heads"
             self.assertTrue((folder / "window_play.csv").exists())
@@ -115,7 +115,7 @@ class TestFeaturesCli(unittest.TestCase):
             args += ["--session-id", "9", "--camera", "window", "--phase", "play", "--no-overlay"]
 
             code = main(
-                args, head_tracker_factory=lambda: tracker, gaze_estimator_factory=make_estimator
+                args, head_tracker_factory=lambda _: tracker, gaze_estimator_factory=make_estimator
             )
 
             self.assertEqual(code, 0)
@@ -137,7 +137,7 @@ class TestFeaturesCli(unittest.TestCase):
                 "1",
             ]
             with self.assertRaisesRegex(RuntimeError, "not available"):
-                main(args, head_tracker_factory=lambda: FakeHeadTracker({}))
+                main(args, head_tracker_factory=lambda _: FakeHeadTracker({}))
 
     def test_heads_requires_a_session(self) -> None:
         with self.assertRaises(SystemExit):

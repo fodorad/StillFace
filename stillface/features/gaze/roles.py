@@ -31,19 +31,6 @@ RoleOverrides = dict[tuple[str, str], dict[str, int]]
 
 
 @dataclass(frozen=True)
-class RoleReferences:
-    """Face-identity embeddings of the two participants of a session.
-
-    Attributes:
-        mother: Mean embedding from the mother camera.
-        baby: Mean embedding from the baby camera.
-    """
-
-    mother: tuple[float, ...]
-    baby: tuple[float, ...]
-
-
-@dataclass(frozen=True)
 class RoleAssignment:
     """Outcome of the role assignment for one clip.
 
@@ -72,10 +59,14 @@ def assign_roles(
     phase: str,
     n_frames: int,
     config: GazeConfig,
-    references: RoleReferences | None = None,
     overrides: Mapping[tuple[str, str], Mapping[str, int]] | None = None,
 ) -> RoleAssignment:
     """Assign head tracks to the mother and the baby.
+
+    Close cameras: the owner is the confident, large track with the most evidence near the
+    image centre. Side cameras: the two strongest persistent heads, excluding far-away
+    background people, are told apart by the fixed seating (side prior per camera and
+    phase).
 
     Args:
         tracks: Head tracks of the clip.
@@ -83,7 +74,6 @@ def assign_roles(
         phase: Experiment phase.
         n_frames: Number of sampled frames in the clip.
         config: Gaze configuration (side priors, role rules).
-        references: Identity embeddings of the participants, if available.
         overrides: Pinned assignments that win over the automatic decision.
 
     Returns:
@@ -93,66 +83,31 @@ def assign_roles(
     if pinned is not None:
         return RoleAssignment(pinned.get("mother"), pinned.get("baby"))
 
+    rules = config.roles
     if camera in PERSONS:
-        # the camera's owner is the most confidently present face, not the biggest box: the
-        # partner's face partly enters the close-up views as a large, weak detection
-        dominant = max(tracks, key=lambda t: t.evidence(), default=None)
-        track_id = None if dominant is None else dominant.track_id
+        # the camera frames its owner: a confident, large head near the image centre, not
+        # the partner's head entering from an edge or a head-like drawing on the wall
+        owners = [
+            t for t in tracks
+            if t.median_score() >= rules.min_owner_score and t.median_area() >= rules.min_owner_area
+        ]  # fmt: skip
+        owner = max(owners, key=lambda t: t.evidence(centrality=True), default=None)
+        track_id = None if owner is None else owner.track_id
         return RoleAssignment(*((track_id, None) if camera == "mother" else (None, track_id)))
 
-    rules = config.roles
-    tagged = {t.role: t for t in tracks if t.role is not None and t.role in PERSONS}
-    if tagged:
-        return _with_tagged(tracks, tagged, n_frames, config)
+    present = [t for t in tracks if len(t.boxes) >= rules.min_presence * n_frames]
+    largest = max((t.median_area() for t in present), default=0.0)
     candidates = sorted(
-        (t for t in tracks if len(t.boxes) >= rules.min_presence * n_frames),
+        (t for t in present if t.median_area() >= rules.min_relative_head_area * largest),
         key=_weight,
         reverse=True,
     )[:2]
     if not candidates:
         return RoleAssignment(None, None)
-    prior = getattr(config.side_priors, camera)
     if len(candidates) == 1:
-        # one visible participant cannot be told from the other by position alone: the mother
-        # leans over the baby, and the baby's face is often missed
+        # one visible participant cannot be told from the other by position alone
         return RoleAssignment(None, None, ("single_track", "roles_ambiguous"))
-    if phase == "baseline":
-        return _by_identity_or_size(candidates, config, references)
-    return _by_side(candidates, prior, config)
-
-
-def _with_tagged(
-    tracks: Sequence[HeadTrack],
-    tagged: dict[str, HeadTrack],
-    n_frames: int,
-    config: GazeConfig,
-) -> RoleAssignment:
-    """Assignment when a text-prompted detector already named some of the heads.
-
-    The missing role takes the most confident anonymous head that is not tiny compared with
-    the named partner's (background people are small).
-    """
-    ids = {person: tagged[person].track_id if person in tagged else None for person in PERSONS}
-    rules = config.roles
-    for person in PERSONS:
-        if ids[person] is not None:
-            continue
-        partner = tagged.get("baby" if person == "mother" else "mother")
-        floor = 0.0
-        if partner is not None and partner.boxes:
-            floor = rules.min_relative_head_area * float(
-                np.median([box.area for box in partner.boxes.values()])
-            )
-        used = {i for i in ids.values() if i is not None}
-        candidates = [
-            t for t in tracks
-            if t.role is None and t.track_id not in used
-            and len(t.boxes) >= rules.min_presence * n_frames
-            and float(np.mean([b.area for b in t.boxes.values()])) >= floor
-        ]  # fmt: skip
-        if candidates:
-            ids[person] = max(candidates, key=lambda t: t.weight()).track_id
-    return RoleAssignment(ids["mother"], ids["baby"])
+    return _by_side(candidates, config.side_priors.side(camera, phase), config)
 
 
 def _weight(track: HeadTrack) -> float:
@@ -169,42 +124,6 @@ def _by_side(candidates: list[HeadTrack], prior: str, config: GazeConfig) -> Rol
         return _AMBIGUOUS
     mother, baby = (second, first) if prior == "right" else (first, second)
     return RoleAssignment(mother.track_id, baby.track_id)
-
-
-def _by_identity_or_size(
-    candidates: list[HeadTrack], config: GazeConfig, references: RoleReferences | None
-) -> RoleAssignment:
-    if references is not None:
-        matched = _by_identity(candidates, config.roles.min_identity_similarity, references)
-        if matched is not None:
-            return matched
-    larger, smaller = sorted(candidates, key=_weight, reverse=True)
-    if _weight(smaller) / _weight(larger) >= config.roles.size_ambiguity_ratio:
-        return _AMBIGUOUS
-    return RoleAssignment(larger.track_id, smaller.track_id)
-
-
-def _by_identity(
-    candidates: list[HeadTrack], min_similarity: float, references: RoleReferences
-) -> RoleAssignment | None:
-    embeddings = [t.embedding for t in candidates if t.embedding is not None]
-    if len(embeddings) != len(candidates):
-        return None
-    similarity = np.array(
-        [[_cosine(e, references.mother), _cosine(e, references.baby)] for e in embeddings]
-    )
-    as_mother, as_baby = similarity.argmax(axis=0)
-    if as_mother == as_baby:
-        return None
-    if similarity[as_mother, 0] < min_similarity or similarity[as_baby, 1] < min_similarity:
-        return None
-    return RoleAssignment(candidates[as_mother].track_id, candidates[as_baby].track_id)
-
-
-def _cosine(a: Sequence[float], b: Sequence[float]) -> float:
-    va, vb = np.asarray(a, dtype=float), np.asarray(b, dtype=float)
-    denominator = np.linalg.norm(va) * np.linalg.norm(vb)
-    return float(va @ vb / denominator) if denominator else 0.0
 
 
 def head_per_frame(

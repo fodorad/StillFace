@@ -6,7 +6,6 @@ from pathlib import Path
 from stillface.features.gaze.config import GazeConfig
 from stillface.features.gaze.heads import HeadBox, HeadTrack
 from stillface.features.gaze.roles import (
-    RoleReferences,
     assign_roles,
     camera_persons,
     head_per_frame,
@@ -65,82 +64,63 @@ class TestBackgroundPeople(unittest.TestCase):
         result = assign([track(1, 0.3), track(2, 0.8), background])
         self.assertEqual((result.mother, result.baby), (2, 1))
 
+    def test_background_person_is_ignored_even_when_the_baby_is_fragmented(self) -> None:
+        mother = track(2, 0.2, width=0.12)
+        background = track(3, 0.45, width=0.03)  # far away, visible the whole clip
+        baby = track(1, 0.85, width=0.08, frames=range(0, 5))  # half the clip
+        result = assign([mother, background, baby], camera="door")
+        self.assertEqual((result.mother, result.baby), (2, 1))
+
     def test_smaller_third_person_is_ignored(self) -> None:
         result = assign([track(1, 0.3), track(2, 0.8), track(3, 0.55, width=0.03)])
         self.assertEqual((result.mother, result.baby), (2, 1))
 
 
 class TestBaseline(unittest.TestCase):
-    def test_baseline_ignores_the_side_prior_and_uses_size(self) -> None:
-        result = assign([track(1, 0.2, width=0.14), track(2, 0.7, width=0.09)], phase="baseline")
+    def test_window_baseline_seats_the_mother_on_the_left(self) -> None:
+        result = assign([track(1, 0.2, width=0.14), track(2, 0.7, width=0.06)], phase="baseline")
         self.assertEqual((result.mother, result.baby), (1, 2))
 
-    def test_similar_sizes_in_baseline_are_ambiguous(self) -> None:
-        result = assign([track(1, 0.2, width=0.1), track(2, 0.7, width=0.095)], phase="baseline")
-        self.assertEqual((result.mother, result.baby), (None, None))
-        self.assertIn("roles_ambiguous", result.flags)
-
-    def test_identity_beats_size_in_baseline(self) -> None:
-        refs = RoleReferences(mother=(1.0, 0.0), baby=(0.0, 1.0))
-        tracks = [
-            track(1, 0.2, width=0.14, embedding=(0.0, 1.0)),
-            track(2, 0.7, width=0.09, embedding=(1.0, 0.0)),
-        ]
-        result = assign(tracks, phase="baseline", references=refs)
+    def test_door_baseline_keeps_the_mother_on_the_left(self) -> None:
+        tracks = [track(1, 0.8, width=0.1), track(2, 0.3, width=0.1)]  # similar head sizes
+        result = assign(tracks, camera="door", phase="baseline")
         self.assertEqual((result.mother, result.baby), (2, 1))
 
-    def test_weak_identity_match_falls_back_to_size(self) -> None:
-        refs = RoleReferences(mother=(1.0, 0.0), baby=(0.0, 1.0))
-        tracks = [
-            track(1, 0.2, width=0.14, embedding=(0.7, -0.7)),
-            track(2, 0.7, width=0.09, embedding=(-0.7, 0.7)),
-        ]
-        result = assign(tracks, phase="baseline", references=refs)
+    def test_small_baby_behind_the_mother_is_not_background(self) -> None:
+        mother, baby = track(1, 0.2, width=0.14), track(2, 0.45, width=0.06)  # area ratio ~0.18
+        result = assign([mother, baby], phase="baseline")
         self.assertEqual((result.mother, result.baby), (1, 2))
-
-
-class TestTaggedTracks(unittest.TestCase):
-    def tagged(self, track_id: int, cx: float, role: str, width: float = 0.07) -> HeadTrack:
-        return HeadTrack(track_id, {f: box(cx, width=width) for f in range(10)}, role=role)
-
-    def test_prompted_baby_and_best_face_for_the_mother(self) -> None:
-        baby = self.tagged(1000, 0.3, "baby")
-        result = assign([baby, track(2, 0.4, width=0.09), track(3, 0.85, width=0.12)])
-        self.assertEqual((result.mother, result.baby), (3, 1000))
-
-    def test_tiny_background_face_is_not_the_mother(self) -> None:
-        baby = self.tagged(1000, 0.3, "baby")
-        result = assign([baby, track(2, 0.6, width=0.015)])
-        self.assertEqual((result.mother, result.baby), (None, 1000))
-
-    def test_both_roles_prompted(self) -> None:
-        result = assign([self.tagged(1000, 0.3, "baby"), self.tagged(1001, 0.8, "mother")])
-        self.assertEqual((result.mother, result.baby), (1001, 1000))
-
-    def test_prompted_baby_works_in_baseline_without_position_priors(self) -> None:
-        baby = self.tagged(1000, 0.8, "baby")
-        result = assign([baby, track(2, 0.2, width=0.09)], phase="baseline")
-        self.assertEqual((result.mother, result.baby), (2, 1000))
-
-    def test_short_lived_faces_are_not_candidates(self) -> None:
-        baby = self.tagged(1000, 0.3, "baby")
-        result = assign([baby, track(2, 0.8, width=0.1, frames=[0])])
-        self.assertEqual((result.mother, result.baby), (None, 1000))
 
 
 class TestCloseCameras(unittest.TestCase):
     def test_owner_is_the_dominant_track(self) -> None:
-        tracks = [track(1, 0.5, width=0.3), track(2, 0.1, width=0.05)]
+        tracks = [track(1, 0.5, width=0.3), track(2, 0.1, width=0.1)]
         mother = assign(tracks, camera="mother")
         self.assertEqual((mother.mother, mother.baby), (1, None))
         baby = assign(tracks, camera="baby", phase="baseline")
         self.assertEqual((baby.mother, baby.baby), (None, 1))
+
+    def test_partner_head_entering_from_the_edge_is_not_the_owner(self) -> None:
+        owner = track(1, 0.5, width=0.2, score=0.6)
+        partner = HeadTrack(2, {f: box(0.08, 0.5, width=0.3) for f in range(10)},
+                            scores={f: 0.9 for f in range(10)})  # fmt: skip
+        result = assign([partner, owner], camera="baby")
+        self.assertEqual(result.baby, 1)
 
     def test_confident_face_beats_a_larger_weak_partner_box(self) -> None:
         owner = track(1, 0.5, width=0.2, score=0.88)
         partner_edge = track(2, 0.05, width=0.5, score=0.5)  # partner's face entering the view
         result = assign([partner_edge, owner], camera="baby")
         self.assertEqual((result.mother, result.baby), (None, 1))
+
+    def test_head_like_drawing_is_not_the_owner_when_the_person_is_away(self) -> None:
+        drawing = track(3, 0.7, width=0.12, score=0.35)  # e.g. a painted animal on the wall
+        result = assign([drawing], camera="mother", phase="baseline")
+        self.assertEqual((result.mother, result.baby), (None, None))
+
+    def test_tiny_box_is_not_the_owner(self) -> None:
+        result = assign([track(3, 0.5, width=0.03, score=0.9)], camera="baby")
+        self.assertEqual(result.baby, None)
 
     def test_close_camera_without_head(self) -> None:
         result = assign([], camera="baby")

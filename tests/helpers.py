@@ -5,12 +5,17 @@ from pathlib import Path
 
 
 def make_video(
-    path: Path, seconds: float = 3.0, fps: int = 60, size: str = "64x48", audio: bool = True
+    path: Path,
+    seconds: float = 3.0,
+    fps: int = 60,
+    size: str = "64x48",
+    audio: bool = True,
+    source: str = "testsrc",
 ) -> Path:
-    """Write a small test-pattern video, optionally with a sine tone."""
+    """Write a small video: ffmpeg ``testsrc`` pattern by default, ``color`` for a black scene."""
     path.parent.mkdir(parents=True, exist_ok=True)
     cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
-           "-f", "lavfi", "-i", f"testsrc=size={size}:rate={fps}:duration={seconds}"]  # fmt: skip
+           "-f", "lavfi", "-i", f"{source}=size={size}:rate={fps}:duration={seconds}"]  # fmt: skip
     if audio:
         cmd += ["-f", "lavfi", "-i", f"sine=frequency=440:duration={seconds}", "-shortest"]
     cmd += ["-pix_fmt", "yuv420p", str(path)]

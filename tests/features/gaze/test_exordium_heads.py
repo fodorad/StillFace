@@ -39,6 +39,14 @@ class TestExordiumHeadTracker(unittest.TestCase):
             for box in track.boxes.values():
                 self.assertTrue(0.0 <= box.x0 < box.x1 <= 1.0 and 0.0 <= box.y0 < box.y1 <= 1.0)
 
+    def test_sparse_sampling_still_links_a_face_into_one_track(self) -> None:
+        clip = DatasetPaths.default().phase_clip("626021", "baby", "play")
+        if not clip.exists():
+            self.skipTest("development session not available")
+        frames = list(range(0, 1800, 60))  # 1 fps on a 60 fps clip
+        tracks = self.tracker.track(clip, frames)
+        self.assertTrue(any(len(t.boxes) >= 0.8 * len(frames) for t in tracks))
+
 
 if __name__ == "__main__":
     unittest.main()
