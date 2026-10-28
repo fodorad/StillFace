@@ -108,10 +108,10 @@ session are stored under `DB_PROCESSED/ELTE-PPK_StillFace/probes/`.
 | 3D bodies | confidence-weighted triangulation; views with more than 25 px error are rejected |
 | Touch | 3D hand-to-body distance in baby head widths, OR a pose hand on the baby, OR a Grounding DINO mother hand on the baby (baby camera) |
 | Gaze | Gaze-LLE ViT-L ChildPlay (in/out) on skeleton-anchored head boxes |
-| Baby face | PyAFAR infant action units (AU6, AU12), Qwen3-VL-4B label as a cross-check |
+| Baby face | PyAFAR infant action units (AU6, AU12) for smiles, Qwen3-VL-4B label for smiles only |
 | Mother face | LibreFace 2.0 |
 | Voice type | VTC 2.2 (BabyHuBERT): baby and mother voice, overlaps kept |
-| Vocal affect | AST AudioSet cry/sob/whimper and laughter probabilities, absolute threshold 0.2 |
+| Vocal affect | AST AudioSet cry/sob/whimper and laughter probabilities, segment peak with an absolute threshold of 0.2 |
 | Mother prosody | Parselmouth F0 per speech segment |
 
 These candidates were rejected: the FiDIP infant pose model (not better than RTMW),
@@ -183,7 +183,9 @@ still face. It is higher on the frames the VLM labels crying (0.32 vs 0.14 and 0
 | Framing | 605317 (baby camera) | a hand on the baby's belly not detected | open |
 | Framing | 819104 (baby camera) | the mother's arm reaching over the baby from the top | open |
 | Model | 626021 | calibration least accurate (inliers 14–24 px) | flagged; other initial frames and distortion did not help |
-| Model | all | AU4, AU12 and AU20 fire on both cry faces and laughs | cry from audio (AST) with the face and VLM label as cross-checks |
+| Model | all | AU4, AU12 and AU20 fire on both cry faces and laughs | baby cry and fuss from audio only (AST) |
+| Model | 605317, 656531 (still face) | the VLM labels fussing grimaces "smiling": a face veto would flip 14 of 25 correct cry segments | VLM not used to veto cry |
+| Model | 656531 (play) | excited laughs reach an AST cry probability of 0.24–0.44: 2 of 27 cry segments are false | open |
 | Model | all | CLAP labels most fuss segments "coo" | CLAP rejected for vocal affect |
 | Camera set | 636211 | two views on the baby: no 3D touch | reduced-view level, touch from 2D evidence |
 | Camera set | 656531 | close cameras only: no 3D | close-only level, touch from the hand detector |

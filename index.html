@@ -489,7 +489,7 @@ session are stored under <code class="docutils literal notranslate"><span class=
 <td><p>Gaze-LLE ViT-L ChildPlay (in/out) on skeleton-anchored head boxes</p></td>
 </tr>
 <tr class="row-odd"><td><p>Baby face</p></td>
-<td><p>PyAFAR infant action units (AU6, AU12), Qwen3-VL-4B label as a cross-check</p></td>
+<td><p>PyAFAR infant action units (AU6, AU12) for smiles, Qwen3-VL-4B label for smiles only</p></td>
 </tr>
 <tr class="row-even"><td><p>Mother face</p></td>
 <td><p>LibreFace 2.0</p></td>
@@ -498,7 +498,7 @@ session are stored under <code class="docutils literal notranslate"><span class=
 <td><p>VTC 2.2 (BabyHuBERT): baby and mother voice, overlaps kept</p></td>
 </tr>
 <tr class="row-even"><td><p>Vocal affect</p></td>
-<td><p>AST AudioSet cry/sob/whimper and laughter probabilities, absolute threshold 0.2</p></td>
+<td><p>AST AudioSet cry/sob/whimper and laughter probabilities, segment peak with an absolute threshold of 0.2</p></td>
 </tr>
 <tr class="row-odd"><td><p>Mother prosody</p></td>
 <td><p>Parselmouth F0 per speech segment</p></td>
@@ -779,7 +779,17 @@ still face. It is higher on the frames the VLM labels crying (0.32 vs 0.14 and 0
 <tr class="row-even"><td><p>Model</p></td>
 <td><p>all</p></td>
 <td><p>AU4, AU12 and AU20 fire on both cry faces and laughs</p></td>
-<td><p>cry from audio (AST) with the face and VLM label as cross-checks</p></td>
+<td><p>baby cry and fuss from audio only (AST)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Model</p></td>
+<td><p>605317, 656531 (still face)</p></td>
+<td><p>the VLM labels fussing grimaces “smiling”: a face veto would flip 14 of 25 correct cry segments</p></td>
+<td><p>VLM not used to veto cry</p></td>
+</tr>
+<tr class="row-even"><td><p>Model</p></td>
+<td><p>656531 (play)</p></td>
+<td><p>excited laughs reach an AST cry probability of 0.24–0.44: 2 of 27 cry segments are false</p></td>
+<td><p>open</p></td>
 </tr>
 <tr class="row-odd"><td><p>Model</p></td>
 <td><p>all</p></td>
