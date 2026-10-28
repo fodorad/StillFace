@@ -5,5 +5,5 @@ from importlib.metadata import PackageNotFoundError, version
 try:
     __version__ = version("stillface")
 except PackageNotFoundError:  # pragma: no cover - source tree without installed metadata
-    __version__ = "0.0.0"
+    __version__ = "0.2.0"
 """Installed package version."""
