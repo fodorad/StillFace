@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/fodorad/StillFace/compare/stillface-v0.2.0...stillface-v0.2.1) (2026-10-28)
+
+
+### Documentation
+
+* **readme:** baby vocal affect review results ([#23](https://github.com/fodorad/StillFace/issues/23)) ([848d70a](https://github.com/fodorad/StillFace/commit/848d70a8da29a429b5a1adb1518ccc44788ef841))
+
 ## [0.2.0](https://github.com/fodorad/StillFace/compare/stillface-v0.1.0...stillface-v0.2.0) (2026-10-28)
 
 
