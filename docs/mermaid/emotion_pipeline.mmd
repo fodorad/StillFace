@@ -1,0 +1,24 @@
+flowchart LR
+    subgraph FACE["Face"]
+        F1["face crops from the full-resolution frame<br/>(baby camera; side camera only as checked fallback)"]
+        F2["PyAFAR infant: 9 action units"]
+        F3["Infant AFAR rules: cry-face AU4+AU20 (+AU6),<br/>smile AU12 (+AU6), >= 0.5 s"]
+        F1 --> F2 --> F3
+    end
+    subgraph VOICE["Voice"]
+        V1["VTC 2.2: who vocalises<br/>(baby / female / male / other child)"]
+        V2["AST AudioSet: cry, whimper,<br/>laughter inside baby segments"]
+        V1 --> V2
+    end
+    subgraph MOM["Mother"]
+        M1["most frontal camera (6DRepNet head pose)"]
+        M2["LibreFace 2.0: AU intensities + expression"]
+        M1 --> M2
+    end
+    C["combined per 0.5 s: negative / positive if face OR voice,<br/>source kept, conflicts listed"]
+    L["local VLM rater (qwen3.8:27b):<br/>6 face crops + full frame per 2 s window"]
+    F3 --> C
+    V2 --> C
+    C --> O["still-face check, Annie export"]
+    M2 --> O
+    L --> O

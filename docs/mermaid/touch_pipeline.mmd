@@ -1,0 +1,15 @@
+flowchart LR
+    subgraph EV["Evidence"]
+        A["2D: mother's hand keypoints or a<br/>detected bare hand inside the baby's<br/>body hull (baby camera)"]
+        B["3D main: triangulated hand points<br/>to the baby's body segments"]
+        C["3D v2: depth-completed skeleton<br/>hand to body segments"]
+        D["depth contact: hand surface vs<br/>baby surface depth around it"]
+    end
+    H["hysteresis 0.5 / 0.8 baby head widths<br/>(about 5.5 / 9 cm)"]
+    F["main touch = 3D main OR 2D<br/>events >= 0.1 s, gaps < 0.2 s merged"]
+    Q["agreement report (kappa)<br/>3D v2 and depth stay secondary"]
+    B --> H --> F
+    A --> F
+    C --> Q
+    D --> Q
+    F --> Q

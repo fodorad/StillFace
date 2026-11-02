@@ -1,0 +1,32 @@
+flowchart TB
+    subgraph CAL["Cameras"]
+        C1["initial cameras: VGGT-1B<br/>(or Depth Anything 3 any-view poses)"]
+        C2["zoom / move detection: ORB + RANSAC<br/>on the people-masked background"]
+        C3["bundle adjustment on face + arm keypoints,<br/>zoomed frames excluded"]
+        C1 --> C3
+        C2 --> C3
+    end
+    subgraph TRI["Triangulation"]
+        T1["confidence-weighted DLT, >= 2 views,<br/>worst view dropped above 25 px"]
+    end
+    subgraph DEP["Dense depth"]
+        D1["Depth Anything 3 (DA3-LARGE-1.1),<br/>4 views per frame, conditioned on the cameras,<br/>15 Hz + interpolation"]
+        D2["per-frame anchoring to triangulated joints<br/>(only where a held-out check says it helps)"]
+        D1 --> D2
+    end
+    subgraph SK["Skeleton v2"]
+        S1["the person's own close camera decides<br/>where a joint is in the image"]
+        S2["depth: triangulated, else DA3 on that ray<br/>(skin-to-joint offset)"]
+        S3["fixed seats: mother's hips one static point<br/>from all cameras; baby trunk within 5 cm"]
+        S4["fixed bone lengths, speed gate,<br/>short gaps filled, unseen joints hidden"]
+        S1 --> S2 --> S3 --> S4
+    end
+    subgraph BODY["Body meshes"]
+        B1["Anny (all ages): baby free age/height;<br/>mother from Multi-HMR-Anny keyframes"]
+        B2["multi-view fit: 2D in all cameras + 3D targets,<br/>seat + temporal terms; gate on 3D error"]
+        B1 --> B2
+    end
+    C3 --> T1 --> S2
+    C3 --> D1
+    D2 --> S2
+    S4 --> B2
