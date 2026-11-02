@@ -1,0 +1,8 @@
+flowchart LR
+    H["head boxes from the tracked skeletons<br/>(face keypoints, or above the shoulders)"]
+    G["Gaze-LLE ViT-L/14 ChildPlay:<br/>heatmap + in / out of frame, every frame"]
+    P["mass of the heatmap on the partner's<br/>head box (box enlarged 25%)"]
+    S["side cameras: mother -> baby, baby -> mother;<br/>close cameras: looking towards the partner"]
+    HP["head pose (6DRepNet, 3D head axes)<br/>as a cross-check"]
+    H --> G --> P --> S
+    HP --> S

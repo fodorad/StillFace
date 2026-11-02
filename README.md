@@ -104,64 +104,168 @@ The phone cameras (mother, baby) record at about 60 fps with a variable frame ra
 | 636211 | mother, baby, window | no door camera |
 | 656531 | mother, baby | close cameras only |
 
-## Probing results
+## Analysis stack
 
-The candidate tools were compared on the play phase of the probing set, using pretrained
-models only and label-free quality checks with visual review. Heavy models ran on a 2 fps
-grid (about 124 frames per camera). The outputs, review mosaics and one multi-view video per
-session are stored under `DB_PROCESSED/ELTE-PPK_StillFace/probes/`.
+The coding of a session (touch, emotion, gaze) rests on a shared analysis of the scene: who is where, in which camera,
+in 3D, and what is heard. All models are pretrained; nothing is trained on this dataset. The stack was built in three
+probing rounds on the probing set above plus two more sessions (616106, the clearest four-camera session of a screen of
+all 48, and 665814, the session with the most crying in play). Quality is measured without labels (reprojection,
+temporal stability, agreement between independent methods, the still-face effect) and by visual review; human labels
+(Annie) come next. Outputs are stored under `DB_PROCESSED/ELTE-PPK_StillFace/probes/`.
 
-**Chosen tools** for the next round:
+<img src="https://raw.githubusercontent.com/fodorad/StillFace/main/docs/mermaid/stack_overview.jpg" alt="Analysis stack overview" width="100%"/>
 
-| Block | Tool |
-|---|---|
-| Persons | Grounding DINO (prompts "a baby." and "a person.") + YOLOX-x persons |
-| Roles | seating rules; on the side cameras baby boxes larger than 20% of the image are ignored, plus a session-level check of the baby's position and head size |
-| 2D pose | RTMW-x whole body (133 keypoints); ViTPose++-H body as a candidate for fusion |
-| Self-calibration | VGGT-1B initial cameras + bundle adjustment on face and arm keypoints |
-| 3D bodies | confidence-weighted triangulation; views with more than 25 px error are rejected |
-| Touch | 3D hand-to-body distance in baby head widths, OR a pose hand on the baby, OR a Grounding DINO mother hand on the baby (baby camera) |
-| Gaze | Gaze-LLE ViT-L ChildPlay (in/out) on skeleton-anchored head boxes |
-| Baby face | PyAFAR infant action units (AU6, AU12) for smiles, Qwen3-VL-4B label for smiles only |
-| Mother face | LibreFace 2.0 |
-| Voice type | VTC 2.2 (BabyHuBERT): baby and mother voice, overlaps kept |
-| Vocal affect | AST AudioSet cry/sob/whimper and laughter probabilities, segment peak with an absolute threshold of 0.2 |
-| Mother prosody | Parselmouth F0 per speech segment |
+### Scene foundations
 
-These candidates were rejected: the FiDIP infant pose model (not better than RTMW),
-OWLv2 heads, radial distortion and multi-frame VGGT for calibration, and CLAP zero-shot
-for fuss vs coo.
+<img src="https://raw.githubusercontent.com/fodorad/StillFace/main/docs/mermaid/scene_3d.jpg" alt="Cameras, triangulation, depth, skeletons and body meshes" width="100%"/>
 
-**Self-calibration and 3D** (RTMW keypoints):
-- *Inlier px* is the median reprojection error of the inlier observations per camera.
-- *Arm bone CV* is the median coefficient of variation of the four arm bone lengths over
-  time (lower is more stable).
-- *Baby 3D coverage* is the share of frames with a triangulated face, arms, legs and feet.
+| Task | Selected | Tried and rejected (why) |
+|---|---|---|
+| Persons (2 Hz anchors) | Grounding DINO base ("a baby.", "a person.") + YOLOX-x persons | OWLv2 heads (missed back-of-head views) |
+| Roles | seating rules per camera, side-camera baby boxes > 20% of the image ignored, session-level baby check | – |
+| Tracking (60 fps) | skeleton-box tracking between anchors; duplicate-skeleton rejection; partner check (head >= 0.7x the owner's: rejects a doll) | – |
+| 2D pose | RTMW-x whole body (133 keypoints), RGB input; visibility = SimCC score >= 3.0 (not a probability) | FiDIP infant pose (not better), ViTPose++-H (slower, similar) |
+| Hands | RTMPose-m hand model on wrist-anchored boxes; ownership: hand wrist within 0.5 hand sizes of the body wrist; bare mother hands in the baby camera from Grounding DINO "a hand." | RTMDet-nano hand detector (fires on shoulders) |
+| Faces | YOLO11s face detector, matched to the role head boxes, every frame | – |
+| Head pose | 6DRepNet on every face crop; for the baby also model-free 3D head axes from the nose, eyes and ears | PyAFAR / LibreFace head pose (pitch medians -40 / -61 deg, roll nearly constant: unusable) |
+| Cameras | self-calibration: VGGT-1B initial cameras, bundle adjustment on face and arm keypoints | radial distortion, multi-frame VGGT, initialising from another session (45-200 px) |
+| Camera changes | zoom / move detection: ORB features on the people-masked background, RANSAC similarity against the calibration frame | phase correlation (fails on the plain walls) |
+| Triangulation | confidence-weighted DLT, >= 2 views, worst view dropped above 25 px | – |
+| Dense depth | Depth Anything 3 (DA3-LARGE-1.1, Apache-2.0): the 4 views of a frame in one pass, conditioned on the calibrated cameras; 15 Hz + interpolation | RTMW3D-x monocular lifting (jitter 5-20x the triangulated joints, outliers up to 129 head widths per frame) |
+| Skeletons | the person's own close camera decides the image position; depth from triangulation or from DA3 on that ray; fixed seats, fixed bone lengths, speed gate; mother without legs | fusion v1 (triangulated + lifted joints) |
+| Body meshes | Anny (NAVER, all ages): baby with free age and height; mother initialised from Multi-HMR-Anny keyframes; fitted to the skeletons and to the 2D keypoints of every camera | v1 per-frame fit (2-6% of frames flew off) |
+| Voice type (diarization) | VTC 2.2: baby, female, male, other child; overlaps kept | – |
+| Sound events | AST AudioSet (cry, sobbing, whimper, laughter, babbling) on 2 s windows | CLAP zero-shot (labels most fussing "coo") |
+| Open-vocabulary grounding | Grounding DINO for persons and bare hands | – |
+| VLM raters | qwen3.8:27b (local): 6 face crops + the full frame per 2 s window | gemma4:26b, gemma4:e4b with audio, Qwen3-VL-8B (see Emotion) |
 
-| Session | Quality level | Inlier px (mother, baby, window, door) | 3D median reprojection px | Arm bone CV mother / baby | Baby 3D coverage face / arms / legs / feet |
+**3D in numbers.** The window camcorder zooms at the start of play in 3 of 4 sessions (626021: 0-15 s, 636211: 0-29 s,
+616106: 0-19 s; image scale 0.57-0.83 of the calibration frame). The calibration was wrong for those frames, and so
+was every 3D point that used the window view there; this was a main cause of the jumpy 3D of round 2. Excluding those
+frames and refitting improved every calibration (636211 baby camera 62 -> 12 px median; 626021 inliers 75 -> 82%).
+
+Coverage / 99th percentile of the frame-to-frame step (baby head widths, about 11 cm), skeleton v2 vs fusion v1:
+
+| Session | Mother arms | Mother hands | Baby arms | Baby legs | Baby feet |
 |---|---|---|---|---|---|
-| 605317 | multi-view | 9, 10, 10, 11 | 8.1 | 0.05 / 0.30 | 92 / 65 / 21 / 5% |
-| 626021 | multi-view | 16, 24, 14, 24 | 8.2 | 0.05 / 0.22 | 80 / 72 / 42 / 21% |
-| 819104 | multi-view | 9, 16, 14, 18 | 11.0 | 0.06 / 0.13 | 93 / 77 / 52 / 19% |
-| 594801 | multi-view | 8, 5, 4, 11 | 5.5 | 0.06 / 0.18 | 90 / 90 / 49 / 11% |
-| 636211 | reduced-view | 6, 5, 3, – | 6.4 | 0.05 / 0.10 | 53 / 32 / 3 / 0% |
-| 656531 | close-only | no calibration | – | – | – |
+| 626021 | 0.86 / 0.29 (0.84 / 1.22) | 0.38 / 0.50 (0.33 / 1.38) | 0.97 / 0.20 (0.79 / 0.30) | 0.75 / 0.33 (0.37 / 0.58) | 0.56 / 0.54 (0.55 / 2.16) |
+| 636211 | 0.84 / 0.53 (0.54 / 2.39) | 0.27 / 0.26 (0.30 / 4.20) | 0.98 / 0.30 (0.82 / 0.83) | 0.56 / 0.31 (0.32 / 0.99) | 0.38 / 0.37 (0.37 / 3.59) |
+| 616106 | 0.97 / 0.23 (0.75 / 1.21) | 0.32 / 0.31 (0.28 / 2.28) | 1.00 / 0.13 (0.52 / 55.0) | 0.77 / 0.37 (0.27 / 6.02) | 0.29 / 0.45 (0.20 / 84.4) |
+| 665814 | 0.99 / 0.29 (0.81 / 0.73) | 0.35 / 0.32 (0.30 / 0.89) | 0.93 / 0.16 (0.64 / 0.28) | 0.37 / 0.25 (0.14 / 0.61) | 0.47 / 0.31 (0.28 / 1.27) |
 
-**Touch** (frames with touch at 2 fps, from each evidence source and fused):
+DA3 depth against triangulated joints held out of the anchoring (arms): median 0.19-0.39 head widths (2-4 cm) with
+per-frame anchoring, 0.33-0.46 with one global scale per camera. Body meshes are drawn on 97-100% of the frames (636211 mother: 52%, nothing during the window zoom)
+(baby 2D error in the baby camera 5-15 px); the mother's side-camera error matches round 2 (626021: 26 / 24 px) at a
+much steadier pose.
 
-| Session | 3D proximity | Pose hand on the baby | Detected mother hand on the baby | Fused |
-|---|---|---|---|---|
-| 605317 | 118 | 83 | 85 | 121 / 124 |
-| 626021 | 63 | 52 | 68 | 98 / 124 |
-| 819104 | 109 | 120 | 117 | 123 / 126 |
-| 594801 | 116 | 56 | 117 | 120 / 124 |
-| 636211 | 0 | 77 | 78 | 103 / 122 |
-| 656531 | – | 17 | 66 | 66 / 124 |
+**Decisions made on the fly**
+- Depth at 15 Hz instead of 60 fps: 60 fps would take more than 2 h per session on the Mac mini M4.
+- VGGT could not be installed for two new sessions; their cameras start from Depth Anything 3's own pose estimates
+  (12 views). This works but gives weaker calibrations (616106: 20-46 px).
+- Per-frame depth anchoring is used per person only when it beats the global scale on held-out joints (it does not
+  where the calibration is weak).
+- The mother's hips are one static 3D point per seat segment, fitted to all cameras over the whole segment: her own
+  camera sees the baby and the bouncer at hip level, so depth there measured the occluder (hips were 320-400 px off in
+  the side views; now 8-43 px).
+- Every distance in cm uses one prior for the baby's ear-to-ear width (11.0 cm). The body fit confounds size and
+  distance (it implied 13-15 cm on the weaker calibrations).
+- Body fits that disagree with the 3D targets by more than one head width are not drawn.
 
-**Gaze** on the side cameras: the share of frames with a head box, and of those, the share
-with at least 30% of the gaze heatmap on the partner's head:
+**Hard cases / failure modes**
+- Occlusion: the mother leaning over the baby hides the baby in the door view (594801) and her own hips everywhere.
+- During the window zoom 636211 has only one valid view of the mother, so her body is missing for 29 s.
+- Depth errors along the close camera's ray show up as lateral offsets in the side views; anchoring halves them where
+  triangulation is good, but a heavy tail remains (636211 mother arms: 90th percentile 3.8 head widths).
+- The baby camera sits 15-40 cm from the mother's head: close, blurred partial views of her.
+- The adult-trained head-pose model and the 3D head axes disagree for the baby (median 5-17 deg on the baby camera,
+  up to 110 deg for the mother seen from behind).
 
-| Session | Window: mother head / on baby | Window: baby head / on mother | Door: mother head / on baby | Door: baby head / on mother |
+### 1. Touch
+
+<img src="https://raw.githubusercontent.com/fodorad/StillFace/main/docs/mermaid/touch_pipeline.jpg" alt="Touch pipeline" width="100%"/>
+
+Three independent measures of the mother's hand on the baby were compared on every frame (share of frames, and
+agreement with the main measure as Cohen's kappa):
+
+| Session | Main: triangulated 3D OR 2D contact | 3D v2: depth-completed skeleton | Depth contact (DA3) |
+|---|---|---|---|
+| 626021 | 0.55 | 0.75 (kappa 0.20) | 0.10 (0.16) |
+| 636211 | 0.53 | 0.40 (0.06) | 0.11 (0.18) |
+| 616106 | 0.81 | 0.88 (0.53) | 0.09 (0.04) |
+| 665814 | 0.90 | 0.92 (0.17) | 0.26 (0.07) |
+
+Round 2, 2 fps (frames with touch: 3D proximity / pose hand on the baby / detected hand on the baby / fused):
+605317 118 / 83 / 85 / 121 of 124; 626021 63 / 52 / 68 / 98; 819104 109 / 120 / 117 / 123; 594801 116 / 56 / 117 / 120;
+636211 0 / 77 / 78 / 103; 656531 – / 17 / 66 / 66.
+
+**Which is better for touch: 2D poses, 3D triangulation, or 3D meshes and depth?**
+- *2D contact in the baby camera* sees most touches (the baby camera faces the baby, hands are large) but cannot tell a
+  hand in front of the baby from a hand on the baby. Bare hands without a skeleton are only found by the hand detector.
+- *Triangulated 3D* is the most precise where it exists, but the mother's hands are triangulated on only 4-10% of the
+  frames: it confirms, it cannot cover.
+- *Depth-completed 3D skeletons* cover 27-38% of the mother's hand frames, but their depth error (2-4 cm median,
+  heavy tail) is close to the 5.5 cm touch threshold, so they over-call touch where calibration is weak.
+- *Depth contact* (hand surface vs the baby's surface around it) does not separate touch from no touch: the depth
+  difference is about the same in both (626021: 7.4 vs 8.1 cm; 616106: 6.0 vs 4.3 cm). At 504 px the hand on the baby
+  is a few depth pixels and blurs into the baby.
+- *Body meshes* give the right definition (skin to skin) and are drawn on almost every frame, but their hands are as
+  good as the skeleton they are fitted to; they are not yet used as a touch measure.
+
+Current answer: the **main measure (triangulated 3D, else 2D contact in the baby camera)** stays the reference for
+precision. The 3D skeleton distance is the best candidate to add coverage where calibration is good (kappa 0.53 on
+616106). The decision needs labelled frames: a frame-level review of the disagreements in Annie.
+
+**Failure modes:** hands under blankets or behind the baby (baby camera framing, 605317, 819104); the mother's arm
+reaching over the baby from the top of the baby camera; 2D contact through occlusion (hand in front); bare hands with
+no skeleton (hand detector only); only two views on the baby in 636211.
+
+### 2. Emotion
+
+<img src="https://raw.githubusercontent.com/fodorad/StillFace/main/docs/mermaid/emotion_pipeline.jpg" alt="Emotion pipeline" width="100%"/>
+
+| Part | Selected | Alternatives (result) |
+|---|---|---|
+| Baby face | PyAFAR infant, 9 action units, rules of Infant AFAR (Ertugrul et al. 2023): cry-face AU4 + AU20 (+AU6, Duchenne), smile AU12 (+AU6) | LibreFace on the baby (adult model) |
+| Baby voice | VTC baby segments + AST cry / whimper / laughter >= 0.2 | CLAP zero-shot (fuss labelled "coo") |
+| Combined | negative / positive when face OR voice says so, per 0.5 s, source kept, conflicts listed | face as a veto on voice (flipped 14 of 25 correct cry segments in round 2) |
+| Mother face | LibreFace 2.0 on the most frontal camera (6DRepNet), AU intensities + expression class | AU6 + AU12 >= 1 smile rule (never fires: intensities are compressed on these faces, AU6 99th percentile <= 0.2) |
+| VLM rater | qwen3.8:27b, 21 / 26 reviewed segments right (distress vs not) | gemma4:26b 11 / 26, gemma4:e4b with audio 4 / 26, Qwen3-VL-8B 14 / 23 (round 2); audio alone 21 / 23 |
+
+**Still-face check, 665814** (share of 0.5 s bins, baby face OR voice):
+
+| Phase | Negative | Positive |
+|---|---|---|
+| baseline | 0.00 | 0.45 |
+| play | 0.37 | 0.02 |
+| still face | 0.62 | 0.01 |
+| reunion | 0.88 | 0.00 |
+
+The baby's distress rises in the still face and carries into the reunion, as expected. In play, the negative bins came
+from the face alone in 43%, from both in 33% and from the voice alone in 24%: either signal alone misses about a
+third. The VLM agrees in direction (play 16 / 31 windows distress, still face 21 / 44, reunion 13 / 15). Play in the
+other pilot sessions: 626021 positive 0.42, 616106 positive 0.21 / negative 0.04, 636211 mostly neutral.
+
+Round 2 voice (VTC seconds, baby camera phone; baby play / still face, mother play / still face): 605317 1.0 / 40.6,
+35.9 / 0.0; 626021 10.8 / 21.1, 50.1 / 0.0; 819104 1.6 / 57.7, 52.4 / 0.0; 594801 1.3 / 2.7, 31.0 / 0.0; 636211 5.4 /
+16.6, 54.3 / 0.2; 656531 10.3 / 35.3, 47.1 / 0.0. The mother's speech vanishes in the still face, as the protocol
+requires.
+
+**Failure modes:** AU4, AU12 and AU20 fire on cry faces and on laughs (the AU combinations and the voice disambiguate);
+excited laughs reach AST cry probabilities of 0.24-0.44; the mother looks down at the baby (pitch -25 to -32 deg in her
+camera), so half of her frames are outside the frontal range; LibreFace labels the mother's still face "Sadness" (665814:
+79%) where a neutral face is expected; the local VLM calls fussing grimaces "smiling" (round-2 models) and needs audio
+it cannot use well.
+
+### 3. Gaze
+
+<img src="https://raw.githubusercontent.com/fodorad/StillFace/main/docs/mermaid/gaze_pipeline.jpg" alt="Gaze pipeline" width="100%"/>
+
+Gaze-LLE ViT-L/14 (ChildPlay weights, in / out of frame) runs on every frame from skeleton-anchored head boxes; looking
+at the partner = heatmap mass on the partner's head box (enlarged 25%). Head pose (6DRepNet, 3D head axes) is now
+available per frame as a cross-check. Round 2, side cameras (share of frames with a head box / of those, at least 30% of
+the heatmap on the partner's head):
+
+| Session | Window: mother / on baby | Window: baby / on mother | Door: mother / on baby | Door: baby / on mother |
 |---|---|---|---|---|
 | 605317 | 100 / 96% | 97 / 28% | 100 / 97% | 98 / 42% |
 | 626021 | 100 / 87% | 87 / 82% | 100 / 95% | 99 / 95% |
@@ -169,59 +273,18 @@ with at least 30% of the gaze heatmap on the partner's head:
 | 594801 | 100 / 100% | 100 / 67% | 100 / 2% | 4 / 40% |
 | 636211 | 100 / 98% | 100 / 36% | – | – |
 
-**Voice** (VTC seconds per phase, play vs still face, baby camera phone):
+**Failure modes:** the baby's head is hidden in the door view of 594801 (4% of frames); a doll was taken as the partner
+in 626021 (fixed by the partner head-size check); gaze toward a partner who is out of frame. Not yet compared with the
+head-pose direction or with human labels.
 
-| Session | Baby voice, play | Baby voice, still face | Mother speech, play | Mother speech, still face |
-|---|---|---|---|---|
-| 605317 | 1.0 | 40.6 | 35.9 | 0.0 |
-| 626021 | 10.8 | 21.1 | 50.1 | 0.0 |
-| 819104 | 1.6 | 57.7 | 52.4 | 0.0 |
-| 594801 | 1.3 | 2.7 | 31.0 | 0.0 |
-| 636211 | 5.4 | 16.6 | 54.3 | 0.2 |
-| 656531 | 10.3 | 35.3 | 47.1 | 0.0 |
+### Compute and outputs
 
-The mother's speech vanishes in the still face, as the protocol requires, while the baby's
-vocal time rises. The AST cry probability peaks at 0.83 (605317) and 0.72 (656531) in the
-still face. It is higher on the frames the VLM labels crying (0.32 vs 0.14 and 0.28 vs
-0.06). In 605317 cry above 0.2 covers 12% of the first half and 65% of the second half.
-
-**Failures by cause:**
-
-| Cause | Sessions | Effect | Handling |
-|---|---|---|---|
-| Occlusion | 594801 (door) | the mother hides the baby; the mother's skeleton was taken as the baby's | large baby boxes ignored, session-level baby check |
-| Occlusion | 594801 (door) | the baby's head is visible on 4% of frames, so the mother's gaze has no partner box | gaze from the window camera |
-| Occlusion | 605317 (mother camera) | the mother leans over the baby, her face is visible on 29 of 124 frames | face affect only on frames with a visible face |
-| Pose | all | baby legs and feet rarely triangulated (feet 0–21%) | touch also uses 2D evidence in the baby camera |
-| Pose | all (baby camera) | the mother's bare hands get no person box, so no skeleton | Grounding DINO hand detector |
-| Framing | 605317 (baby camera) | a hand on the baby's belly not detected | open |
-| Framing | 819104 (baby camera) | the mother's arm reaching over the baby from the top | open |
-| Model | 626021 | calibration least accurate (inliers 14–24 px) | flagged; other initial frames and distortion did not help |
-| Model | all | AU4, AU12 and AU20 fire on both cry faces and laughs | baby cry and fuss from audio only (AST) |
-| Model | 605317, 656531 (still face) | the VLM labels fussing grimaces "smiling": a face veto would flip 14 of 25 correct cry segments | VLM not used to veto cry |
-| Model | 656531 (play) | excited laughs reach an AST cry probability of 0.24–0.44: 2 of 27 cry segments are false | open |
-| Model | all | CLAP labels most fuss segments "coo" | CLAP rejected for vocal affect |
-| Camera set | 636211 | two views on the baby: no 3D touch | reduced-view level, touch from 2D evidence |
-| Camera set | 656531 | close cameras only: no 3D | close-only level, touch from the hand detector |
-
-No decoding failures occurred on the processed clips. Residual audio offsets between
-the cameras are at most 23 ms, except 74 ms for the 636211 window camera.
-
-**Compute** on a Mac mini M4 (seconds per camera frame):
-
-| Model | s/frame |
-|---|---|
-| Grounding DINO persons (2 prompts) | 2.8 |
-| Grounding DINO hands | 1.1 |
-| RTMW-x | 0.25 |
-| ViTPose++-H | 0.86 |
-| Gaze-LLE ViT-L | 0.36–0.65 |
-| Qwen3-VL-4B | 1.2–1.7 |
-
-PyAFAR, LibreFace, VTC and AST take minutes per clip. A full run over 70 sessions and all
-phases at 2 fps is about 136k camera frames, so Grounding DINO persons alone take about
-110 hours. The full run therefore detects persons at 1 fps with tracking in between, and
-estimates gaze at 5–10 Hz or on a GPU machine.
+On a Mac mini M4 (seconds per camera frame): Grounding DINO persons 2.8, hands 1.1; RTMW-x 0.25; Gaze-LLE 0.36-0.65;
+YOLO11 faces about 0.13; Depth Anything 3 about 2 s per 4-view frame. One session (4 cameras, 4 phases) takes about
+8-10 GPU hours, so a full run uses a GPU machine. Per session and phase the outputs are per-frame values and
+segments (CSV / JSON for Annie) plus review videos: the four cameras with 2D overlays, the 3D panel (skeletons and
+shaded body meshes from the door / window direction and from above, the hand-baby distance in cm), action units with
+names and head pose, and head-pose videos per camera with frame numbers.
 
 ## Installation
 

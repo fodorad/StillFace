@@ -1,0 +1,31 @@
+flowchart LR
+    subgraph IN["Input per session and phase"]
+        V["4 synced cameras<br/>mother, baby, window, door<br/>1920x1080, 60 fps"]
+        A["phone audio<br/>mother + baby channel"]
+    end
+    subgraph SCENE["Scene foundations"]
+        C["cameras: self-calibration,<br/>zoom / move masks"]
+        P["people: detection, roles,<br/>60 fps tracking, occlusion checks"]
+        K["2D pose + hands"]
+        D["3D: triangulation + dense depth<br/>-> skeletons -> body meshes"]
+        F["faces + head pose"]
+        S["audio: voice type (diarization),<br/>sound events"]
+    end
+    subgraph OUT["Coding"]
+        T["1. touch"]
+        E["2. emotion"]
+        G["3. gaze"]
+    end
+    V --> C --> D
+    V --> P --> K --> D
+    P --> F
+    A --> S
+    K --> T
+    D --> T
+    F --> E
+    S --> E
+    F --> G
+    P --> G
+    T --> X["per-frame values + segments<br/>(CSV / JSON for Annie), videos"]
+    E --> X
+    G --> X
