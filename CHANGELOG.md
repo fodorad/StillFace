@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/fodorad/StillFace/compare/stillface-v0.2.0...stillface-v0.2.1) (2026-11-02)
+
+
+### Documentation
+
+* **readme:** analysis stack for touch, emotion and gaze ([#27](https://github.com/fodorad/StillFace/issues/27)) ([a1fe7d7](https://github.com/fodorad/StillFace/commit/a1fe7d75ce5c8e44d0e4868ffdbcbfd49353ad10))
+* **readme:** baby vocal affect review results ([#23](https://github.com/fodorad/StillFace/issues/23)) ([848d70a](https://github.com/fodorad/StillFace/commit/848d70a8da29a429b5a1adb1518ccc44788ef841))
+
 ## [0.2.0](https://github.com/fodorad/StillFace/compare/stillface-v0.1.0...stillface-v0.2.0) (2026-10-28)
 
 
