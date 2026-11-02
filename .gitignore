@@ -1,5 +1,7 @@
 # data (soft links to the original and processed datasets)
 data/
+tmp/
+temp/
 
 # Mac
 .DS_Store
