@@ -71,9 +71,12 @@ class FrameScores:
     def __post_init__(self) -> None:
         """Validate shapes."""
         self.times = np.asarray(self.times, dtype=float).reshape(-1)
-        self.values = np.asarray(self.values, dtype=float).reshape(len(self.times), -1)
-        if self.values.shape[1] != len(self.names):
-            raise ValueError(f"{self.values.shape[1]} score columns for {len(self.names)} names")
+        values = np.asarray(self.values, dtype=float)
+        if values.size != len(self.times) * len(self.names):
+            raise ValueError(
+                f"{values.size} scores for {len(self.times)} frames x {len(self.names)} names"
+            )
+        self.values = values.reshape(len(self.times), len(self.names))
 
 
 @dataclass
@@ -97,7 +100,10 @@ class SegmentScores:
         m = len(self.segments)
         self.values = np.asarray(self.values, dtype=float).reshape(m, len(self.names))
         if self.embeddings is not None:
-            self.embeddings = np.asarray(self.embeddings, dtype=float).reshape(m, -1)
+            embeddings = np.asarray(self.embeddings, dtype=float)
+            if embeddings.ndim != 2 or len(embeddings) != m:
+                embeddings = embeddings.reshape(m, -1)
+            self.embeddings = embeddings
 
 
 @dataclass

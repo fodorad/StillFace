@@ -1,10 +1,11 @@
 [project]
 name = "stillface-audio-vad"
 version = "0.1.0"
-description = "Voice activity models of the StillFace audio pipeline (Silero VAD)."
+description = "Voice activity and speaker models of the StillFace audio pipeline (Silero VAD, pyannote)."
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "numpy",
+  "pyannote-audio==4.1.1",
   "silero-vad==6.3",
   "torch",
 ]
