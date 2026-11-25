@@ -1,0 +1,115 @@
+stillface.features.audio.workers.pyannote_worker
+================================================
+
+.. py:module:: stillface.features.audio.workers.pyannote_worker
+
+.. autoapi-nested-parse::
+
+   pyannote worker: speech activity and speaker embeddings (environment ``vad``).
+
+   Two outputs from the pyannote community-1 models (Bredin et al.):
+
+   - ``speech`` frame scores (whole-phase requests): the segmentation model's per-frame
+     speaker activities, the maximum over its local speakers being the probability that anyone
+     speaks. It is the third voice-activity opinion next to VTC and Silero.
+   - ``embedding`` segment vectors (segment requests): one L2-normalised speaker embedding per
+     segment, used to tell the mother from other women by similarity to her enrolled voice.
+
+   The community-1 models are gated on Hugging Face; the token comes from ``HF_TOKEN``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.pyannote_worker.REPO
+   stillface.features.audio.workers.pyannote_worker.MIN_EMBEDDING_S
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.pyannote_worker.PyannoteWorker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.pyannote_worker.speech_scores
+   stillface.features.audio.workers.pyannote_worker.embedding_scores
+
+
+Module Contents
+---------------
+
+.. py:data:: REPO
+   :type:  str
+   :value: 'pyannote/speaker-diarization-community-1'
+
+
+   Hugging Face repository holding the segmentation and embedding models.
+
+.. py:data:: MIN_EMBEDDING_S
+   :type:  float
+   :value: 0.5
+
+
+   Shorter segments get a NaN embedding.
+
+.. py:function:: speech_scores(start: float, step: float, duration: float, activity: numpy.ndarray) -> stillface.features.audio.models.FrameScores
+
+   Speech probability from per-frame local speaker activities.
+
+   :param start: Start of the first frame.
+   :param step: Frame step.
+   :param duration: Frame duration.
+   :param activity: Speaker activities, shape ``(n, speakers)``.
+
+   :returns: ``speech`` = maximum activity, at the frame centres, clipped to ``[0, 1]``.
+
+
+.. py:function:: embedding_scores(segments: tuple[stillface.features.audio.models.Segment, ...], vectors: list[numpy.ndarray | None]) -> stillface.features.audio.models.SegmentScores
+
+   L2-normalised embeddings per segment.
+
+   :param segments: Requested segments.
+   :param vectors: One vector per segment, None where it could not be computed.
+
+   :returns: Segment scores with ``duration_s`` as value and the embeddings (NaN rows for None).
+
+   :raises ValueError: If the counts disagree.
+
+
+.. py:class:: PyannoteWorker
+
+   Speech activity for whole phases, embeddings for segment requests.
+
+
+   .. py:method:: load(options: dict[str, Any]) -> dict[str, Any]
+
+      Load the segmentation and embedding models at the pinned revision.
+
+
+
+   .. py:method:: forward(request: stillface.features.audio.models.InferenceRequest) -> stillface.features.audio.models.FrameScores | list[numpy.ndarray | None]
+
+      Speech scores of a whole phase, or embeddings of the requested segments.
+
+
+
+   .. py:method:: infer(request: stillface.features.audio.models.InferenceRequest) -> stillface.features.audio.models.InferenceResult
+
+      Run the request.
+
+      :param request: Whole-phase request (speech) or segment request (embeddings).
+
+      :returns: ``speech`` frame scores or ``embedding`` segment scores.
+
+
+
