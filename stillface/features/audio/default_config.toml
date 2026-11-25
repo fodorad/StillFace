@@ -91,3 +91,22 @@ weights_revision = "b3250219066482f571ef3868413b0b0f1ad92502"
 window_s = 2.0
 hop_s = 1.0
 enabled = false
+
+[models.audeering]
+# audEERING MSP-dim: arousal / dominance / valence per 3 s window (0.5 s hop) inside
+# mother segments (baby segments: experimental).
+env = "hf"
+module = "stillface.features.audio.workers.audeering"
+weights_revision = "6eba34a2485ea31cb03600241787c3a5edab8626"
+window_s = 3.0
+hop_s = 0.5
+input = "segments"
+
+[models.emotion2vec]
+# emotion2vec+ large: 9 emotion categories per 3 s window (0.5 s hop), cross-check.
+env = "e2v"
+module = "stillface.features.audio.workers.emotion2vec"
+weights_revision = "6c303ba987b86b93193de93e34bb2b077a6bedc4"
+window_s = 3.0
+hop_s = 0.5
+input = "segments"

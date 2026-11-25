@@ -19,6 +19,7 @@ import numpy as np
 from stillface.features.audio.models import (
     InferenceRequest,
     InferenceResult,
+    Segment,
     request_from_dict,
     save_result,
 )
@@ -156,3 +157,31 @@ def fixed_windows(
         part = samples[round(start * rate) :][:size]
         out[i, : len(part)] = part
     return out
+
+
+def segment_windows(
+    segments: tuple[Segment, ...], window_s: float, hop_s: float
+) -> tuple[Segment, ...]:
+    """Analysis windows inside segments.
+
+    Windows never cross a segment edge: a segment shorter than ``window_s`` gives one window
+    equal to the segment, a longer one gives windows every ``hop_s`` that end inside it.
+
+    Args:
+        segments: Role segments.
+        window_s: Window length.
+        hop_s: Hop between windows.
+
+    Returns:
+        Windows in time order, carrying the role and label of their segment.
+    """
+    out = []
+    for segment in segments:
+        duration = segment.end_s - segment.start_s
+        if duration <= window_s:
+            out.append(segment)
+            continue
+        for start in window_starts(duration, window_s, hop_s):
+            a = segment.start_s + start
+            out.append(Segment(a, a + window_s, segment.role, segment.label))
+    return tuple(out)

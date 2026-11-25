@@ -16,8 +16,9 @@ repository on `PYTHONPATH`; they import nothing from the package's own dependenc
 | Environment | Models |
 |---|---|
 | `vad` | Silero VAD, pyannote segmentation and speaker embeddings |
-| `hf` | AST AudioSet |
+| `hf` | AST AudioSet, audEERING arousal / dominance / valence |
 | `vtc` | VTC 2.2 voice types, addressee (KCDS / ADS / Other) |
+| `e2v` | emotion2vec+ large (FunASR) |
 | `littlebeats` | LittleBeats wav2vec2 speaker and vocalisation heads (Python 3.10, fairseq; disabled until verified) |
 
 Gated Hugging Face models read the token from the `HF_TOKEN` environment variable.
