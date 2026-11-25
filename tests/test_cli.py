@@ -197,6 +197,45 @@ class TestFeaturesCli(unittest.TestCase):
             raw_out = out / "Sessions" / "9" / "features" / "audio" / "raw" / "fake" / "play.npz"
             self.assertTrue(raw_out.exists())
 
+    def test_audio_segment_model_and_roles(self) -> None:
+        from stillface.config import DatasetPaths
+        from stillface.features.audio.models import Segment
+        from stillface.features.audio.registry import IN_PROCESS
+        from tests.features.audio.fakes import FakeAdapter
+        from tests.features.audio.test_roles import store
+
+        with tempfile.TemporaryDirectory() as tmp:
+            raw, out = Path(tmp) / "raw", Path(tmp) / "out"
+            meta = raw / "metadata_database.xlsx"
+            meta.parent.mkdir(parents=True)
+            pd.DataFrame({"ID": [9], "Analysis": ["y"]}).to_excel(meta, index=False)
+            make_audio(
+                raw / "Sessions" / "9" / "processed" / "baby_play.mp4", seconds=3.0, video=True
+            )
+            config = Path(tmp) / "audio.toml"
+            config.write_text(
+                "version = 1\n[models.fakeseg]\ninput = 'segments'\nsegment_source = 'vtc:FEM'\n"
+            )
+            base = ["--raw-dir", str(raw), "--processed-dir", str(out), "audio"]
+            opts = ["--config", str(config)]
+            main([*base, "inventory", *opts])
+            main([*base, "prepare", *opts])
+            store(
+                DatasetPaths(raw, out),
+                "vtc",
+                "9/play",
+                [Segment(0.5, 2.0, "", "FEM")],
+                "voice_type",
+            )
+            IN_PROCESS["fakeseg"] = lambda name, model: FakeAdapter(name=name)
+            try:
+                self.assertEqual(main([*base, "infer", "fakeseg", *opts]), 0)
+            finally:
+                del IN_PROCESS["fakeseg"]
+            self.assertEqual(main([*base, "roles", *opts]), 0)
+            listening = (out / "audio" / "listening_roles.csv").read_text()
+            self.assertIn("no_enrolment", listening)
+
     def test_heads_requires_a_session(self) -> None:
         with self.assertRaises(SystemExit):
             build_parser().parse_args(["features", "heads"])
