@@ -15,6 +15,10 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   /autoapi/stillface/features/audio/cli/index
+   /autoapi/stillface/features/audio/config/index
+   /autoapi/stillface/features/audio/inventory/index
    /autoapi/stillface/features/audio/lanes/index
+   /autoapi/stillface/features/audio/media/index
 
 

@@ -9,7 +9,8 @@ stillface.cli
 
    ``stillface prepare <sync|cut|thumbnails|check-missing>`` runs the data preparation,
    ``stillface features heads`` the head and role pilot of the gaze extraction and
-   ``stillface features gaze`` the gaze extraction itself.
+   ``stillface features gaze`` the gaze extraction itself and ``stillface audio …`` the audio
+   pipeline.
 
 
 

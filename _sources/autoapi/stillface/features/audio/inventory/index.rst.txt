@@ -1,0 +1,258 @@
+stillface.features.audio.inventory
+==================================
+
+.. py:module:: stillface.features.audio.inventory
+
+.. autoapi-nested-parse::
+
+   Session inventory: which microphone each session and phase has, and in what state.
+
+   The inventory is the first audio stage. It reads nothing but the phase clips and the
+   metadata sheet, picks one source clip per session and phase by the configured fallback
+   order, and records the audio format and level problems, so the later stages and the user
+   know what to expect before any model runs.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.inventory.logger
+   stillface.features.audio.inventory.STATUSES
+   stillface.features.audio.inventory.FALSY_FLAGS
+   stillface.features.audio.inventory.INVENTORY_COLUMNS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.inventory.LevelStats
+   stillface.features.audio.inventory.InventoryRow
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.inventory.level_stats
+   stillface.features.audio.inventory.is_flag_set
+   stillface.features.audio.inventory.analysis_flags
+   stillface.features.audio.inventory.inspect_phase
+   stillface.features.audio.inventory.session_ids
+   stillface.features.audio.inventory.build_inventory
+   stillface.features.audio.inventory.write_inventory
+   stillface.features.audio.inventory.read_inventory
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: STATUSES
+   :type:  tuple[str, ...]
+   :value: ('ok', 'fallback', 'missing', 'no_audio_stream', 'decode_error')
+
+
+   Inventory status of a session phase, from usable to unusable.
+
+.. py:data:: FALSY_FLAGS
+   :type:  frozenset[str]
+
+   Metadata flag values read as False (case-insensitive); anything else is True.
+
+.. py:class:: LevelStats
+
+   Level statistics of a decoded signal.
+
+   .. attribute:: rms_dbfs
+
+      RMS level in dBFS (``-inf`` for digital silence).
+
+   .. attribute:: peak_dbfs
+
+      Peak level in dBFS.
+
+   .. attribute:: clipped_share
+
+      Share of samples at or above the clip level.
+
+   .. attribute:: silent_share
+
+      Share of frames whose RMS is below the silence level.
+
+
+.. py:class:: InventoryRow
+
+   One session phase in the inventory.
+
+   .. attribute:: session_id
+
+      Session identifier.
+
+   .. attribute:: phase
+
+      Experiment phase.
+
+   .. attribute:: analysis
+
+      Metadata analysis flag.
+
+   .. attribute:: excluded
+
+      Listed in the config exclusions.
+
+   .. attribute:: in_scope
+
+      ``analysis and not excluded``.
+
+   .. attribute:: camera
+
+      Chosen source camera, empty if none.
+
+   .. attribute:: candidates
+
+      Cameras whose clip exists, ``;``-separated in fallback order.
+
+   .. attribute:: status
+
+      One of :data:`STATUSES`.
+
+   .. attribute:: reason
+
+      Why the status was given (skipped candidates, errors).
+
+   .. attribute:: codec
+
+      Audio codec of the chosen clip.
+
+   .. attribute:: sample_rate
+
+      Native sample rate.
+
+   .. attribute:: channels
+
+      Native channel count.
+
+   .. attribute:: audio_s
+
+      Audio stream duration.
+
+   .. attribute:: video_s
+
+      Video stream duration, NaN if none.
+
+   .. attribute:: duration_diff_s
+
+      ``|audio_s - video_s|``, NaN if no video.
+
+   .. attribute:: rms_dbfs
+
+      See :class:`LevelStats`.
+
+   .. attribute:: peak_dbfs
+
+      See :class:`LevelStats`.
+
+   .. attribute:: clipped_share
+
+      See :class:`LevelStats`.
+
+   .. attribute:: silent_share
+
+      See :class:`LevelStats`.
+
+
+.. py:data:: INVENTORY_COLUMNS
+   :type:  tuple[str, ...]
+
+   Inventory CSV columns, in file order.
+
+.. py:function:: level_stats(samples: numpy.ndarray, rate: int, config: stillface.features.audio.config.InventoryConfig) -> LevelStats
+
+   Compute level statistics of a signal.
+
+   :param samples: Float samples, shape ``(channels, n)`` or ``(n,)``.
+   :param rate: Sample rate.
+   :param config: Frame length and levels.
+
+   :returns: The statistics; shares are 0 for an empty signal.
+
+
+.. py:function:: is_flag_set(value: object) -> bool
+
+   Read a metadata yes/no cell.
+
+   :param value: Cell value (number, text, NaN or None).
+
+   :returns: False for empty, NaN, zero and the words in :data:`FALSY_FLAGS`, else True.
+
+
+.. py:function:: analysis_flags(metadata: pandas.DataFrame, column: str) -> dict[str, bool]
+
+   Analysis flag per session id.
+
+   :param metadata: Metadata table with an ``ID`` column.
+   :param column: Flag column.
+
+   :returns: Session id (as text, without a trailing ``.0``) mapped to the flag. Distinct raw
+             values are logged so the reading can be checked.
+
+
+.. py:function:: inspect_phase(paths: stillface.config.DatasetPaths, session_id: str, phase: str, row: InventoryRow, config: stillface.features.audio.config.AudioConfig) -> InventoryRow
+
+   Choose the source clip of a session phase and measure it.
+
+   :param paths: Dataset locations.
+   :param session_id: Session identifier.
+   :param phase: Experiment phase.
+   :param row: Row with the scope fields filled.
+   :param config: Source order and level settings.
+
+   :returns: The completed row.
+
+
+.. py:function:: session_ids(paths: stillface.config.DatasetPaths) -> list[str]
+
+   Session folders of the raw dataset.
+
+   :param paths: Dataset locations.
+
+   :returns: Sorted session ids; empty if the sessions folder is missing.
+
+
+.. py:function:: build_inventory(paths: stillface.config.DatasetPaths, config: stillface.features.audio.config.AudioConfig, metadata: pandas.DataFrame) -> list[InventoryRow]
+
+   Inventory every session and phase.
+
+   :param paths: Dataset locations.
+   :param config: Audio configuration.
+   :param metadata: Session metadata table.
+
+   :returns: One row per session and phase, sessions sorted, phases in protocol order.
+
+
+.. py:function:: write_inventory(rows: list[InventoryRow], path: pathlib.Path) -> None
+
+   Write the inventory CSV atomically.
+
+   :param rows: Inventory rows.
+   :param path: Output file.
+
+
+.. py:function:: read_inventory(path: pathlib.Path) -> list[InventoryRow]
+
+   Read an inventory CSV.
+
+   :param path: File written by :func:`write_inventory`.
+
+   :returns: The rows.
+
+   :raises ValueError: If the header does not match :data:`INVENTORY_COLUMNS`.
+
+

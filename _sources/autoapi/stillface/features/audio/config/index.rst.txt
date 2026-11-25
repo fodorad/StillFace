@@ -1,0 +1,134 @@
+stillface.features.audio.config
+===============================
+
+.. py:module:: stillface.features.audio.config
+
+.. autoapi-nested-parse::
+
+   Configuration of the audio pipeline.
+
+   Every source choice, threshold and rule lives here, never in the code; the resolved config
+   is copied into each run record and its hash into every provenance sidecar.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.config.CONFIG_VERSION
+   stillface.features.audio.config.DEFAULT_CONFIG_PATH
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.config.SourceConfig
+   stillface.features.audio.config.ScopeConfig
+   stillface.features.audio.config.InventoryConfig
+   stillface.features.audio.config.AudioConfig
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.config.load_audio_config
+
+
+Module Contents
+---------------
+
+.. py:data:: CONFIG_VERSION
+   :type:  int
+   :value: 1
+
+
+   Supported version of the audio config file format.
+
+.. py:data:: DEFAULT_CONFIG_PATH
+   :type:  pathlib.Path
+
+   Config file shipped with the package.
+
+.. py:class:: SourceConfig
+
+   Which microphone feeds the pipeline.
+
+   .. attribute:: cameras
+
+      Camera clips tried in order; the first with a decodable audio stream wins.
+      The baby-cam phone lies next to the mother's head and hears both partners.
+
+
+.. py:class:: ScopeConfig
+
+   Which sessions are analysed.
+
+   .. attribute:: analysis_column
+
+      Metadata column flagging analysed sessions.
+
+   .. attribute:: exclude
+
+      Session ids left out although flagged (e.g. the first visit of a dyad).
+
+
+.. py:class:: InventoryConfig
+
+   Level statistics of the inventory.
+
+   .. attribute:: frame_s
+
+      Frame length for the near-silence share.
+
+   .. attribute:: silence_dbfs
+
+      Frame RMS below this level counts as near-silent.
+
+   .. attribute:: clip_level
+
+      Absolute sample value at or above which a sample counts as clipped.
+
+
+.. py:class:: AudioConfig
+
+   Audio pipeline configuration.
+
+   .. attribute:: version
+
+      Config file format version.
+
+   .. attribute:: source
+
+      Microphone choice.
+
+   .. attribute:: scope
+
+      Session selection.
+
+   .. attribute:: inventory
+
+      Inventory statistics.
+
+
+   .. py:property:: digest
+      :type: str
+
+
+      Short SHA-256 of the resolved configuration, recorded in provenance sidecars.
+
+
+.. py:function:: load_audio_config(path: pathlib.Path = DEFAULT_CONFIG_PATH) -> AudioConfig
+
+   Load and validate an audio config file.
+
+   :param path: TOML file; the packaged defaults if omitted.
+
+   :returns: The configuration.
+
+

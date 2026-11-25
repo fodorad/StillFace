@@ -1,0 +1,123 @@
+stillface.features.audio.media
+==============================
+
+.. py:module:: stillface.features.audio.media
+
+.. autoapi-nested-parse::
+
+   Audio probing and decoding through the ffmpeg command line tools.
+
+   ffmpeg is already required by the data preparation and installed in CI, so the audio
+   pipeline decodes and resamples with it instead of a torch audio stack. Decoded audio is
+   returned as float32 samples in ``[-1, 1]`` with shape ``(channels, samples)``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.media.logger
+   stillface.features.audio.media.RESAMPLER
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.media.MediaError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.media.AudioStreamInfo
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.media.probe_audio
+   stillface.features.audio.media.decode_audio
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: RESAMPLER
+   :type:  str
+   :value: 'resampler=swr:filter_size=64:phase_shift=10:linear_interp=1:cutoff=0.97'
+
+
+   Options of ffmpeg's built-in ``aresample`` filter used for every sample-rate conversion.
+
+   The built-in resampler with a long windowed-sinc filter is used because soxr is not part of
+   every ffmpeg build.
+
+.. py:exception:: MediaError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   A media file cannot be probed or decoded.
+
+   Initialize self.  See help(type(self)) for accurate signature.
+
+
+.. py:class:: AudioStreamInfo
+
+   Properties of the first audio stream of a media file.
+
+   .. attribute:: codec
+
+      Codec name, e.g. ``aac``.
+
+   .. attribute:: sample_rate
+
+      Sample rate in Hz.
+
+   .. attribute:: channels
+
+      Number of channels.
+
+   .. attribute:: duration_s
+
+      Audio stream duration in seconds.
+
+   .. attribute:: video_duration_s
+
+      Duration of the first video stream, None if there is none.
+
+
+.. py:function:: probe_audio(path: pathlib.Path) -> AudioStreamInfo | None
+
+   Probe the audio stream of a media file.
+
+   :param path: Media file.
+
+   :returns: The stream properties, None if the file has no audio stream.
+
+   :raises MediaError: If ffprobe cannot read the file.
+
+
+.. py:function:: decode_audio(path: pathlib.Path, sample_rate: int | None = None, mono: bool = False) -> tuple[numpy.ndarray, int]
+
+   Decode the first audio stream to float samples.
+
+   :param path: Media file.
+   :param sample_rate: Output rate; the native rate if None. Conversion uses :data:`RESAMPLER`.
+   :param mono: Downmix to one channel by the mean of the channels.
+
+   :returns: ``(samples, rate)`` with samples of shape ``(channels, n)``.
+
+   :raises MediaError: If the file has no audio stream or ffmpeg fails.
+
+

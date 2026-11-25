@@ -1,0 +1,794 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.audio.lanes" href="../lanes/index.html"><link rel="prev" title="stillface.features.audio.config" href="../config/index.html">
+        <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/audio/inventory/index.html">
+        <link rel="prefetch" href="../../../../../_static/logo.svg" as="image">
+
+    <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
+        <title>stillface.features.audio.inventory - StillFace latest documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../../index.html"><div class="brand">StillFace latest documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../../_static/logo.svg" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">StillFace latest documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../../../index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../../../index.html">stillface</a><input aria-label="Toggle navigation of stillface" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../cli/index.html">stillface.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../config/index.html">stillface.config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../constants/index.html">stillface.constants</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../data_preparation/index.html">stillface.data_preparation</a><input aria-label="Toggle navigation of stillface.data_preparation" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_preparation/cut/index.html">stillface.data_preparation.cut</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_preparation/metadata/index.html">stillface.data_preparation.metadata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_preparation/sync/index.html">stillface.data_preparation.sync</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_preparation/thumbnails/index.html">stillface.data_preparation.thumbnails</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_preparation/video/index.html">stillface.data_preparation.video</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../data_preparation/visualize/index.html">stillface.data_preparation.visualize</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="../../index.html">stillface.features</a><input aria-label="Toggle navigation of stillface.features" checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">stillface.features.audio</a><input aria-label="Toggle navigation of stillface.features.audio" checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="../cli/index.html">stillface.features.audio.cli</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../config/index.html">stillface.features.audio.config</a></li>
+<li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.audio.inventory</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../lanes/index.html">stillface.features.audio.lanes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../media/index.html">stillface.features.audio.media</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../config/index.html">stillface.features.config</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/classes/index.html">stillface.features.gaze.classes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/config/index.html">stillface.features.gaze.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/estimator/index.html">stillface.features.gaze.estimator</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/exordium_heads/index.html">stillface.features.gaze.exordium_heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/fusion/index.html">stillface.features.gaze.fusion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/gdino_heads/index.html">stillface.features.gaze.gdino_heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/heads/index.html">stillface.features.gaze.heads</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/pilot/index.html">stillface.features.gaze.pilot</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/pipeline/index.html">stillface.features.gaze.pipeline</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/prepare/index.html">stillface.features.gaze.prepare</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/roles/index.html">stillface.features.gaze.roles</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/runner/index.html">stillface.features.gaze.runner</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../gaze/tracking/index.html">stillface.features.gaze.tracking</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../io/index.html">stillface.features.io</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../overlay/index.html">stillface.features.overlay</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../run_record/index.html">stillface.features.run_record</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../timeline/index.html">stillface.features.timeline</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../../../../_sources/autoapi/stillface/features/audio/inventory/index.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-stillface.features.audio.inventory">
+<span id="stillface-features-audio-inventory"></span><h1>stillface.features.audio.inventory<a class="headerlink" href="#module-stillface.features.audio.inventory" title="Link to this heading">¶</a></h1>
+<p>Session inventory: which microphone each session and phase has, and in what state.</p>
+<p>The inventory is the first audio stage. It reads nothing but the phase clips and the
+metadata sheet, picks one source clip per session and phase by the configured fallback
+order, and records the audio format and level problems, so the later stages and the user
+know what to expect before any model runs.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.logger" title="stillface.features.audio.inventory.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.STATUSES" title="stillface.features.audio.inventory.STATUSES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">STATUSES</span></code></a></p></td>
+<td><p>Inventory status of a session phase, from usable to unusable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.FALSY_FLAGS" title="stillface.features.audio.inventory.FALSY_FLAGS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FALSY_FLAGS</span></code></a></p></td>
+<td><p>Metadata flag values read as False (case-insensitive); anything else is True.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.INVENTORY_COLUMNS" title="stillface.features.audio.inventory.INVENTORY_COLUMNS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">INVENTORY_COLUMNS</span></code></a></p></td>
+<td><p>Inventory CSV columns, in file order.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.LevelStats" title="stillface.features.audio.inventory.LevelStats"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LevelStats</span></code></a></p></td>
+<td><p>Level statistics of a decoded signal.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow" title="stillface.features.audio.inventory.InventoryRow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InventoryRow</span></code></a></p></td>
+<td><p>One session phase in the inventory.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.level_stats" title="stillface.features.audio.inventory.level_stats"><code class="xref py py-obj docutils literal notranslate"><span class="pre">level_stats</span></code></a>(→ LevelStats)</p></td>
+<td><p>Compute level statistics of a signal.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.is_flag_set" title="stillface.features.audio.inventory.is_flag_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_flag_set</span></code></a>(→ bool)</p></td>
+<td><p>Read a metadata yes/no cell.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.analysis_flags" title="stillface.features.audio.inventory.analysis_flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">analysis_flags</span></code></a>(→ dict[str, bool])</p></td>
+<td><p>Analysis flag per session id.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.inspect_phase" title="stillface.features.audio.inventory.inspect_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect_phase</span></code></a>(→ InventoryRow)</p></td>
+<td><p>Choose the source clip of a session phase and measure it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.session_ids" title="stillface.features.audio.inventory.session_ids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">session_ids</span></code></a>(→ list[str])</p></td>
+<td><p>Session folders of the raw dataset.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.build_inventory" title="stillface.features.audio.inventory.build_inventory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_inventory</span></code></a>(→ list[InventoryRow])</p></td>
+<td><p>Inventory every session and phase.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.write_inventory" title="stillface.features.audio.inventory.write_inventory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_inventory</span></code></a>(→ None)</p></td>
+<td><p>Write the inventory CSV atomically.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.inventory.read_inventory" title="stillface.features.audio.inventory.read_inventory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_inventory</span></code></a>(→ list[InventoryRow])</p></td>
+<td><p>Read an inventory CSV.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.logger">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#stillface.features.audio.inventory.logger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.STATUSES">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">STATUSES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ok',</span> <span class="pre">'fallback',</span> <span class="pre">'missing',</span> <span class="pre">'no_audio_stream',</span> <span class="pre">'decode_error')</span></span><a class="headerlink" href="#stillface.features.audio.inventory.STATUSES" title="Link to this definition">¶</a></dt>
+<dd><p>Inventory status of a session phase, from usable to unusable.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.FALSY_FLAGS">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">FALSY_FLAGS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">frozenset</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#stillface.features.audio.inventory.FALSY_FLAGS" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata flag values read as False (case-insensitive); anything else is True.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.LevelStats">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">LevelStats</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/inventory.html#LevelStats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.inventory.LevelStats" title="Link to this definition">¶</a></dt>
+<dd><p>Level statistics of a decoded signal.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.LevelStats.rms_dbfs">
+<span class="sig-name descname"><span class="pre">rms_dbfs</span></span><a class="headerlink" href="#stillface.features.audio.inventory.LevelStats.rms_dbfs" title="Link to this definition">¶</a></dt>
+<dd><p>RMS level in dBFS (<code class="docutils literal notranslate"><span class="pre">-inf</span></code> for digital silence).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.LevelStats.peak_dbfs">
+<span class="sig-name descname"><span class="pre">peak_dbfs</span></span><a class="headerlink" href="#stillface.features.audio.inventory.LevelStats.peak_dbfs" title="Link to this definition">¶</a></dt>
+<dd><p>Peak level in dBFS.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.LevelStats.clipped_share">
+<span class="sig-name descname"><span class="pre">clipped_share</span></span><a class="headerlink" href="#stillface.features.audio.inventory.LevelStats.clipped_share" title="Link to this definition">¶</a></dt>
+<dd><p>Share of samples at or above the clip level.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.LevelStats.silent_share">
+<span class="sig-name descname"><span class="pre">silent_share</span></span><a class="headerlink" href="#stillface.features.audio.inventory.LevelStats.silent_share" title="Link to this definition">¶</a></dt>
+<dd><p>Share of frames whose RMS is below the silence level.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">InventoryRow</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/inventory.html#InventoryRow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow" title="Link to this definition">¶</a></dt>
+<dd><p>One session phase in the inventory.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.session_id">
+<span class="sig-name descname"><span class="pre">session_id</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.session_id" title="Link to this definition">¶</a></dt>
+<dd><p>Session identifier.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.phase">
+<span class="sig-name descname"><span class="pre">phase</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.phase" title="Link to this definition">¶</a></dt>
+<dd><p>Experiment phase.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.analysis">
+<span class="sig-name descname"><span class="pre">analysis</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.analysis" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata analysis flag.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.excluded">
+<span class="sig-name descname"><span class="pre">excluded</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.excluded" title="Link to this definition">¶</a></dt>
+<dd><p>Listed in the config exclusions.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.in_scope">
+<span class="sig-name descname"><span class="pre">in_scope</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.in_scope" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">analysis</span> <span class="pre">and</span> <span class="pre">not</span> <span class="pre">excluded</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.camera">
+<span class="sig-name descname"><span class="pre">camera</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.camera" title="Link to this definition">¶</a></dt>
+<dd><p>Chosen source camera, empty if none.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.candidates">
+<span class="sig-name descname"><span class="pre">candidates</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.candidates" title="Link to this definition">¶</a></dt>
+<dd><p>Cameras whose clip exists, <code class="docutils literal notranslate"><span class="pre">;</span></code>-separated in fallback order.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.status">
+<span class="sig-name descname"><span class="pre">status</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.status" title="Link to this definition">¶</a></dt>
+<dd><p>One of <a class="reference internal" href="#stillface.features.audio.inventory.STATUSES" title="stillface.features.audio.inventory.STATUSES"><code class="xref py py-data docutils literal notranslate"><span class="pre">STATUSES</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.reason">
+<span class="sig-name descname"><span class="pre">reason</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.reason" title="Link to this definition">¶</a></dt>
+<dd><p>Why the status was given (skipped candidates, errors).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.codec">
+<span class="sig-name descname"><span class="pre">codec</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.codec" title="Link to this definition">¶</a></dt>
+<dd><p>Audio codec of the chosen clip.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.sample_rate">
+<span class="sig-name descname"><span class="pre">sample_rate</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.sample_rate" title="Link to this definition">¶</a></dt>
+<dd><p>Native sample rate.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.channels">
+<span class="sig-name descname"><span class="pre">channels</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.channels" title="Link to this definition">¶</a></dt>
+<dd><p>Native channel count.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.audio_s">
+<span class="sig-name descname"><span class="pre">audio_s</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.audio_s" title="Link to this definition">¶</a></dt>
+<dd><p>Audio stream duration.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.video_s">
+<span class="sig-name descname"><span class="pre">video_s</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.video_s" title="Link to this definition">¶</a></dt>
+<dd><p>Video stream duration, NaN if none.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.duration_diff_s">
+<span class="sig-name descname"><span class="pre">duration_diff_s</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.duration_diff_s" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">|audio_s</span> <span class="pre">-</span> <span class="pre">video_s|</span></code>, NaN if no video.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.rms_dbfs">
+<span class="sig-name descname"><span class="pre">rms_dbfs</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.rms_dbfs" title="Link to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#stillface.features.audio.inventory.LevelStats" title="stillface.features.audio.inventory.LevelStats"><code class="xref py py-class docutils literal notranslate"><span class="pre">LevelStats</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.peak_dbfs">
+<span class="sig-name descname"><span class="pre">peak_dbfs</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.peak_dbfs" title="Link to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#stillface.features.audio.inventory.LevelStats" title="stillface.features.audio.inventory.LevelStats"><code class="xref py py-class docutils literal notranslate"><span class="pre">LevelStats</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.clipped_share">
+<span class="sig-name descname"><span class="pre">clipped_share</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.clipped_share" title="Link to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#stillface.features.audio.inventory.LevelStats" title="stillface.features.audio.inventory.LevelStats"><code class="xref py py-class docutils literal notranslate"><span class="pre">LevelStats</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.InventoryRow.silent_share">
+<span class="sig-name descname"><span class="pre">silent_share</span></span><a class="headerlink" href="#stillface.features.audio.inventory.InventoryRow.silent_share" title="Link to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#stillface.features.audio.inventory.LevelStats" title="stillface.features.audio.inventory.LevelStats"><code class="xref py py-class docutils literal notranslate"><span class="pre">LevelStats</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.INVENTORY_COLUMNS">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">INVENTORY_COLUMNS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#stillface.features.audio.inventory.INVENTORY_COLUMNS" title="Link to this definition">¶</a></dt>
+<dd><p>Inventory CSV columns, in file order.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.level_stats">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">level_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../config/index.html#stillface.features.audio.config.InventoryConfig" title="stillface.features.audio.config.InventoryConfig"><span class="pre">stillface.features.audio.config.InventoryConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stillface.features.audio.inventory.LevelStats" title="stillface.features.audio.inventory.LevelStats"><span class="pre">LevelStats</span></a></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/inventory.html#level_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.inventory.level_stats" title="Link to this definition">¶</a></dt>
+<dd><p>Compute level statistics of a signal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samples</strong> – Float samples, shape <code class="docutils literal notranslate"><span class="pre">(channels,</span> <span class="pre">n)</span></code> or <code class="docutils literal notranslate"><span class="pre">(n,)</span></code>.</p></li>
+<li><p><strong>rate</strong> – Sample rate.</p></li>
+<li><p><strong>config</strong> – Frame length and levels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The statistics; shares are 0 for an empty signal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.is_flag_set">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">is_flag_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/inventory.html#is_flag_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.inventory.is_flag_set" title="Link to this definition">¶</a></dt>
+<dd><p>Read a metadata yes/no cell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Cell value (number, text, NaN or None).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>False for empty, NaN, zero and the words in <a class="reference internal" href="#stillface.features.audio.inventory.FALSY_FLAGS" title="stillface.features.audio.inventory.FALSY_FLAGS"><code class="xref py py-data docutils literal notranslate"><span class="pre">FALSY_FLAGS</span></code></a>, else True.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.analysis_flags">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">analysis_flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/inventory.html#analysis_flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.inventory.analysis_flags" title="Link to this definition">¶</a></dt>
+<dd><p>Analysis flag per session id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metadata</strong> – Metadata table with an <code class="docutils literal notranslate"><span class="pre">ID</span></code> column.</p></li>
+<li><p><strong>column</strong> – Flag column.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Session id (as text, without a trailing <code class="docutils literal notranslate"><span class="pre">.0</span></code>) mapped to the flag. Distinct raw
+values are logged so the reading can be checked.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.inspect_phase">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">inspect_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../../config/index.html#stillface.config.DatasetPaths" title="stillface.config.DatasetPaths"><span class="pre">stillface.config.DatasetPaths</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow" title="stillface.features.audio.inventory.InventoryRow"><span class="pre">InventoryRow</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../config/index.html#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><span class="pre">stillface.features.audio.config.AudioConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow" title="stillface.features.audio.inventory.InventoryRow"><span class="pre">InventoryRow</span></a></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/inventory.html#inspect_phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.inventory.inspect_phase" title="Link to this definition">¶</a></dt>
+<dd><p>Choose the source clip of a session phase and measure it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>paths</strong> – Dataset locations.</p></li>
+<li><p><strong>session_id</strong> – Session identifier.</p></li>
+<li><p><strong>phase</strong> – Experiment phase.</p></li>
+<li><p><strong>row</strong> – Row with the scope fields filled.</p></li>
+<li><p><strong>config</strong> – Source order and level settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The completed row.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.session_ids">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">session_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../../config/index.html#stillface.config.DatasetPaths" title="stillface.config.DatasetPaths"><span class="pre">stillface.config.DatasetPaths</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/inventory.html#session_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.inventory.session_ids" title="Link to this definition">¶</a></dt>
+<dd><p>Session folders of the raw dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paths</strong> – Dataset locations.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sorted session ids; empty if the sessions folder is missing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.build_inventory">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">build_inventory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../../config/index.html#stillface.config.DatasetPaths" title="stillface.config.DatasetPaths"><span class="pre">stillface.config.DatasetPaths</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../config/index.html#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><span class="pre">stillface.features.audio.config.AudioConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow" title="stillface.features.audio.inventory.InventoryRow"><span class="pre">InventoryRow</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/inventory.html#build_inventory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.inventory.build_inventory" title="Link to this definition">¶</a></dt>
+<dd><p>Inventory every session and phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>paths</strong> – Dataset locations.</p></li>
+<li><p><strong>config</strong> – Audio configuration.</p></li>
+<li><p><strong>metadata</strong> – Session metadata table.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>One row per session and phase, sessions sorted, phases in protocol order.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.write_inventory">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">write_inventory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow" title="stillface.features.audio.inventory.InventoryRow"><span class="pre">InventoryRow</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/inventory.html#write_inventory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.inventory.write_inventory" title="Link to this definition">¶</a></dt>
+<dd><p>Write the inventory CSV atomically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> – Inventory rows.</p></li>
+<li><p><strong>path</strong> – Output file.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.inventory.read_inventory">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.inventory.</span></span><span class="sig-name descname"><span class="pre">read_inventory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow" title="stillface.features.audio.inventory.InventoryRow"><span class="pre">InventoryRow</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/inventory.html#read_inventory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.inventory.read_inventory" title="Link to this definition">¶</a></dt>
+<dd><p>Read an inventory CSV.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – File written by <a class="reference internal" href="#stillface.features.audio.inventory.write_inventory" title="stillface.features.audio.inventory.write_inventory"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_inventory()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rows.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the header does not match <a class="reference internal" href="#stillface.features.audio.inventory.INVENTORY_COLUMNS" title="stillface.features.audio.inventory.INVENTORY_COLUMNS"><code class="xref py py-data docutils literal notranslate"><span class="pre">INVENTORY_COLUMNS</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../lanes/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">stillface.features.audio.lanes</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../config/index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">stillface.features.audio.config</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, StillFace contributors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">stillface.features.audio.inventory</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.STATUSES"><code class="docutils literal notranslate"><span class="pre">STATUSES</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.FALSY_FLAGS"><code class="docutils literal notranslate"><span class="pre">FALSY_FLAGS</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.LevelStats"><code class="docutils literal notranslate"><span class="pre">LevelStats</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.LevelStats.rms_dbfs"><code class="docutils literal notranslate"><span class="pre">LevelStats.rms_dbfs</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.LevelStats.peak_dbfs"><code class="docutils literal notranslate"><span class="pre">LevelStats.peak_dbfs</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.LevelStats.clipped_share"><code class="docutils literal notranslate"><span class="pre">LevelStats.clipped_share</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.LevelStats.silent_share"><code class="docutils literal notranslate"><span class="pre">LevelStats.silent_share</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow"><code class="docutils literal notranslate"><span class="pre">InventoryRow</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.session_id"><code class="docutils literal notranslate"><span class="pre">InventoryRow.session_id</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.phase"><code class="docutils literal notranslate"><span class="pre">InventoryRow.phase</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.analysis"><code class="docutils literal notranslate"><span class="pre">InventoryRow.analysis</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.excluded"><code class="docutils literal notranslate"><span class="pre">InventoryRow.excluded</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.in_scope"><code class="docutils literal notranslate"><span class="pre">InventoryRow.in_scope</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.camera"><code class="docutils literal notranslate"><span class="pre">InventoryRow.camera</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.candidates"><code class="docutils literal notranslate"><span class="pre">InventoryRow.candidates</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.status"><code class="docutils literal notranslate"><span class="pre">InventoryRow.status</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.reason"><code class="docutils literal notranslate"><span class="pre">InventoryRow.reason</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.codec"><code class="docutils literal notranslate"><span class="pre">InventoryRow.codec</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.sample_rate"><code class="docutils literal notranslate"><span class="pre">InventoryRow.sample_rate</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.channels"><code class="docutils literal notranslate"><span class="pre">InventoryRow.channels</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.audio_s"><code class="docutils literal notranslate"><span class="pre">InventoryRow.audio_s</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.video_s"><code class="docutils literal notranslate"><span class="pre">InventoryRow.video_s</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.duration_diff_s"><code class="docutils literal notranslate"><span class="pre">InventoryRow.duration_diff_s</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.rms_dbfs"><code class="docutils literal notranslate"><span class="pre">InventoryRow.rms_dbfs</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.peak_dbfs"><code class="docutils literal notranslate"><span class="pre">InventoryRow.peak_dbfs</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.clipped_share"><code class="docutils literal notranslate"><span class="pre">InventoryRow.clipped_share</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.InventoryRow.silent_share"><code class="docutils literal notranslate"><span class="pre">InventoryRow.silent_share</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.INVENTORY_COLUMNS"><code class="docutils literal notranslate"><span class="pre">INVENTORY_COLUMNS</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.level_stats"><code class="docutils literal notranslate"><span class="pre">level_stats()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.is_flag_set"><code class="docutils literal notranslate"><span class="pre">is_flag_set()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.analysis_flags"><code class="docutils literal notranslate"><span class="pre">analysis_flags()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.inspect_phase"><code class="docutils literal notranslate"><span class="pre">inspect_phase()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.session_ids"><code class="docutils literal notranslate"><span class="pre">session_ids()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.build_inventory"><code class="docutils literal notranslate"><span class="pre">build_inventory()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.write_inventory"><code class="docutils literal notranslate"><span class="pre">write_inventory()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.inventory.read_inventory"><code class="docutils literal notranslate"><span class="pre">read_inventory()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../../_static/documentation_options.js?v=c6e86fd7"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

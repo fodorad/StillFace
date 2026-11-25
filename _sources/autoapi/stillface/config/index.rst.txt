@@ -170,6 +170,19 @@ Module Contents
 
 
 
+   .. py:method:: audio_session_dir(session_id: str) -> pathlib.Path
+
+      Audio pipeline outputs of a session.
+
+
+
+   .. py:property:: audio_dir
+      :type: pathlib.Path
+
+
+      Dataset-level audio tables (inventory, QC summary, listening list).
+
+
    .. py:property:: thumbnails_dir
       :type: pathlib.Path
 

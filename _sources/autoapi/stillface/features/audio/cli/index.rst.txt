@@ -1,0 +1,58 @@
+stillface.features.audio.cli
+============================
+
+.. py:module:: stillface.features.audio.cli
+
+.. autoapi-nested-parse::
+
+   ``stillface audio …`` subcommands.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.cli.logger
+   stillface.features.audio.cli.INVENTORY_FILE
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.cli.add_audio_parser
+   stillface.features.audio.cli.run_audio
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: INVENTORY_FILE
+   :type:  str
+   :value: 'inventory.csv'
+
+
+   Name of the inventory table in the dataset-level audio folder.
+
+.. py:function:: add_audio_parser(groups: argparse._SubParsersAction) -> None
+
+   Register the ``audio`` command group.
+
+   :param groups: Sub-parser collection of the top-level parser.
+
+
+.. py:function:: run_audio(args: argparse.Namespace, paths: stillface.config.DatasetPaths) -> int
+
+   Run an ``audio`` subcommand.
+
+   :param args: Parsed arguments.
+   :param paths: Dataset locations.
+
+   :returns: Process exit code.
+
+

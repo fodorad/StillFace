@@ -213,7 +213,11 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../features/index.html">stillface.features</a><input aria-label="Toggle navigation of stillface.features" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../features/audio/index.html">stillface.features.audio</a><input aria-label="Toggle navigation of stillface.features.audio" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../features/audio/cli/index.html">stillface.features.audio.cli</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../features/audio/config/index.html">stillface.features.audio.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../features/audio/inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../features/audio/lanes/index.html">stillface.features.audio.lanes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../features/audio/media/index.html">stillface.features.audio.media</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../features/config/index.html">stillface.features.config</a></li>
@@ -471,6 +475,18 @@ every generated file is written below the processed root.</p>
 <dd><p>Gaze overlay clips of a session.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.config.DatasetPaths.audio_session_dir">
+<span class="sig-name descname"><span class="pre">audio_session_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pathlib.Path</span></span></span><a class="reference internal" href="../../../_modules/stillface/config.html#DatasetPaths.audio_session_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.config.DatasetPaths.audio_session_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Audio pipeline outputs of a session.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="stillface.config.DatasetPaths.audio_dir">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">audio_dir</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></span><a class="headerlink" href="#stillface.config.DatasetPaths.audio_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Dataset-level audio tables (inventory, QC summary, listening list).</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="stillface.config.DatasetPaths.thumbnails_dir">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">thumbnails_dir</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></span><a class="headerlink" href="#stillface.config.DatasetPaths.thumbnails_dir" title="Link to this definition">¶</a></dt>
@@ -567,6 +583,8 @@ every generated file is written below the processed root.</p>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.features_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.features_dir()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.gaze_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.gaze_dir()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.gaze_overlay_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.gaze_overlay_dir()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.config.DatasetPaths.audio_session_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.audio_session_dir()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.config.DatasetPaths.audio_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.audio_dir</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.thumbnails_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.thumbnails_dir</span></code></a></li>
 <li><a class="reference internal" href="#stillface.config.DatasetPaths.logs_dir"><code class="docutils literal notranslate"><span class="pre">DatasetPaths.logs_dir</span></code></a></li>
 </ul>
