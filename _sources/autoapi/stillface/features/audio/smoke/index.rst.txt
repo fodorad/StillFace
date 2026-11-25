@@ -71,7 +71,8 @@ Module Contents
    :param wav: Input clip.
    :param models: Model names; every configured model if None.
 
-   :returns: Model name mapped to ``ok: <kind>/<group>, ...``, ``not installed`` or ``error: <message>``.
+   :returns: Model name mapped to ``ok: <kind>/<group>, ...``, ``disabled``, ``not installed`` or
+             ``error: <message>``.
 
 
 .. py:function:: main(argv: collections.abc.Sequence[str] | None = None) -> int

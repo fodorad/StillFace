@@ -1,0 +1,133 @@
+stillface.features.audio.workers.littlebeats
+============================================
+
+.. py:module:: stillface.features.audio.workers.littlebeats
+
+.. autoapi-nested-parse::
+
+   LittleBeats worker: speaker and vocalisation types per window (environment ``littlebeats``).
+
+   wav2vec 2.0 pre-trained on 4300 h of LittleBeats and LENA home recordings and fine-tuned
+   with three heads (Li et al. 2023, SpeechBrain recipe ``wav2vec_LittleBeats``) on 2 s
+   windows:
+
+   - speaker: ``SIL`` silence, ``CHN`` target child, ``FAN`` female adult, ``MAN`` male adult,
+     ``CXN`` other child;
+   - infant vocalisation: ``CRY``, ``FUS`` (fuss), ``BAB`` (babble);
+   - adult vocalisation: ``CDS`` (child-directed), ``ADS`` (adult-directed), ``LAU`` (laugh),
+     ``SNG`` (singing / rhythmic).
+
+   The label orders follow the recipe's ``dict_map``. Each head's softmax is reported for every
+   window; the vocalisation heads are only meaningful where the speaker head (or VTC) says the
+   infant / an adult vocalises.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.littlebeats.REPO
+   stillface.features.audio.workers.littlebeats.FINE_TUNED
+   stillface.features.audio.workers.littlebeats.SPEAKERS
+   stillface.features.audio.workers.littlebeats.INFANT
+   stillface.features.audio.workers.littlebeats.ADULT
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.littlebeats.LittleBeatsWorker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.littlebeats.postprocess
+
+
+Module Contents
+---------------
+
+.. py:data:: REPO
+   :type:  str
+   :value: 'lijialudew/wav2vec_LittleBeats_LENA'
+
+
+   Hugging Face repository of the checkpoints.
+
+.. py:data:: FINE_TUNED
+   :type:  str
+   :value: 'LL_4300_fine_tuned/save/CKPT+2022-11-26+14-06-17+00'
+
+
+   Folder of the fine-tuned SpeechBrain checkpoint.
+
+.. py:data:: SPEAKERS
+   :type:  tuple[str, ...]
+   :value: ('SIL', 'CHN', 'FAN', 'MAN', 'CXN')
+
+
+   Speaker head classes in output order.
+
+.. py:data:: INFANT
+   :type:  tuple[str, ...]
+   :value: ('CRY', 'FUS', 'BAB')
+
+
+   Infant vocalisation head classes in output order.
+
+.. py:data:: ADULT
+   :type:  tuple[str, ...]
+   :value: ('CDS', 'ADS', 'LAU', 'SNG')
+
+
+   Adult vocalisation head classes in output order (``ADS`` = the recipe's FAN/MAN).
+
+.. py:function:: postprocess(starts: list[float], window_s: float, speaker: numpy.ndarray, infant: numpy.ndarray, adult: numpy.ndarray) -> dict[str, stillface.features.audio.models.FrameScores]
+
+   Softmax of each head at the window centres.
+
+   :param starts: Window start times.
+   :param window_s: Window length.
+   :param speaker: Speaker logits, shape ``(n, 5)``.
+   :param infant: Infant vocalisation logits, shape ``(n, 3)``.
+   :param adult: Adult vocalisation logits, shape ``(n, 4)``.
+
+   :returns: ``speaker``, ``infant`` and ``adult`` frame scores.
+
+   :raises ValueError: If a head has the wrong shape.
+
+
+.. py:class:: LittleBeatsWorker
+
+   Runs the three-head model on overlapping 2 s windows.
+
+
+   .. py:method:: load(options: dict[str, Any]) -> dict[str, Any]
+
+      Download the pinned checkpoints and rebuild the recipe's modules.
+
+
+
+   .. py:method:: forward(windows: numpy.ndarray) -> tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+      Logits of the three heads for a batch of equal-length windows.
+
+
+
+   .. py:method:: infer(request: stillface.features.audio.models.InferenceRequest) -> stillface.features.audio.models.InferenceResult
+
+      Head probabilities over one phase.
+
+      :param request: Whole-phase request.
+
+      :returns: ``speaker``, ``infant`` and ``adult`` frame scores.
+
+
+

@@ -42,6 +42,7 @@ Functions
    stillface.features.audio.workers.base.serve
    stillface.features.audio.workers.base.torch_device
    stillface.features.audio.workers.base.window_starts
+   stillface.features.audio.workers.base.fixed_windows
 
 
 Module Contents
@@ -126,5 +127,17 @@ Module Contents
    :param hop_s: Hop between window starts.
 
    :returns: Start times in seconds.
+
+
+.. py:function:: fixed_windows(samples: numpy.ndarray, rate: int, starts: list[float], window_s: float) -> numpy.ndarray
+
+   Cut equal-length windows, zero-padding the ones that run past the end.
+
+   :param samples: Mono samples.
+   :param rate: Sample rate.
+   :param starts: Window start times.
+   :param window_s: Window length.
+
+   :returns: Array of shape ``(len(starts), round(window_s * rate))``.
 
 

@@ -229,6 +229,7 @@
 <li class="toctree-l6"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/workers/addressee/index.html">stillface.features.audio.workers.addressee</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/workers/ast_audioset/index.html">stillface.features.audio.workers.ast_audioset</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/workers/base/index.html">stillface.features.audio.workers.base</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/workers/littlebeats/index.html">stillface.features.audio.workers.littlebeats</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/workers/pyannote_worker/index.html">stillface.features.audio.workers.pyannote_worker</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/workers/silero/index.html">stillface.features.audio.workers.silero</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/workers/vtc/index.html">stillface.features.audio.workers.vtc</a></li>
@@ -397,6 +398,8 @@
 <span class="sd">        options: Further model-specific options, passed to the worker as text.</span>
 <span class="sd">        input: ``wav`` for whole-phase models (first pass), ``segments`` for models that</span>
 <span class="sd">            score role segments (second pass).</span>
+<span class="sd">        enabled: False keeps a configured model out of every run (recorded as disabled),</span>
+<span class="sd">            e.g. until its outputs are verified.</span>
 <span class="sd">    """</span>
 
     <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
@@ -409,6 +412,7 @@
     <span class="n">hop_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
     <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"wav"</span>
+    <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Validate the input kind."""</span>

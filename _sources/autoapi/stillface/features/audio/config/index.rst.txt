@@ -151,6 +151,11 @@ Module Contents
       ``wav`` for whole-phase models (first pass), ``segments`` for models that
       score role segments (second pass).
 
+   .. attribute:: enabled
+
+      False keeps a configured model out of every run (recorded as disabled),
+      e.g. until its outputs are verified.
+
 
    .. py:property:: digest
       :type: str
