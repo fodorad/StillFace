@@ -15,3 +15,7 @@ exclude = []
 frame_s = 0.05
 silence_dbfs = -60.0
 clip_level = 0.999
+
+[prepare]
+# 16-bit PCM mono, no gain or normalisation: levels stay comparable across sessions.
+sample_rate = 16000
