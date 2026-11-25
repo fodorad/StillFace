@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.audio.infer" href="../infer/index.html"><link rel="prev" title="stillface.features.audio.cli" href="../cli/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.audio.decisions" href="../decisions/index.html"><link rel="prev" title="stillface.features.audio.cli" href="../cli/index.html">
         <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/audio/config/index.html">
         <link rel="prefetch" href="../../../../../_static/logo.svg" as="image">
 
@@ -215,6 +215,8 @@
 <li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">stillface.features.audio</a><input aria-label="Toggle navigation of stillface.features.audio" checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5"><a class="reference internal" href="../cli/index.html">stillface.features.audio.cli</a></li>
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.audio.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../decisions/index.html">stillface.features.audio.decisions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../fusion/index.html">stillface.features.audio.fusion</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../infer/index.html">stillface.features.audio.infer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../lanes/index.html">stillface.features.audio.lanes</a></li>
@@ -349,7 +351,22 @@ is copied into each run record and its hash into every provenance sidecar.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.ModelConfig" title="stillface.features.audio.config.ModelConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModelConfig</span></code></a></p></td>
 <td><p>How one model is run.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AudioConfig</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.Threshold" title="stillface.features.audio.config.Threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Threshold</span></code></a></p></td>
+<td><p>A documented threshold.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.TypeRule" title="stillface.features.audio.config.TypeRule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeRule</span></code></a></p></td>
+<td><p>Model classes that vote for one vocalisation type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.GongConfig" title="stillface.features.audio.config.GongConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GongConfig</span></code></a></p></td>
+<td><p>Phase-boundary gong detection.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.ContextConfig" title="stillface.features.audio.config.ContextConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ContextConfig</span></code></a></p></td>
+<td><p>Non-vocal context sounds to flag.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.FusionConfig" title="stillface.features.audio.config.FusionConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FusionConfig</span></code></a></p></td>
+<td><p>Rule-based fusion of the model outputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AudioConfig</span></code></a></p></td>
 <td><p>Audio pipeline configuration.</p></td>
 </tr>
 </tbody>
@@ -598,6 +615,149 @@ e.g. until its outputs are verified.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.audio.config.Threshold">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">Threshold</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#Threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.Threshold" title="Link to this definition">¶</a></dt>
+<dd><p>A documented threshold.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.Threshold.value">
+<span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#stillface.features.audio.config.Threshold.value" title="Link to this definition">¶</a></dt>
+<dd><p>Inclusive threshold on a score.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.Threshold.origin">
+<span class="sig-name descname"><span class="pre">origin</span></span><a class="headerlink" href="#stillface.features.audio.config.Threshold.origin" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">vendor</span></code> (the model’s published default), <code class="docutils literal notranslate"><span class="pre">probe</span></code> (our 3-session probe)
+or <code class="docutils literal notranslate"><span class="pre">config</span></code> (placeholder set here); see
+<a class="reference internal" href="../lanes/index.html#stillface.features.audio.lanes.ORIGINS" title="stillface.features.audio.lanes.ORIGINS"><code class="xref py py-data docutils literal notranslate"><span class="pre">stillface.features.audio.lanes.ORIGINS</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.audio.config.TypeRule">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">TypeRule</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#TypeRule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.TypeRule" title="Link to this definition">¶</a></dt>
+<dd><p>Model classes that vote for one vocalisation type.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.TypeRule.ast">
+<span class="sig-name descname"><span class="pre">ast</span></span><a class="headerlink" href="#stillface.features.audio.config.TypeRule.ast" title="Link to this definition">¶</a></dt>
+<dd><p>AudioSet class names (AST).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.TypeRule.littlebeats">
+<span class="sig-name descname"><span class="pre">littlebeats</span></span><a class="headerlink" href="#stillface.features.audio.config.TypeRule.littlebeats" title="Link to this definition">¶</a></dt>
+<dd><p>LittleBeats head classes.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.audio.config.GongConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">GongConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#GongConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.GongConfig" title="Link to this definition">¶</a></dt>
+<dd><p>Phase-boundary gong detection.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.GongConfig.classes">
+<span class="sig-name descname"><span class="pre">classes</span></span><a class="headerlink" href="#stillface.features.audio.config.GongConfig.classes" title="Link to this definition">¶</a></dt>
+<dd><p>AudioSet classes counted as the gong.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.GongConfig.edge_s">
+<span class="sig-name descname"><span class="pre">edge_s</span></span><a class="headerlink" href="#stillface.features.audio.config.GongConfig.edge_s" title="Link to this definition">¶</a></dt>
+<dd><p>Only the first and last <code class="docutils literal notranslate"><span class="pre">edge_s</span></code> seconds of a phase are searched.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.GongConfig.dilate_s">
+<span class="sig-name descname"><span class="pre">dilate_s</span></span><a class="headerlink" href="#stillface.features.audio.config.GongConfig.dilate_s" title="Link to this definition">¶</a></dt>
+<dd><p>The detected gong is widened by this much on both sides.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ContextConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">ContextConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#ContextConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.ContextConfig" title="Link to this definition">¶</a></dt>
+<dd><p>Non-vocal context sounds to flag.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ContextConfig.classes">
+<span class="sig-name descname"><span class="pre">classes</span></span><a class="headerlink" href="#stillface.features.audio.config.ContextConfig.classes" title="Link to this definition">¶</a></dt>
+<dd><p>AudioSet classes summarised per phase.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ContextConfig.listen_share">
+<span class="sig-name descname"><span class="pre">listen_share</span></span><a class="headerlink" href="#stillface.features.audio.config.ContextConfig.listen_share" title="Link to this definition">¶</a></dt>
+<dd><p>A class present at least this share of a phase sends the session to
+the listening list.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.audio.config.FusionConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">FusionConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#FusionConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.FusionConfig" title="Link to this definition">¶</a></dt>
+<dd><p>Rule-based fusion of the model outputs.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.FusionConfig.thresholds">
+<span class="sig-name descname"><span class="pre">thresholds</span></span><a class="headerlink" href="#stillface.features.audio.config.FusionConfig.thresholds" title="Link to this definition">¶</a></dt>
+<dd><p>Named thresholds (<code class="docutils literal notranslate"><span class="pre">silero</span></code>, <code class="docutils literal notranslate"><span class="pre">pyannote</span></code>, <code class="docutils literal notranslate"><span class="pre">ast_type</span></code>, <code class="docutils literal notranslate"><span class="pre">littlebeats</span></code>,
+<code class="docutils literal notranslate"><span class="pre">gong</span></code>, <code class="docutils literal notranslate"><span class="pre">context</span></code>).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.FusionConfig.gong">
+<span class="sig-name descname"><span class="pre">gong</span></span><a class="headerlink" href="#stillface.features.audio.config.FusionConfig.gong" title="Link to this definition">¶</a></dt>
+<dd><p>Gong detection.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.FusionConfig.context">
+<span class="sig-name descname"><span class="pre">context</span></span><a class="headerlink" href="#stillface.features.audio.config.FusionConfig.context" title="Link to this definition">¶</a></dt>
+<dd><p>Context flags.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.FusionConfig.baby_types">
+<span class="sig-name descname"><span class="pre">baby_types</span></span><a class="headerlink" href="#stillface.features.audio.config.FusionConfig.baby_types" title="Link to this definition">¶</a></dt>
+<dd><p>Baby vocalisation type mapped to its voting classes.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.FusionConfig.mother_types">
+<span class="sig-name descname"><span class="pre">mother_types</span></span><a class="headerlink" href="#stillface.features.audio.config.FusionConfig.mother_types" title="Link to this definition">¶</a></dt>
+<dd><p>Mother vocalisation type mapped to its AST classes; <code class="docutils literal notranslate"><span class="pre">speech</span></code> is the
+default when none reaches the threshold.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.FusionConfig.disagreement_listen_share">
+<span class="sig-name descname"><span class="pre">disagreement_listen_share</span></span><a class="headerlink" href="#stillface.features.audio.config.FusionConfig.disagreement_listen_share" title="Link to this definition">¶</a></dt>
+<dd><p>VAD disagreement share of a phase that sends it to the
+listening list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stillface.features.audio.config.FusionConfig.threshold">
+<span class="sig-name descname"><span class="pre">threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stillface.features.audio.config.Threshold" title="stillface.features.audio.config.Threshold"><span class="pre">Threshold</span></a></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#FusionConfig.threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.FusionConfig.threshold" title="Link to this definition">¶</a></dt>
+<dd><p>A named threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – Threshold name.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The threshold.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>KeyError</strong> – If it is not configured.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">AudioConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#AudioConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.AudioConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Audio pipeline configuration.</p>
@@ -643,6 +803,12 @@ e.g. until its outputs are verified.</p>
 <dd><p>Role assignment settings.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig.fusion">
+<span class="sig-name descname"><span class="pre">fusion</span></span><a class="headerlink" href="#stillface.features.audio.config.AudioConfig.fusion" title="Link to this definition">¶</a></dt>
+<dd><p>Fusion rules and thresholds.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig.digest">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">digest</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#stillface.features.audio.config.AudioConfig.digest" title="Link to this definition">¶</a></dt>
@@ -673,12 +839,12 @@ e.g. until its outputs are verified.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../infer/index.html">
+          <a class="next-page" href="../decisions/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">stillface.features.audio.infer</div>
+                <div class="title">stillface.features.audio.decisions</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -777,6 +943,37 @@ e.g. until its outputs are verified.</p>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.digest"><code class="docutils literal notranslate"><span class="pre">ModelConfig.digest</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#stillface.features.audio.config.Threshold"><code class="docutils literal notranslate"><span class="pre">Threshold</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.config.Threshold.value"><code class="docutils literal notranslate"><span class="pre">Threshold.value</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.Threshold.origin"><code class="docutils literal notranslate"><span class="pre">Threshold.origin</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stillface.features.audio.config.TypeRule"><code class="docutils literal notranslate"><span class="pre">TypeRule</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.config.TypeRule.ast"><code class="docutils literal notranslate"><span class="pre">TypeRule.ast</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.TypeRule.littlebeats"><code class="docutils literal notranslate"><span class="pre">TypeRule.littlebeats</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stillface.features.audio.config.GongConfig"><code class="docutils literal notranslate"><span class="pre">GongConfig</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.config.GongConfig.classes"><code class="docutils literal notranslate"><span class="pre">GongConfig.classes</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.GongConfig.edge_s"><code class="docutils literal notranslate"><span class="pre">GongConfig.edge_s</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.GongConfig.dilate_s"><code class="docutils literal notranslate"><span class="pre">GongConfig.dilate_s</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ContextConfig"><code class="docutils literal notranslate"><span class="pre">ContextConfig</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.config.ContextConfig.classes"><code class="docutils literal notranslate"><span class="pre">ContextConfig.classes</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ContextConfig.listen_share"><code class="docutils literal notranslate"><span class="pre">ContextConfig.listen_share</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stillface.features.audio.config.FusionConfig"><code class="docutils literal notranslate"><span class="pre">FusionConfig</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.config.FusionConfig.thresholds"><code class="docutils literal notranslate"><span class="pre">FusionConfig.thresholds</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.FusionConfig.gong"><code class="docutils literal notranslate"><span class="pre">FusionConfig.gong</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.FusionConfig.context"><code class="docutils literal notranslate"><span class="pre">FusionConfig.context</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.FusionConfig.baby_types"><code class="docutils literal notranslate"><span class="pre">FusionConfig.baby_types</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.FusionConfig.mother_types"><code class="docutils literal notranslate"><span class="pre">FusionConfig.mother_types</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.FusionConfig.disagreement_listen_share"><code class="docutils literal notranslate"><span class="pre">FusionConfig.disagreement_listen_share</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.FusionConfig.threshold"><code class="docutils literal notranslate"><span class="pre">FusionConfig.threshold()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig"><code class="docutils literal notranslate"><span class="pre">AudioConfig</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.version"><code class="docutils literal notranslate"><span class="pre">AudioConfig.version</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.source"><code class="docutils literal notranslate"><span class="pre">AudioConfig.source</span></code></a></li>
@@ -785,6 +982,7 @@ e.g. until its outputs are verified.</p>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.prepare"><code class="docutils literal notranslate"><span class="pre">AudioConfig.prepare</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.models"><code class="docutils literal notranslate"><span class="pre">AudioConfig.models</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.roles"><code class="docutils literal notranslate"><span class="pre">AudioConfig.roles</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.fusion"><code class="docutils literal notranslate"><span class="pre">AudioConfig.fusion</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.digest"><code class="docutils literal notranslate"><span class="pre">AudioConfig.digest</span></code></a></li>
 </ul>
 </li>

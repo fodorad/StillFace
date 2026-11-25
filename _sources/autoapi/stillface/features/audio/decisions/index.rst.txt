@@ -1,0 +1,109 @@
+stillface.features.audio.decisions
+==================================
+
+.. py:module:: stillface.features.audio.decisions
+
+.. autoapi-nested-parse::
+
+   Decision tables: every rule and threshold that produced the audio outputs.
+
+   The tables are generated from the loaded configuration, never written by hand, so the
+   report always shows the rules that were actually applied. Every ``rule_id`` that appears in
+   a band or an event is listed here.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.decisions.THRESHOLD_OF
+   stillface.features.audio.decisions.COLUMNS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.decisions.DecisionRow
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.decisions.decision_rows
+   stillface.features.audio.decisions.to_markdown
+   stillface.features.audio.decisions.to_html
+
+
+Module Contents
+---------------
+
+.. py:class:: DecisionRow
+
+   One rule.
+
+   .. attribute:: rule_id
+
+      Identifier used in the outputs.
+
+   .. attribute:: description
+
+      What the rule decides.
+
+   .. attribute:: inputs
+
+      Models or classes it reads.
+
+   .. attribute:: threshold
+
+      Threshold value as text, empty if none.
+
+   .. attribute:: origin
+
+      Origin of the threshold, empty if none.
+
+
+.. py:data:: THRESHOLD_OF
+   :type:  dict[str, str]
+
+   Rule id mapped to the name of the fusion threshold it applies.
+
+.. py:function:: decision_rows(config: stillface.features.audio.config.AudioConfig) -> list[DecisionRow]
+
+   All rules with the inputs and thresholds of a configuration.
+
+   :param config: Audio configuration.
+
+   :returns: Role rules, fusion rules, then one row per configured vocalisation type.
+
+
+.. py:data:: COLUMNS
+   :type:  tuple[str, ...]
+   :value: ('rule', 'decides', 'inputs', 'threshold', 'origin')
+
+
+   Table column titles.
+
+.. py:function:: to_markdown(rows: list[DecisionRow]) -> str
+
+   Render rows as a Markdown table.
+
+   :param rows: Decision rows.
+
+   :returns: The table text.
+
+
+.. py:function:: to_html(rows: list[DecisionRow]) -> str
+
+   Render rows as an HTML table fragment.
+
+   :param rows: Decision rows.
+
+   :returns: ``<table>`` markup with escaped cells.
+
+

@@ -77,10 +77,13 @@ Module Contents
 
 .. py:data:: ROLES
    :type:  tuple[str, ...]
-   :value: ('baby', 'mother', 'other', 'context', 'dyad')
+   :value: ('baby', 'mother', 'other', 'adult', 'context', 'dyad')
 
 
-   Who a lane, band or event describes; ``context`` covers non-vocal sounds.
+   ``adult`` is an adult voice before the mother /
+   other split, ``context`` covers non-vocal sounds, ``dyad`` both partners together.
+
+   :type: Who a lane, band or event describes
 
 .. py:data:: ORIGINS
    :type:  tuple[str, ...]
@@ -278,18 +281,21 @@ Module Contents
       Identifier of the rule in the decision tables.
 
 
-.. py:function:: to_grid(times: numpy.ndarray, values: numpy.ndarray, duration_s: float, spec: LaneSpec, rate_hz: float = GRID_RATE_HZ) -> Lane
+.. py:function:: to_grid(times: numpy.ndarray, values: numpy.ndarray, duration_s: float, spec: LaneSpec, rate_hz: float = GRID_RATE_HZ, hold_s: float = 0.0) -> Lane
 
    Resample native-rate samples onto the lane grid.
 
    Bin ``k`` collects the samples with ``round(t * rate_hz) == k``. Samples outside the
-   phase and NaN samples are ignored; empty bins are NaN.
+   phase and NaN samples are ignored; empty bins are NaN unless a sample lies within
+   ``hold_s`` of the bin time, whose value is then held (for sources slower than the grid,
+   e.g. AST windows every 0.25 s).
 
    :param times: Sample times in seconds, phase-local.
    :param values: Sample values; category indices for majority lanes.
    :param duration_s: Phase duration.
    :param spec: Lane description, its aggregation is applied.
    :param rate_hz: Grid rate.
+   :param hold_s: Largest distance to the nearest sample for filling an empty bin.
 
    :returns: The lane.
 

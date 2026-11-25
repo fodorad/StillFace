@@ -214,6 +214,8 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/index.html">stillface.features.audio</a><input aria-label="Toggle navigation of stillface.features.audio" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/cli/index.html">stillface.features.audio.cli</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/config/index.html">stillface.features.audio.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/decisions/index.html">stillface.features.audio.decisions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/fusion/index.html">stillface.features.audio.fusion</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/infer/index.html">stillface.features.audio.infer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/lanes/index.html">stillface.features.audio.lanes</a></li>
@@ -328,8 +330,9 @@
 <span class="n">GRID_RATE_HZ</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span>
 <span class="sd">"""Sampling rate of the common lane grid."""</span>
 
-<span class="n">ROLES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"baby"</span><span class="p">,</span> <span class="s2">"mother"</span><span class="p">,</span> <span class="s2">"other"</span><span class="p">,</span> <span class="s2">"context"</span><span class="p">,</span> <span class="s2">"dyad"</span><span class="p">)</span>
-<span class="sd">"""Who a lane, band or event describes; ``context`` covers non-vocal sounds."""</span>
+<span class="n">ROLES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"baby"</span><span class="p">,</span> <span class="s2">"mother"</span><span class="p">,</span> <span class="s2">"other"</span><span class="p">,</span> <span class="s2">"adult"</span><span class="p">,</span> <span class="s2">"context"</span><span class="p">,</span> <span class="s2">"dyad"</span><span class="p">)</span>
+<span class="sd">"""Who a lane, band or event describes: ``adult`` is an adult voice before the mother /</span>
+<span class="sd">other split, ``context`` covers non-vocal sounds, ``dyad`` both partners together."""</span>
 
 <span class="n">ORIGINS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"vendor"</span><span class="p">,</span> <span class="s2">"probe"</span><span class="p">,</span> <span class="s2">"config"</span><span class="p">)</span>
 <span class="sd">"""Where a threshold comes from: the model's published default, the probe, or our config."""</span>
@@ -540,11 +543,14 @@
     <span class="n">duration_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">spec</span><span class="p">:</span> <span class="n">LaneSpec</span><span class="p">,</span>
     <span class="n">rate_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">GRID_RATE_HZ</span><span class="p">,</span>
+    <span class="n">hold_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Lane</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Resample native-rate samples onto the lane grid.</span>
 
 <span class="sd">    Bin ``k`` collects the samples with ``round(t * rate_hz) == k``. Samples outside the</span>
-<span class="sd">    phase and NaN samples are ignored; empty bins are NaN.</span>
+<span class="sd">    phase and NaN samples are ignored; empty bins are NaN unless a sample lies within</span>
+<span class="sd">    ``hold_s`` of the bin time, whose value is then held (for sources slower than the grid,</span>
+<span class="sd">    e.g. AST windows every 0.25 s).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        times: Sample times in seconds, phase-local.</span>
@@ -552,6 +558,7 @@
 <span class="sd">        duration_s: Phase duration.</span>
 <span class="sd">        spec: Lane description, its aggregation is applied.</span>
 <span class="sd">        rate_hz: Grid rate.</span>
+<span class="sd">        hold_s: Largest distance to the nearest sample for filling an empty bin.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The lane.</span>
@@ -579,6 +586,18 @@
         <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">codes</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">filled</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="n">out</span><span class="p">[</span><span class="n">filled</span><span class="p">]</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="n">filled</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">hold_s</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">index</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">grid_times</span><span class="p">(</span><span class="n">duration_s</span><span class="p">,</span> <span class="n">rate_hz</span><span class="p">)</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">keep</span><span class="p">])</span>
+        <span class="n">sample_times</span><span class="p">,</span> <span class="n">sample_values</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">keep</span><span class="p">][</span><span class="n">order</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+        <span class="n">empty</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">sample_times</span><span class="p">,</span> <span class="n">grid</span><span class="p">[</span><span class="n">empty</span><span class="p">])</span>
+        <span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">pos</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_times</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_times</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">empty</span><span class="p">]</span> <span class="o">-</span> <span class="n">sample_times</span><span class="p">[</span><span class="n">lo</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sample_times</span><span class="p">[</span><span class="n">hi</span><span class="p">]</span> <span class="o">-</span> <span class="n">grid</span><span class="p">[</span><span class="n">empty</span><span class="p">])</span>
+        <span class="n">nearest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+        <span class="n">close</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sample_times</span><span class="p">[</span><span class="n">nearest</span><span class="p">]</span> <span class="o">-</span> <span class="n">grid</span><span class="p">[</span><span class="n">empty</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">hold_s</span> <span class="o">+</span> <span class="mf">1e-9</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">empty</span><span class="p">[</span><span class="n">close</span><span class="p">]]</span> <span class="o">=</span> <span class="n">sample_values</span><span class="p">[</span><span class="n">nearest</span><span class="p">[</span><span class="n">close</span><span class="p">]]</span>
     <span class="k">return</span> <span class="n">Lane</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span></div>
 
 

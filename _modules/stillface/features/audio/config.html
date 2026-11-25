@@ -214,6 +214,8 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/index.html">stillface.features.audio</a><input aria-label="Toggle navigation of stillface.features.audio" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/cli/index.html">stillface.features.audio.cli</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/config/index.html">stillface.features.audio.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/decisions/index.html">stillface.features.audio.decisions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/fusion/index.html">stillface.features.audio.fusion</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/infer/index.html">stillface.features.audio.infer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/lanes/index.html">stillface.features.audio.lanes</a></li>
@@ -468,6 +470,121 @@
 
 
 
+<div class="viewcode-block" id="Threshold">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.Threshold">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Threshold</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A documented threshold.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        value: Inclusive threshold on a score.</span>
+<span class="sd">        origin: ``vendor`` (the model's published default), ``probe`` (our 3-session probe)</span>
+<span class="sd">            or ``config`` (placeholder set here); see</span>
+<span class="sd">            :data:`stillface.features.audio.lanes.ORIGINS`.</span>
+<span class="sd">    """</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"config"</span></div>
+
+
+
+<div class="viewcode-block" id="TypeRule">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.TypeRule">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TypeRule</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Model classes that vote for one vocalisation type.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        ast: AudioSet class names (AST).</span>
+<span class="sd">        littlebeats: LittleBeats head classes.</span>
+<span class="sd">    """</span>
+
+    <span class="n">ast</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">littlebeats</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="GongConfig">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.GongConfig">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GongConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Phase-boundary gong detection.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        classes: AudioSet classes counted as the gong.</span>
+<span class="sd">        edge_s: Only the first and last ``edge_s`` seconds of a phase are searched.</span>
+<span class="sd">        dilate_s: The detected gong is widened by this much on both sides.</span>
+<span class="sd">    """</span>
+
+    <span class="n">classes</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"Gong"</span><span class="p">,</span> <span class="s2">"Bell"</span><span class="p">,</span> <span class="s2">"Chime"</span><span class="p">,</span> <span class="s2">"Singing bowl"</span><span class="p">)</span>
+    <span class="n">edge_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span>
+    <span class="n">dilate_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span></div>
+
+
+
+<div class="viewcode-block" id="ContextConfig">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.ContextConfig">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContextConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Non-vocal context sounds to flag.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        classes: AudioSet classes summarised per phase.</span>
+<span class="sd">        listen_share: A class present at least this share of a phase sends the session to</span>
+<span class="sd">            the listening list.</span>
+<span class="sd">    """</span>
+
+    <span class="n">classes</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"Music"</span><span class="p">,)</span>
+    <span class="n">listen_share</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span></div>
+
+
+
+<div class="viewcode-block" id="FusionConfig">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.FusionConfig">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FusionConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Rule-based fusion of the model outputs.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        thresholds: Named thresholds (``silero``, ``pyannote``, ``ast_type``, ``littlebeats``,</span>
+<span class="sd">            ``gong``, ``context``).</span>
+<span class="sd">        gong: Gong detection.</span>
+<span class="sd">        context: Context flags.</span>
+<span class="sd">        baby_types: Baby vocalisation type mapped to its voting classes.</span>
+<span class="sd">        mother_types: Mother vocalisation type mapped to its AST classes; ``speech`` is the</span>
+<span class="sd">            default when none reaches the threshold.</span>
+<span class="sd">        disagreement_listen_share: VAD disagreement share of a phase that sends it to the</span>
+<span class="sd">            listening list.</span>
+<span class="sd">    """</span>
+
+    <span class="n">thresholds</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Threshold</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">gong</span><span class="p">:</span> <span class="n">GongConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">GongConfig</span><span class="p">)</span>
+    <span class="n">context</span><span class="p">:</span> <span class="n">ContextConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ContextConfig</span><span class="p">)</span>
+    <span class="n">baby_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TypeRule</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">mother_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TypeRule</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">disagreement_listen_share</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span>
+
+<div class="viewcode-block" id="FusionConfig.threshold">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.FusionConfig.threshold">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Threshold</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""A named threshold.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: Threshold name.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The threshold.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: If it is not configured.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Threshold </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> is not configured"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
+</div>
+
+
+
 <div class="viewcode-block" id="AudioConfig">
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.AudioConfig">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -482,6 +599,7 @@
 <span class="sd">        prepare: Prepared audio format.</span>
 <span class="sd">        models: Model name mapped to how it is run.</span>
 <span class="sd">        roles: Role assignment settings.</span>
+<span class="sd">        fusion: Fusion rules and thresholds.</span>
 <span class="sd">    """</span>
 
     <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">CONFIG_VERSION</span>
@@ -491,6 +609,7 @@
     <span class="n">prepare</span><span class="p">:</span> <span class="n">PrepareConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">PrepareConfig</span><span class="p">)</span>
     <span class="n">models</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModelConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
     <span class="n">roles</span><span class="p">:</span> <span class="n">RolesConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">RolesConfig</span><span class="p">)</span>
+    <span class="n">fusion</span><span class="p">:</span> <span class="n">FusionConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">FusionConfig</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">digest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

@@ -1,0 +1,245 @@
+stillface.features.audio.fusion
+===============================
+
+.. py:module:: stillface.features.audio.fusion
+
+.. autoapi-nested-parse::
+
+   Rule-based fusion: every model output on one grid, plus the fused decisions.
+
+   For one session phase the fusion stage reads the raw outputs of the first- and second-pass
+   models and the role events, and writes:
+
+   - ``lanes/<phase>.csv`` + ``lanes/<phase>.json``: every raw score as a lane (10 Hz) and every
+     presence decision as a band, each band with its threshold, origin and rule id;
+   - ``events/<phase>.csv``: fused vocalisation events (baby type per baby segment, mother type
+     per mother segment, addressee per adult segment);
+   - ``fusion/<phase>.json``: phase summary (context shares, disagreement share, which models
+     were available).
+
+   All rules are listed by id in :data:`RULES` and their thresholds come from the config, so
+   :mod:`~stillface.features.audio.decisions` can render the exact decision tables that
+   produced the data. No rule is learned; learned fusion needs annotations (later phase).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.fusion.logger
+   stillface.features.audio.fusion.MODELS
+   stillface.features.audio.fusion.VTC_ROLES
+   stillface.features.audio.fusion.EXTRA_TYPES
+   stillface.features.audio.fusion.RULES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.fusion.PhaseInputs
+   stillface.features.audio.fusion.FusionResult
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.fusion.hold_for
+   stillface.features.audio.fusion.nanmean_rows
+   stillface.features.audio.fusion.raster
+   stillface.features.audio.fusion.dilate
+   stillface.features.audio.fusion.column
+   stillface.features.audio.fusion.segment_max
+   stillface.features.audio.fusion.fuse_phase
+   stillface.features.audio.fusion.load_inputs
+   stillface.features.audio.fusion.fusion_paths
+   stillface.features.audio.fusion.run_fusion
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: MODELS
+   :type:  dict[str, str]
+
+   Model names whose raw outputs the fusion reads (VTC comes from the roles config).
+
+.. py:data:: VTC_ROLES
+   :type:  dict[str, str]
+
+   Lane role of each VTC class (adults are split into mother / other by the roles stage).
+
+.. py:data:: EXTRA_TYPES
+   :type:  tuple[str, ...]
+   :value: ('other_vocal', 'conflict')
+
+
+   no vote, and a tie.
+
+   :type: Baby type labels besides the configured types
+
+.. py:data:: RULES
+   :type:  dict[str, str]
+
+   Fusion rules by id (the role rules are in :data:`stillface.features.audio.roles.RULES`).
+
+.. py:class:: PhaseInputs
+
+   Everything the fusion reads for one phase.
+
+   .. attribute:: session
+
+      Session identifier.
+
+   .. attribute:: phase
+
+      Experiment phase.
+
+   .. attribute:: duration_s
+
+      Phase duration.
+
+   .. attribute:: raw
+
+      Model key (``vtc``, ``silero`` ...) mapped to its raw result, None if missing.
+
+   .. attribute:: roles
+
+      Role events of the phase.
+
+
+.. py:class:: FusionResult
+
+   Output of the fusion of one phase.
+
+   .. attribute:: table
+
+      Lanes and bands.
+
+   .. attribute:: events
+
+      Fused events.
+
+   .. attribute:: summary
+
+      Phase summary.
+
+   .. attribute:: listening
+
+      Listening items found by the fusion.
+
+
+.. py:function:: hold_for(times: numpy.ndarray) -> float
+
+   Hold distance for a source: half its median sample spacing plus half a grid bin.
+
+   :param times: Sample times.
+
+   :returns: Seconds; 0 for fewer than two samples.
+
+
+.. py:function:: nanmean_rows(stack: numpy.ndarray) -> numpy.ndarray
+
+   Column-wise mean ignoring NaN, NaN where a column has no finite value.
+
+   :param stack: Shape ``(k, n)``.
+
+   :returns: Shape ``(n,)``.
+
+
+.. py:function:: raster(intervals: collections.abc.Sequence[tuple[float, float]], times: numpy.ndarray) -> numpy.ndarray
+
+   Grid presence of intervals: ``start <= t < end``.
+
+   :param intervals: ``(start, end)`` pairs.
+   :param times: Grid times.
+
+   :returns: Boolean mask.
+
+
+.. py:function:: dilate(mask: numpy.ndarray, bins: int) -> numpy.ndarray
+
+   Widen every run of a mask by ``bins`` on both sides.
+
+   :param mask: Boolean mask.
+   :param bins: Bins added per side.
+
+   :returns: The widened mask.
+
+
+.. py:function:: column(frames: stillface.features.audio.models.FrameScores, names: collections.abc.Sequence[str]) -> numpy.ndarray
+
+   Maximum over named columns of frame scores.
+
+   :param frames: Frame scores.
+   :param names: Column names; all must exist.
+
+   :returns: Per-frame maximum, NaN if ``names`` is empty.
+
+   :raises KeyError: If a name is unknown.
+
+
+.. py:function:: segment_max(frames: stillface.features.audio.models.FrameScores, values: numpy.ndarray, start: float, end: float) -> float
+
+   Largest value of the frames whose time lies in a segment (nearest frame if none).
+
+   :param frames: Frame scores giving the times.
+   :param values: One value per frame.
+   :param start: Segment start.
+   :param end: Segment end.
+
+   :returns: The maximum, NaN without frames.
+
+
+.. py:function:: fuse_phase(inputs: PhaseInputs, config: stillface.features.audio.config.AudioConfig) -> FusionResult
+
+   Fuse the model outputs of one phase.
+
+   :param inputs: Raw outputs and role events.
+   :param config: Audio configuration (fusion rules, thresholds).
+
+   :returns: Lanes, bands, events, summary and listening items.
+
+
+.. py:function:: load_inputs(paths: stillface.config.DatasetPaths, session: str, phase: str, config: stillface.features.audio.config.AudioConfig) -> PhaseInputs | None
+
+   Collect the raw outputs and role events of one phase.
+
+   :param paths: Dataset locations.
+   :param session: Session identifier.
+   :param phase: Experiment phase.
+   :param config: Audio configuration (model names).
+
+   :returns: The inputs, None if the phase WAV was not prepared.
+
+
+.. py:function:: fusion_paths(paths: stillface.config.DatasetPaths, session: str, phase: str) -> dict[str, pathlib.Path]
+
+   Output files of the fusion of one phase.
+
+   :param paths: Dataset locations.
+   :param session: Session identifier.
+   :param phase: Experiment phase.
+
+   :returns: ``lanes`` (CSV), ``legend`` (JSON), ``events`` (CSV) and ``summary`` (JSON) paths.
+
+
+.. py:function:: run_fusion(paths: stillface.config.DatasetPaths, session: str, config: stillface.features.audio.config.AudioConfig, phases: collections.abc.Sequence[str] = PHASES) -> list[stillface.features.audio.roles.ListeningItem]
+
+   Fuse every prepared phase of a session and write the outputs.
+
+   :param paths: Dataset locations.
+   :param session: Session identifier.
+   :param config: Audio configuration.
+   :param phases: Phases to fuse.
+
+   :returns: The listening items of the session.
+
+

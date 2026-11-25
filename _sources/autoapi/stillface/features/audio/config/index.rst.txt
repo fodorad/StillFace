@@ -32,6 +32,11 @@ Classes
    stillface.features.audio.config.PrepareConfig
    stillface.features.audio.config.RolesConfig
    stillface.features.audio.config.ModelConfig
+   stillface.features.audio.config.Threshold
+   stillface.features.audio.config.TypeRule
+   stillface.features.audio.config.GongConfig
+   stillface.features.audio.config.ContextConfig
+   stillface.features.audio.config.FusionConfig
    stillface.features.audio.config.AudioConfig
 
 
@@ -212,6 +217,109 @@ Module Contents
       Short SHA-256 of these settings; a change recomputes only this model's outputs.
 
 
+.. py:class:: Threshold
+
+   A documented threshold.
+
+   .. attribute:: value
+
+      Inclusive threshold on a score.
+
+   .. attribute:: origin
+
+      ``vendor`` (the model's published default), ``probe`` (our 3-session probe)
+      or ``config`` (placeholder set here); see
+      :data:`stillface.features.audio.lanes.ORIGINS`.
+
+
+.. py:class:: TypeRule
+
+   Model classes that vote for one vocalisation type.
+
+   .. attribute:: ast
+
+      AudioSet class names (AST).
+
+   .. attribute:: littlebeats
+
+      LittleBeats head classes.
+
+
+.. py:class:: GongConfig
+
+   Phase-boundary gong detection.
+
+   .. attribute:: classes
+
+      AudioSet classes counted as the gong.
+
+   .. attribute:: edge_s
+
+      Only the first and last ``edge_s`` seconds of a phase are searched.
+
+   .. attribute:: dilate_s
+
+      The detected gong is widened by this much on both sides.
+
+
+.. py:class:: ContextConfig
+
+   Non-vocal context sounds to flag.
+
+   .. attribute:: classes
+
+      AudioSet classes summarised per phase.
+
+   .. attribute:: listen_share
+
+      A class present at least this share of a phase sends the session to
+      the listening list.
+
+
+.. py:class:: FusionConfig
+
+   Rule-based fusion of the model outputs.
+
+   .. attribute:: thresholds
+
+      Named thresholds (``silero``, ``pyannote``, ``ast_type``, ``littlebeats``,
+      ``gong``, ``context``).
+
+   .. attribute:: gong
+
+      Gong detection.
+
+   .. attribute:: context
+
+      Context flags.
+
+   .. attribute:: baby_types
+
+      Baby vocalisation type mapped to its voting classes.
+
+   .. attribute:: mother_types
+
+      Mother vocalisation type mapped to its AST classes; ``speech`` is the
+      default when none reaches the threshold.
+
+   .. attribute:: disagreement_listen_share
+
+      VAD disagreement share of a phase that sends it to the
+      listening list.
+
+
+   .. py:method:: threshold(name: str) -> Threshold
+
+      A named threshold.
+
+      :param name: Threshold name.
+
+      :returns: The threshold.
+
+      :raises KeyError: If it is not configured.
+
+
+
 .. py:class:: AudioConfig
 
    Audio pipeline configuration.
@@ -243,6 +351,10 @@ Module Contents
    .. attribute:: roles
 
       Role assignment settings.
+
+   .. attribute:: fusion
+
+      Fusion rules and thresholds.
 
 
    .. py:property:: digest
