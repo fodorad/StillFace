@@ -246,6 +246,18 @@ class FusionConfig:
 
 
 @dataclass(frozen=True)
+class GatingConfig:
+    """Mother-only and baby-only tracks.
+
+    Attributes:
+        pad_s: Each role segment is widened by this much on both sides before gating, so
+            word onsets and offsets survive.
+    """
+
+    pad_s: float = 0.3
+
+
+@dataclass(frozen=True)
 class AudioConfig:
     """Audio pipeline configuration.
 
@@ -258,6 +270,7 @@ class AudioConfig:
         models: Model name mapped to how it is run.
         roles: Role assignment settings.
         fusion: Fusion rules and thresholds.
+        gating: Gated track settings.
     """
 
     version: int = CONFIG_VERSION
@@ -268,6 +281,7 @@ class AudioConfig:
     models: dict[str, ModelConfig] = field(default_factory=dict)
     roles: RolesConfig = field(default_factory=RolesConfig)
     fusion: FusionConfig = field(default_factory=FusionConfig)
+    gating: GatingConfig = field(default_factory=GatingConfig)
 
     @property
     def digest(self) -> str:

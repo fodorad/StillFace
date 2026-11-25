@@ -12,6 +12,7 @@ from stillface.data_preparation.metadata import load_metadata
 from stillface.features.audio.config import DEFAULT_CONFIG_PATH, load_audio_config
 from stillface.features.audio.decisions import decision_rows, to_html, to_markdown
 from stillface.features.audio.fusion import run_fusion
+from stillface.features.audio.gating import run_gating
 from stillface.features.audio.infer import full_wav_request, run_model
 from stillface.features.audio.inventory import build_inventory, read_inventory, write_inventory
 from stillface.features.audio.prepare import prepare_all
@@ -50,7 +51,9 @@ def add_audio_parser(groups: argparse._SubParsersAction) -> None:
     roles.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
     fuse = audio.add_parser("fuse", help="Lanes, bands and events from all model outputs")
     fuse.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
-    for step in (inventory, prepare, infer, roles, fuse):
+    gate = audio.add_parser("gate", help="Mother-only and baby-only tracks, overlap list")
+    gate.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
+    for step in (inventory, prepare, infer, roles, fuse, gate):
         step.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="Audio config")
 
 
@@ -128,4 +131,7 @@ def run_audio(args: argparse.Namespace, paths: DatasetPaths) -> int:
         for name, text in (("decisions.md", to_markdown(rows)), ("decisions.html", to_html(rows))):
             write_atomic(paths.audio_dir / name, lambda tmp, t=text: tmp.write_text(t))
         logger.info("%d listening items, %d decision rules", len(items), len(rows))
+    elif args.command == "gate":
+        for session in args.session_id or scope_sessions(paths):
+            run_gating(paths, session, config)
     return 0
