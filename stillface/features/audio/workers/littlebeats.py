@@ -1,8 +1,8 @@
 """LittleBeats worker: speaker and vocalisation types per window (environment ``littlebeats``).
 
 wav2vec 2.0 pre-trained on 4300 h of LittleBeats and LENA home recordings and fine-tuned
-with three heads (Li et al. 2023, SpeechBrain recipe ``wav2vec_LittleBeats``) on 2 s
-windows:
+with three heads (Li et al. 2023, SpeechBrain recipe ``wav2vec_LittleBeats``, the
+weighted-layer-average variant ``hparams_LL_4300_WA_aug_on_sp``) on 2 s windows:
 
 - speaker: ``SIL`` silence, ``CHN`` target child, ``FAN`` female adult, ``MAN`` male adult,
   ``CXN`` other child;
@@ -87,10 +87,11 @@ class LittleBeatsWorker:
         import tempfile
 
         import torch
+        import torch.nn.functional as functional
         from huggingface_hub import hf_hub_download
         from speechbrain.lobes.models.CRDNN import DNN_Block
         from speechbrain.lobes.models.fairseq_wav2vec import FairseqWav2Vec2
-        from speechbrain.nnet.linear import Linear
+        from speechbrain.nnet.linear import Linear, WeightedAverage
         from speechbrain.nnet.pooling import StatisticsPooling
 
         revision = options.get("weights_revision") or None
@@ -102,11 +103,48 @@ class LittleBeatsWorker:
             return hf_hub_download(REPO, name, revision=revision)
 
         self.tmp = tempfile.TemporaryDirectory()
-        self.wav2vec2 = FairseqWav2Vec2(
+
+        class LayerWav2Vec2(FairseqWav2Vec2):
+            """The fork's wrapper with the layer aggregation of the model repository.
+
+            The pinned SpeechBrain fork's wrapper calls ``aggregate_features`` with an argument
+            it does not define and uses an unimported ``F``; feature extraction and layer
+            aggregation follow the ``fairseq_wav2vec.py`` shipped next to the checkpoints.
+            """
+
+            def extract_features(self, wav: Any) -> Any:
+                if self.normalize:
+                    wav = functional.layer_norm(wav, wav.shape)
+                out = self.model.extract_features(wav, padding_mask=None, mask=False)
+                features = self.aggregate_features(out, include_CNN_layer=self.include_CNN_layer)
+                return (
+                    functional.layer_norm(features, features.shape)
+                    if self.output_norm
+                    else features
+                )
+
+            def aggregate_features(self, out: Any, include_CNN_layer: bool = True) -> Any:
+                self.model.layerdrop = 0
+                features = torch.stack([layer[0].transpose(0, 1) for layer in out["layer_results"]])
+                return features if include_CNN_layer else features[1:]
+
+        class LayerAverage(WeightedAverage):
+            """The fork's softmax-weighted layer average (its ``forward`` lacks an import)."""
+
+            def forward(self, x: Any) -> Any:
+                weights = torch.squeeze(functional.softmax(self.w.weight, dim=1))
+                return torch.matmul(x, weights)
+
+        self.wav2vec2 = LayerWav2Vec2(
             pretrained_path=fetch("LL_4300/checkpoint_best.pt"),
             save_path=f"{self.tmp.name}/w2v.pt",
             output_norm=True,
             freeze=True,
+            output_all_hiddens=True,
+            encoder_dropout=0,
+            # fairseq 0.12.2 returns the 12 transformer layers only, which the 12 learned layer
+            # weights expect; dropping the first ("CNN") entry would leave 11.
+            include_CNN_layer=True,
         )
         self.wav2vec2.load_state_dict(
             torch.load(fetch(f"{FINE_TUNED}/wav2vec2.ckpt"), map_location="cpu")
@@ -114,7 +152,8 @@ class LittleBeatsWorker:
         self.pool = StatisticsPooling(return_std=False)
         dnns = [DNN_Block(input_shape=[None, 768], neurons=384, dropout=0.1) for _ in range(3)]
         heads = [Linear(input_size=384, n_neurons=n, bias=False) for n in (5, 3, 4)]
-        self.heads = torch.nn.ModuleList([*dnns, *heads])
+        layer_weights = [LayerAverage(input_size=12, n_neurons=1) for _ in range(3)]
+        self.heads = torch.nn.ModuleList([*dnns, *heads, *layer_weights])
         self.heads.load_state_dict(
             torch.load(fetch(f"{FINE_TUNED}/model.ckpt"), map_location="cpu")
         )
@@ -123,18 +162,29 @@ class LittleBeatsWorker:
         return {"device": self.device, "revision": revision}
 
     def forward(self, windows: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Logits of the three heads for a batch of equal-length windows."""
+        """Logits of the three heads for a batch of equal-length windows.
+
+        As in the recipe's weighted-average model (``train_WA_*``): every transformer layer
+        is mean-pooled over time, each task mixes the 12 layers with its own learned
+        weights, then its DNN block and output layer follow.
+        """
         import torch
 
         with torch.no_grad():
             wavs = torch.from_numpy(windows.astype(np.float32)).to(self.device)
             lens = torch.ones(len(wavs), device=self.device)
-            pooled = self.pool(self.wav2vec2(wavs), lens).view(len(wavs), -1)
-            dnn_sp, dnn_chn, dnn_adu, out_sp, out_chn, out_adu = self.heads
-            return (
-                out_sp(dnn_sp(pooled)).cpu().numpy(),
-                out_chn(dnn_chn(pooled)).cpu().numpy(),
-                out_adu(dnn_adu(pooled)).cpu().numpy(),
+            hiddens = self.wav2vec2(wavs)
+            pooled = torch.stack(
+                [self.pool(layer, lens).view(len(wavs), -1) for layer in hiddens]
+            ).permute(1, 2, 0)
+            dnn_sp, dnn_chn, dnn_adu, out_sp, out_chn, out_adu, wa_sp, wa_chn, wa_adu = self.heads
+            return tuple(
+                out(dnn(wa(pooled))).cpu().numpy()
+                for wa, dnn, out in (
+                    (wa_sp, dnn_sp, out_sp),
+                    (wa_chn, dnn_chn, out_chn),
+                    (wa_adu, dnn_adu, out_adu),
+                )
             )
 
     def infer(self, request: InferenceRequest) -> InferenceResult:

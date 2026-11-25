@@ -177,6 +177,8 @@ segment_source = "vtc:FEM"
 env = "littlebeats"
 module = "stillface.features.audio.workers.littlebeats"
 weights_revision = "b3250219066482f571ef3868413b0b0f1ad92502"
+# torch 2.1 (needed by fairseq) lacks weight-norm on MPS.
+device = "cpu"
 window_s = 2.0
 hop_s = 1.0
 enabled = false

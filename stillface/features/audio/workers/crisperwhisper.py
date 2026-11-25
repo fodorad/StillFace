@@ -107,8 +107,8 @@ class CrisperWhisperWorker:
             result = self.model.transcribe(
                 wav, language=self.language, mode=mode, word_confidence=True
             )
-            texts[mode] = result.text
-            words[mode] = [(w.start, w.end, w.word, w.probability) for w in result.words]
+            texts[mode] = result.text or ""
+            words[mode] = [(w.start, w.end, w.word, w.probability) for w in result.words or []]
         return texts, words
 
     def infer(self, request: InferenceRequest) -> InferenceResult:

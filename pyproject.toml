@@ -107,6 +107,7 @@ exclude_lines = [
   "def load\\(",
   "def forward\\(",
   "def torch_device\\(",
+  "def load_probs\\(",
   "if __name__ == .__main__.:",
 ]
 

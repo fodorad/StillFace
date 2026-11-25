@@ -89,6 +89,35 @@ def postprocess(
     return frames, scored
 
 
+def load_probs(path: Path) -> Any:
+    """Load VTC's saved probabilities with the weights-only loader.
+
+    VTC pickles its class names as ``tomlkit`` string objects. Exactly the ``tomlkit``
+    types the file needs are allowed; any other non-tensor type is refused.
+
+    Args:
+        path: ``<uri>-probs_dict_t.pt`` written by VTC.
+
+    Returns:
+        Class name mapped to its probability tensor.
+
+    Raises:
+        ValueError: If the file needs a type outside ``tomlkit``.
+    """
+    import importlib
+
+    import torch
+
+    allowed = []
+    for name in torch.serialization.get_unsafe_globals_in_checkpoint(str(path)):
+        module, _, attr = name.rpartition(".")
+        if not module.startswith("tomlkit"):
+            raise ValueError(f"Unexpected type {name} in the VTC probabilities")
+        allowed.append(getattr(importlib.import_module(module), attr))
+    with torch.serialization.safe_globals(allowed):
+        return torch.load(path, weights_only=True)
+
+
 class VtcWorker:
     """Runs VTC on whole phases."""
 
@@ -111,8 +140,6 @@ class VtcWorker:
 
     def forward(self, wav: Path) -> tuple[dict[str, np.ndarray], str, dict[str, Any]]:
         """Run VTC on one WAV: probabilities, merged RTTM and the thresholds used."""
-        import torch
-
         with tempfile.TemporaryDirectory() as tmp:
             wavs, out = Path(tmp) / "wavs", Path(tmp) / "out"
             wavs.mkdir()
@@ -126,8 +153,8 @@ class VtcWorker:
                 save_probs=True,
                 high_precision=self.high_precision,
             )
-            saved = torch.load(out / "probs" / f"{URI}-probs_dict_t.pt")
-            probs = {k: v.cpu().numpy() for k, v in saved.items()}
+            saved = load_probs(out / "probs" / f"{URI}-probs_dict_t.pt")
+            probs = {str(k): v.cpu().numpy() for k, v in saved.items()}
             rttm = out / "rttm" / f"{URI}.rttm"
             text = rttm.read_text() if rttm.exists() else ""
             name = "hp.toml" if self.high_precision else "f1.toml"
