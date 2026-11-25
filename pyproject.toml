@@ -38,6 +38,10 @@ dev = [
   "ruff",
   "ty",
 ]
+audio = [
+  "opensmile",
+  "praat-parselmouth",
+]
 features = [
   "transformers",
   "pillow",
@@ -106,11 +110,13 @@ directory = "coverage_html"
 [tool.ty.environment]
 python-version = "3.13"
 
-# The detector adapters need the optional `features` extra, which CI does not install.
+# The detector adapters need the optional `features` extra, which CI does not install;
+# parselmouth is a compiled module without type stubs.
 [[tool.ty.overrides]]
 include = [
   "stillface/features/gaze/exordium_heads.py",
   "stillface/features/gaze/gdino_heads.py",
+  "stillface/features/audio/prosody.py",
 ]
 
 [tool.ty.overrides.rules]
