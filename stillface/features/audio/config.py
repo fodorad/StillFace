@@ -70,6 +70,39 @@ class PrepareConfig:
 
 
 @dataclass(frozen=True)
+class ModelConfig:
+    """How one model is run.
+
+    Attributes:
+        env: Environment folder below ``$STILLFACE_AUDIO_ENVS``; empty for in-process models.
+        module: Worker module run inside the environment.
+        weights_revision: Exact weights revision (e.g. a Hugging Face commit hash).
+        worker_version: Version of the worker code; bump it when its output changes.
+        device: Preferred device (``mps``, ``cuda``, ``cpu``); workers fall back to CPU.
+        timeout_s: Wall-clock limit of one batch.
+        window_s: Analysis window for windowed models, 0 if not applicable.
+        hop_s: Hop between windows, 0 if not applicable.
+        options: Further model-specific options, passed to the worker as text.
+    """
+
+    env: str = ""
+    module: str = ""
+    weights_revision: str = ""
+    worker_version: str = "1"
+    device: str = "mps"
+    timeout_s: float = 7200.0
+    window_s: float = 0.0
+    hop_s: float = 0.0
+    options: dict[str, str] = field(default_factory=dict)
+
+    @property
+    def digest(self) -> str:
+        """Short SHA-256 of these settings; a change recomputes only this model's outputs."""
+        text = json.dumps(asdict(self), sort_keys=True)
+        return hashlib.sha256(text.encode()).hexdigest()[:16]
+
+
+@dataclass(frozen=True)
 class AudioConfig:
     """Audio pipeline configuration.
 
@@ -79,6 +112,7 @@ class AudioConfig:
         scope: Session selection.
         inventory: Inventory statistics.
         prepare: Prepared audio format.
+        models: Model name mapped to how it is run.
     """
 
     version: int = CONFIG_VERSION
@@ -86,6 +120,7 @@ class AudioConfig:
     scope: ScopeConfig = field(default_factory=ScopeConfig)
     inventory: InventoryConfig = field(default_factory=InventoryConfig)
     prepare: PrepareConfig = field(default_factory=PrepareConfig)
+    models: dict[str, ModelConfig] = field(default_factory=dict)
 
     @property
     def digest(self) -> str:

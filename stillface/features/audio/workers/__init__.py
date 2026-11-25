@@ -1,0 +1,7 @@
+"""Model workers: one module per model, each run inside that model's own environment.
+
+A worker module imports only the standard library, numpy, :mod:`~stillface.features.audio.models`,
+:mod:`~stillface.features.audio.workers.base` and its model's libraries (inside its
+``load`` boundary), so every model environment needs nothing of the package's own
+dependencies.
+"""

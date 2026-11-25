@@ -170,6 +170,33 @@ class TestFeaturesCli(unittest.TestCase):
             (raw / "Sessions" / "9" / "processed" / "baby_play.mp4").write_bytes(b"x")
             self.assertEqual(main([*base, "prepare", "--overwrite"]), 1)
 
+    def test_audio_infer_runs_a_registered_model(self) -> None:
+        from stillface.features.audio.registry import IN_PROCESS
+        from tests.features.audio.fakes import FakeAdapter
+
+        with tempfile.TemporaryDirectory() as tmp:
+            raw, out = Path(tmp) / "raw", Path(tmp) / "out"
+            meta = raw / "metadata_database.xlsx"
+            meta.parent.mkdir(parents=True)
+            pd.DataFrame({"ID": [9], "Analysis": ["y"]}).to_excel(meta, index=False)
+            make_audio(raw / "Sessions" / "9" / "processed" / "baby_play.mp4", video=True)
+            config = Path(tmp) / "audio.toml"
+            config.write_text("version = 1\n[models.fake]\nenv = ''\n")
+            base = ["--raw-dir", str(raw), "--processed-dir", str(out), "audio"]
+            opts = ["--config", str(config)]
+            main([*base, "inventory", *opts])
+            main([*base, "prepare", *opts])
+            IN_PROCESS["fake"] = lambda name, model: FakeAdapter(name=name)
+            try:
+                self.assertEqual(main([*base, "infer", "fake", *opts]), 0)
+                IN_PROCESS["fake"] = lambda name, model: FakeAdapter(name=name, fail={"9/play"})
+                code = main([*base, "infer", "fake", "--overwrite", "--phase", "play", *opts])
+                self.assertEqual(code, 1)
+            finally:
+                del IN_PROCESS["fake"]
+            raw_out = out / "Sessions" / "9" / "features" / "audio" / "raw" / "fake" / "play.npz"
+            self.assertTrue(raw_out.exists())
+
     def test_heads_requires_a_session(self) -> None:
         with self.assertRaises(SystemExit):
             build_parser().parse_args(["features", "heads"])
