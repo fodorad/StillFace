@@ -51,3 +51,20 @@ module = "stillface.features.audio.workers.ast_audioset"
 weights_revision = "f826b80d28226b62986cc218e5cec390b1096902"
 window_s = 2.0
 hop_s = 0.25
+
+[models.vtc]
+# VTC 2.2 voice types (KCHI, OCH, MAL, FEM) every 20 ms; weights_revision is the coml/VTC-2
+# commit at the time of pinning (the vtc package resolves model "2.2").
+env = "vtc"
+module = "stillface.features.audio.workers.vtc"
+weights_revision = "91167f6103c1f211bb9861f32d57e92ed01618b9"
+[models.vtc.options]
+vtc_version = "2.2"
+thresholds = "f1"
+
+[models.addressee]
+# KCDS / ADS / Other per adult VTC segment (coml/addressee), 10 s context, <= 30 s parts.
+env = "vtc"
+module = "stillface.features.audio.workers.addressee"
+weights_revision = "080532e23a25ad08e40a8c183bb522380e916f62"
+input = "segments"
