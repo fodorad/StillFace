@@ -70,6 +70,33 @@ class PrepareConfig:
 
 
 @dataclass(frozen=True)
+class RolesConfig:
+    """Who is who: VTC voice types to roles, and the mother's voice enrolment.
+
+    Attributes:
+        vtc_model: Model whose segments give the voice types.
+        embedding_model: Model whose segment embeddings identify the mother.
+        baby_labels: VTC classes that are the baby (no siblings: key child and other child).
+        enrol_phase: Phase whose female speech enrols the mother's voice.
+        fallback_phase: Phase used when the enrolment phase has too little speech.
+        enrol_total_s: Longest female segments are used up to this total.
+        enrol_min_s: Less enrolment speech than this leaves the session unresolved.
+        tau_high: Cosine similarity at or above which a female segment is the mother.
+        tau_low: Cosine similarity at or below which it is another woman.
+    """
+
+    vtc_model: str = "vtc"
+    embedding_model: str = "pyannote_embedding"
+    baby_labels: tuple[str, ...] = ("KCHI", "OCH")
+    enrol_phase: str = "play"
+    fallback_phase: str = "reunion"
+    enrol_total_s: float = 30.0
+    enrol_min_s: float = 8.0
+    tau_high: float = 0.6
+    tau_low: float = 0.4
+
+
+@dataclass(frozen=True)
 class ModelConfig:
     """How one model is run.
 
@@ -87,6 +114,9 @@ class ModelConfig:
             score role segments (second pass).
         enabled: False keeps a configured model out of every run (recorded as disabled),
             e.g. until its outputs are verified.
+        segment_source: For ``segments`` models, where the segments come from:
+            ``vtc:<labels>`` (VTC segments with these classes, e.g. ``vtc:FEM,MAL``) or
+            ``roles:<roles>`` (role segments, e.g. ``roles:mother,baby``).
     """
 
     env: str = ""
@@ -100,11 +130,16 @@ class ModelConfig:
     options: dict[str, str] = field(default_factory=dict)
     input: str = "wav"
     enabled: bool = True
+    segment_source: str = ""
 
     def __post_init__(self) -> None:
-        """Validate the input kind."""
+        """Validate the input kind and the segment source."""
         if self.input not in ("wav", "segments"):
             raise ValueError(f"model input must be 'wav' or 'segments', not {self.input!r}")
+        if self.segment_source:
+            kind, _, names = self.segment_source.partition(":")
+            if kind not in ("vtc", "roles") or not names:
+                raise ValueError("segment_source must be 'vtc:<labels>' or 'roles:<roles>'")
 
     @property
     def digest(self) -> str:
@@ -124,6 +159,7 @@ class AudioConfig:
         inventory: Inventory statistics.
         prepare: Prepared audio format.
         models: Model name mapped to how it is run.
+        roles: Role assignment settings.
     """
 
     version: int = CONFIG_VERSION
@@ -132,6 +168,7 @@ class AudioConfig:
     inventory: InventoryConfig = field(default_factory=InventoryConfig)
     prepare: PrepareConfig = field(default_factory=PrepareConfig)
     models: dict[str, ModelConfig] = field(default_factory=dict)
+    roles: RolesConfig = field(default_factory=RolesConfig)
 
     @property
     def digest(self) -> str:

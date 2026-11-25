@@ -10,10 +10,11 @@ from stillface.config import DatasetPaths
 from stillface.constants import PHASES
 from stillface.data_preparation.metadata import load_metadata
 from stillface.features.audio.config import DEFAULT_CONFIG_PATH, load_audio_config
-from stillface.features.audio.infer import run_model
+from stillface.features.audio.infer import full_wav_request, run_model
 from stillface.features.audio.inventory import build_inventory, read_inventory, write_inventory
 from stillface.features.audio.prepare import prepare_all
 from stillface.features.audio.registry import build_adapter
+from stillface.features.audio.roles import assign_roles, segment_builder, write_listening
 from stillface.features.io import write_atomic
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,9 @@ def add_audio_parser(groups: argparse._SubParsersAction) -> None:
     infer.add_argument(
         "--envs", type=Path, help="Model environments (default: $STILLFACE_AUDIO_ENVS)"
     )
-    for step in (inventory, prepare, infer):
+    roles = audio.add_parser("roles", help="Mother / baby / other roles from VTC and embeddings")
+    roles.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
+    for step in (inventory, prepare, infer, roles):
         step.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="Audio config")
 
 
@@ -97,14 +100,19 @@ def run_audio(args: argparse.Namespace, paths: DatasetPaths) -> int:
             logger.error("Model %s is disabled in the config", args.model)
             return 1
         adapter = build_adapter(args.model, config, args.envs)
+        model = config.models[args.model]
         sessions = args.session_id or scope_sessions(paths)
+        builder = full_wav_request
+        if model.input == "segments":
+            builder = segment_builder(model.segment_source, config.roles.vtc_model)
         result = run_model(
-            paths,
-            adapter,
-            config.models[args.model],
-            sessions,
-            args.phase,
-            overwrite=args.overwrite,
+            paths, adapter, model, sessions, args.phase, builder, overwrite=args.overwrite
         )
         return 1 if result.failed else 0
+    elif args.command == "roles":
+        items = []
+        for session in args.session_id or scope_sessions(paths):
+            items += assign_roles(paths, session, config)
+        write_listening(items, paths.audio_dir / "listening_roles.csv")
+        logger.info("%d listening items", len(items))
     return 0

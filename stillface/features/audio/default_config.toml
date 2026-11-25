@@ -16,6 +16,20 @@ frame_s = 0.05
 silence_dbfs = -60.0
 clip_level = 0.999
 
+[roles]
+# Baby = KCHI or OCH (no siblings). Female segments are the mother when their speaker
+# embedding is close to her enrolled voice (longest play-phase FEM speech without baby
+# overlap, up to 30 s); placeholder thresholds until tuned on annotations.
+vtc_model = "vtc"
+embedding_model = "pyannote_embedding"
+baby_labels = ["KCHI", "OCH"]
+enrol_phase = "play"
+fallback_phase = "reunion"
+enrol_total_s = 30.0
+enrol_min_s = 8.0
+tau_high = 0.6
+tau_low = 0.4
+
 [prepare]
 # 16-bit PCM mono, no gain or normalisation: levels stay comparable across sessions.
 sample_rate = 16000
@@ -36,6 +50,7 @@ infant_f0_max = "1000"
 [models.egemaps]
 # openSMILE eGeMAPS v02 functionals per role segment.
 input = "segments"
+segment_source = "roles:mother,baby"
 
 [models.silero]
 # Silero VAD, weights bundled with the pinned package (envs/audio/vad).
@@ -68,6 +83,7 @@ env = "vtc"
 module = "stillface.features.audio.workers.addressee"
 weights_revision = "080532e23a25ad08e40a8c183bb522380e916f62"
 input = "segments"
+segment_source = "vtc:FEM,MAL"
 
 [models.pyannote_vad]
 # pyannote community-1 segmentation: speech probability (third VAD opinion). Gated: HF_TOKEN.
@@ -81,6 +97,7 @@ env = "vad"
 module = "stillface.features.audio.workers.pyannote_worker"
 weights_revision = "3533c8cf8e369892e6b79ff1bf80f7b0286a54ee"
 input = "segments"
+segment_source = "vtc:FEM"
 
 [models.littlebeats]
 # LittleBeats wav2vec2 (LL_4300 fine-tuned): speaker / infant / adult vocalisation heads on
@@ -101,6 +118,7 @@ weights_revision = "6eba34a2485ea31cb03600241787c3a5edab8626"
 window_s = 3.0
 hop_s = 0.5
 input = "segments"
+segment_source = "roles:mother,baby"
 
 [models.emotion2vec]
 # emotion2vec+ large: 9 emotion categories per 3 s window (0.5 s hop), cross-check.
@@ -110,3 +128,4 @@ weights_revision = "6c303ba987b86b93193de93e34bb2b077a6bedc4"
 window_s = 3.0
 hop_s = 0.5
 input = "segments"
+segment_source = "roles:mother"
