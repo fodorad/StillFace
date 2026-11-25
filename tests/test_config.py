@@ -87,6 +87,10 @@ class TestPhaseClips(unittest.TestCase):
         for folder in (gaze, self.paths.gaze_overlay_dir("7")):
             self.assertTrue(folder.is_relative_to(self.paths.processed_dir))
 
+    def test_audio_folders(self) -> None:
+        self.assertEqual(self.paths.audio_session_dir("7"), self.paths.features_dir("7", "audio"))
+        self.assertEqual(self.paths.audio_dir, self.tmp / "out" / "audio")
+
 
 if __name__ == "__main__":
     unittest.main()

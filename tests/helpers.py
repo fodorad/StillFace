@@ -35,3 +35,31 @@ def make_noise_video(path: Path, delay_ms: int = 0, seconds: float = 6.0, fps: i
         check=True,
     )  # fmt: skip
     return path
+
+
+def make_audio(
+    path: Path,
+    expr: str = "0.5*sin(2*PI*440*t)",
+    seconds: float = 1.0,
+    rate: int = 48000,
+    channels: int = 1,
+    video: bool = False,
+) -> Path:
+    """Write a synthetic audio file (or a video with that audio) from an ffmpeg expression.
+
+    The expression is used for every channel; ``.wav`` paths get PCM, others AAC.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    exprs = "|".join([expr] * channels)
+    cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y"]
+    if video:
+        cmd += ["-f", "lavfi", "-i", f"color=size=32x24:rate=10:duration={seconds}"]
+    cmd += ["-f", "lavfi", "-i", f"aevalsrc={exprs}:s={rate}:d={seconds}"]
+    if path.suffix == ".wav":
+        cmd += ["-c:a", "pcm_s16le"]
+    else:
+        cmd += ["-c:a", "aac", "-b:a", "128k"]
+    if video:
+        cmd += ["-pix_fmt", "yuv420p", "-shortest"]
+    subprocess.run([*cmd, str(path)], check=True)
+    return path
