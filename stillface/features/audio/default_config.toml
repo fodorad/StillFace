@@ -30,6 +30,63 @@ enrol_min_s = 8.0
 tau_high = 0.6
 tau_low = 0.4
 
+[fusion]
+disagreement_listen_share = 0.2
+
+# Thresholds: value and where it comes from (vendor default, probe, or config placeholder).
+[fusion.thresholds.silero]
+value = 0.5
+origin = "vendor"
+[fusion.thresholds.pyannote]
+value = 0.5
+origin = "vendor"
+[fusion.thresholds.ast_type]
+value = 0.2
+origin = "probe"
+[fusion.thresholds.littlebeats]
+value = 0.5
+origin = "config"
+[fusion.thresholds.gong]
+value = 0.2
+origin = "probe"
+[fusion.thresholds.context]
+value = 0.2
+origin = "probe"
+
+[fusion.gong]
+classes = ["Gong", "Bell", "Chime", "Singing bowl"]
+edge_s = 5.0
+dilate_s = 0.5
+
+[fusion.context]
+classes = [
+  "Music", "Television", "Radio", "Speech synthesizer", "Rattle", "Squeak", "Walk, footsteps",
+  "Door", "Knock", "Telephone", "Mechanical fan", "Air conditioning", "White noise",
+]
+listen_share = 0.2
+
+# Baby vocalisation types: inside baby segments a model votes for a type when one of its
+# classes reaches the model's threshold; no vote = other_vocal, a tie = conflict.
+[fusion.baby_types.cry]
+ast = ["Baby cry, infant cry", "Crying, sobbing", "Wail, moan"]
+littlebeats = ["CRY"]
+[fusion.baby_types.fuss]
+ast = ["Whimper"]
+littlebeats = ["FUS"]
+[fusion.baby_types.laugh]
+ast = ["Baby laughter", "Laughter", "Giggle"]
+[fusion.baby_types.babble]
+ast = ["Babbling"]
+littlebeats = ["BAB"]
+
+# Mother vocalisation types from AST inside mother segments; speech is the default.
+[fusion.mother_types.singing]
+ast = ["Singing", "Female singing", "Lullaby"]
+[fusion.mother_types.humming]
+ast = ["Humming"]
+[fusion.mother_types.laughter]
+ast = ["Laughter", "Giggle", "Chuckle, chortle", "Belly laugh"]
+
 [prepare]
 # 16-bit PCM mono, no gain or normalisation: levels stay comparable across sessions.
 sample_rate = 16000

@@ -10,6 +10,8 @@ from stillface.config import DatasetPaths
 from stillface.constants import PHASES
 from stillface.data_preparation.metadata import load_metadata
 from stillface.features.audio.config import DEFAULT_CONFIG_PATH, load_audio_config
+from stillface.features.audio.decisions import decision_rows, to_html, to_markdown
+from stillface.features.audio.fusion import run_fusion
 from stillface.features.audio.infer import full_wav_request, run_model
 from stillface.features.audio.inventory import build_inventory, read_inventory, write_inventory
 from stillface.features.audio.prepare import prepare_all
@@ -46,7 +48,9 @@ def add_audio_parser(groups: argparse._SubParsersAction) -> None:
     )
     roles = audio.add_parser("roles", help="Mother / baby / other roles from VTC and embeddings")
     roles.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
-    for step in (inventory, prepare, infer, roles):
+    fuse = audio.add_parser("fuse", help="Lanes, bands and events from all model outputs")
+    fuse.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
+    for step in (inventory, prepare, infer, roles, fuse):
         step.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="Audio config")
 
 
@@ -115,4 +119,13 @@ def run_audio(args: argparse.Namespace, paths: DatasetPaths) -> int:
             items += assign_roles(paths, session, config)
         write_listening(items, paths.audio_dir / "listening_roles.csv")
         logger.info("%d listening items", len(items))
+    elif args.command == "fuse":
+        items = []
+        for session in args.session_id or scope_sessions(paths):
+            items += run_fusion(paths, session, config)
+        write_listening(items, paths.audio_dir / "listening_fusion.csv")
+        rows = decision_rows(config)
+        for name, text in (("decisions.md", to_markdown(rows)), ("decisions.html", to_html(rows))):
+            write_atomic(paths.audio_dir / name, lambda tmp, t=text: tmp.write_text(t))
+        logger.info("%d listening items, %d decision rules", len(items), len(rows))
     return 0

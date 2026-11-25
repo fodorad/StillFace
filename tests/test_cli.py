@@ -235,6 +235,10 @@ class TestFeaturesCli(unittest.TestCase):
             self.assertEqual(main([*base, "roles", *opts]), 0)
             listening = (out / "audio" / "listening_roles.csv").read_text()
             self.assertIn("no_enrolment", listening)
+            self.assertEqual(main([*base, "fuse"]), 0)
+            self.assertIn("| GONG |", (out / "audio" / "decisions.md").read_text())
+            lanes = out / "Sessions" / "9" / "features" / "audio" / "lanes" / "play.csv"
+            self.assertTrue(lanes.exists())
 
     def test_heads_requires_a_session(self) -> None:
         with self.assertRaises(SystemExit):
