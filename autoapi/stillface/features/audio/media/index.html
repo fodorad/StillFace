@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.config" href="../../config/index.html"><link rel="prev" title="stillface.features.audio.lanes" href="../lanes/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.audio.prepare" href="../prepare/index.html"><link rel="prev" title="stillface.features.audio.lanes" href="../lanes/index.html">
         <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/audio/media/index.html">
         <link rel="prefetch" href="../../../../../_static/logo.svg" as="image">
 
@@ -218,6 +218,8 @@
 <li class="toctree-l5"><a class="reference internal" href="../inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../lanes/index.html">stillface.features.audio.lanes</a></li>
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.audio.media</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../prepare/index.html">stillface.features.audio.prepare</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../provenance/index.html">stillface.features.audio.provenance</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../config/index.html">stillface.features.config</a></li>
@@ -341,6 +343,12 @@ returned as float32 samples in <code class="docutils literal notranslate"><span 
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.media.decode_audio" title="stillface.features.audio.media.decode_audio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_audio</span></code></a>(→ tuple[numpy.ndarray, int])</p></td>
 <td><p>Decode the first audio stream to float samples.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.media.write_wav" title="stillface.features.audio.media.write_wav"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_wav</span></code></a>(→ None)</p></td>
+<td><p>Write mono float samples as PCM 16-bit WAV, atomically.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.media.read_wav" title="stillface.features.audio.media.read_wav"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_wav</span></code></a>(→ tuple[numpy.ndarray, int])</p></td>
+<td><p>Read a mono PCM 16-bit WAV written by <a class="reference internal" href="#stillface.features.audio.media.write_wav" title="stillface.features.audio.media.write_wav"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_wav()</span></code></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -442,6 +450,39 @@ every ffmpeg build.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.media.write_wav">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.media.</span></span><span class="sig-name descname"><span class="pre">write_wav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/media.html#write_wav"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.media.write_wav" title="Link to this definition">¶</a></dt>
+<dd><p>Write mono float samples as PCM 16-bit WAV, atomically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Output file.</p></li>
+<li><p><strong>samples</strong> – Float samples in <code class="docutils literal notranslate"><span class="pre">[-1,</span> <span class="pre">1]</span></code>, shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> or <code class="docutils literal notranslate"><span class="pre">(1,</span> <span class="pre">n)</span></code>; values outside
+are clipped.</p></li>
+<li><p><strong>rate</strong> – Sample rate.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.media.read_wav">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.media.</span></span><span class="sig-name descname"><span class="pre">read_wav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/media.html#read_wav"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.media.read_wav" title="Link to this definition">¶</a></dt>
+<dd><p>Read a mono PCM 16-bit WAV written by <a class="reference internal" href="#stillface.features.audio.media.write_wav" title="stillface.features.audio.media.write_wav"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_wav()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – WAV file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(samples,</span> <span class="pre">rate)</span></code>, samples float32 of shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> in <code class="docutils literal notranslate"><span class="pre">[-1,</span> <span class="pre">1]</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#stillface.features.audio.media.MediaError" title="stillface.features.audio.media.MediaError"><strong>MediaError</strong></a> – If the file is not mono 16-bit PCM.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -450,12 +491,12 @@ every ffmpeg build.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../../config/index.html">
+          <a class="next-page" href="../prepare/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">stillface.features.config</div>
+                <div class="title">stillface.features.audio.prepare</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -519,6 +560,8 @@ every ffmpeg build.</p>
 </li>
 <li><a class="reference internal" href="#stillface.features.audio.media.probe_audio"><code class="docutils literal notranslate"><span class="pre">probe_audio()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.media.decode_audio"><code class="docutils literal notranslate"><span class="pre">decode_audio()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.media.write_wav"><code class="docutils literal notranslate"><span class="pre">write_wav()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.media.read_wav"><code class="docutils literal notranslate"><span class="pre">read_wav()</span></code></a></li>
 </ul>
 </li>
 </ul>

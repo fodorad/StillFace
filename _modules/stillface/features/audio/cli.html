@@ -217,6 +217,8 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/lanes/index.html">stillface.features.audio.lanes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/media/index.html">stillface.features.audio.media</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/prepare/index.html">stillface.features.audio.prepare</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/provenance/index.html">stillface.features.audio.provenance</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/config/index.html">stillface.features.config</a></li>
@@ -282,13 +284,17 @@
 <span></span><span class="sd">"""``stillface audio …`` subcommands."""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetPaths</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.data_preparation.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_metadata</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_CONFIG_PATH</span><span class="p">,</span> <span class="n">load_audio_config</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.inventory</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_inventory</span><span class="p">,</span> <span class="n">write_inventory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.inventory</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_inventory</span><span class="p">,</span> <span class="n">read_inventory</span><span class="p">,</span> <span class="n">write_inventory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.prepare</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_all</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_atomic</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -308,7 +314,11 @@
         <span class="n">dest</span><span class="o">=</span><span class="s2">"command"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
     <span class="n">inventory</span> <span class="o">=</span> <span class="n">audio</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"inventory"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"List the audio source of every session"</span><span class="p">)</span>
-    <span class="n">inventory</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--config"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_CONFIG_PATH</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Audio config"</span><span class="p">)</span></div>
+    <span class="n">prepare</span> <span class="o">=</span> <span class="n">audio</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"prepare"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Write the 16 kHz mono WAV of every phase"</span><span class="p">)</span>
+    <span class="n">prepare</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--session-id"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Sessions; all in scope if omitted"</span><span class="p">)</span>
+    <span class="n">prepare</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--overwrite"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Recompute existing outputs"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="p">(</span><span class="n">inventory</span><span class="p">,</span> <span class="n">prepare</span><span class="p">):</span>
+        <span class="n">step</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--config"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_CONFIG_PATH</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Audio config"</span><span class="p">)</span></div>
 
 
 
@@ -330,6 +340,20 @@
         <span class="n">out</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">audio_dir</span> <span class="o">/</span> <span class="n">INVENTORY_FILE</span>
         <span class="n">write_inventory</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Wrote </span><span class="si">%d</span><span class="s2"> inventory rows to </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="n">out</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"prepare"</span><span class="p">:</span>
+        <span class="n">inventory_path</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">audio_dir</span> <span class="o">/</span> <span class="n">INVENTORY_FILE</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">inventory_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">"No inventory at </span><span class="si">%s</span><span class="s2">: run `stillface audio inventory` first"</span><span class="p">,</span> <span class="n">inventory_path</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="n">sessions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">session_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">session_id</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">report</span> <span class="o">=</span> <span class="n">prepare_all</span><span class="p">(</span>
+            <span class="n">paths</span><span class="p">,</span> <span class="n">read_inventory</span><span class="p">(</span><span class="n">inventory_path</span><span class="p">),</span> <span class="n">config</span><span class="p">,</span> <span class="n">sessions</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">overwrite</span>
+        <span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">asdict</span><span class="p">(</span><span class="n">report</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">write_atomic</span><span class="p">(</span><span class="n">paths</span><span class="o">.</span><span class="n">audio_dir</span> <span class="o">/</span> <span class="s2">"prepare_report.json"</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">tmp</span><span class="p">:</span> <span class="n">tmp</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">failed</span> <span class="k">else</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="mi">0</span></div>
 
 </pre></div>

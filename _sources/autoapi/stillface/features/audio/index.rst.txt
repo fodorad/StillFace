@@ -20,5 +20,7 @@ Submodules
    /autoapi/stillface/features/audio/inventory/index
    /autoapi/stillface/features/audio/lanes/index
    /autoapi/stillface/features/audio/media/index
+   /autoapi/stillface/features/audio/prepare/index
+   /autoapi/stillface/features/audio/provenance/index
 
 

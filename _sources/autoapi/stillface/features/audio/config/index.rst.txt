@@ -29,6 +29,7 @@ Classes
    stillface.features.audio.config.SourceConfig
    stillface.features.audio.config.ScopeConfig
    stillface.features.audio.config.InventoryConfig
+   stillface.features.audio.config.PrepareConfig
    stillface.features.audio.config.AudioConfig
 
 
@@ -95,6 +96,15 @@ Module Contents
       Absolute sample value at or above which a sample counts as clipped.
 
 
+.. py:class:: PrepareConfig
+
+   Prepared analysis audio.
+
+   .. attribute:: sample_rate
+
+      Output sample rate; every model reads 16 kHz mono.
+
+
 .. py:class:: AudioConfig
 
    Audio pipeline configuration.
@@ -114,6 +124,10 @@ Module Contents
    .. attribute:: inventory
 
       Inventory statistics.
+
+   .. attribute:: prepare
+
+      Prepared audio format.
 
 
    .. py:property:: digest

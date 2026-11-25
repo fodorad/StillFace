@@ -218,6 +218,8 @@
 <li class="toctree-l5"><a class="reference internal" href="../inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../lanes/index.html">stillface.features.audio.lanes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../media/index.html">stillface.features.audio.media</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../prepare/index.html">stillface.features.audio.prepare</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../provenance/index.html">stillface.features.audio.provenance</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../config/index.html">stillface.features.config</a></li>
@@ -319,7 +321,10 @@ is copied into each run record and its hash into every provenance sidecar.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.InventoryConfig" title="stillface.features.audio.config.InventoryConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InventoryConfig</span></code></a></p></td>
 <td><p>Level statistics of the inventory.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AudioConfig</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.PrepareConfig" title="stillface.features.audio.config.PrepareConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrepareConfig</span></code></a></p></td>
+<td><p>Prepared analysis audio.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AudioConfig</span></code></a></p></td>
 <td><p>Audio pipeline configuration.</p></td>
 </tr>
 </tbody>
@@ -408,6 +413,18 @@ The baby-cam phone lies next to the mother’s head and hears both partners.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.audio.config.PrepareConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">PrepareConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#PrepareConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.PrepareConfig" title="Link to this definition">¶</a></dt>
+<dd><p>Prepared analysis audio.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.PrepareConfig.sample_rate">
+<span class="sig-name descname"><span class="pre">sample_rate</span></span><a class="headerlink" href="#stillface.features.audio.config.PrepareConfig.sample_rate" title="Link to this definition">¶</a></dt>
+<dd><p>Output sample rate; every model reads 16 kHz mono.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">AudioConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#AudioConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.AudioConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Audio pipeline configuration.</p>
@@ -433,6 +450,12 @@ The baby-cam phone lies next to the mother’s head and hears both partners.</p>
 <dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig.inventory">
 <span class="sig-name descname"><span class="pre">inventory</span></span><a class="headerlink" href="#stillface.features.audio.config.AudioConfig.inventory" title="Link to this definition">¶</a></dt>
 <dd><p>Inventory statistics.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig.prepare">
+<span class="sig-name descname"><span class="pre">prepare</span></span><a class="headerlink" href="#stillface.features.audio.config.AudioConfig.prepare" title="Link to this definition">¶</a></dt>
+<dd><p>Prepared audio format.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -537,11 +560,16 @@ The baby-cam phone lies next to the mother’s head and hears both partners.</p>
 <li><a class="reference internal" href="#stillface.features.audio.config.InventoryConfig.clip_level"><code class="docutils literal notranslate"><span class="pre">InventoryConfig.clip_level</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#stillface.features.audio.config.PrepareConfig"><code class="docutils literal notranslate"><span class="pre">PrepareConfig</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.config.PrepareConfig.sample_rate"><code class="docutils literal notranslate"><span class="pre">PrepareConfig.sample_rate</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig"><code class="docutils literal notranslate"><span class="pre">AudioConfig</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.version"><code class="docutils literal notranslate"><span class="pre">AudioConfig.version</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.source"><code class="docutils literal notranslate"><span class="pre">AudioConfig.source</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.scope"><code class="docutils literal notranslate"><span class="pre">AudioConfig.scope</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.inventory"><code class="docutils literal notranslate"><span class="pre">AudioConfig.inventory</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.prepare"><code class="docutils literal notranslate"><span class="pre">AudioConfig.prepare</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.digest"><code class="docutils literal notranslate"><span class="pre">AudioConfig.digest</span></code></a></li>
 </ul>
 </li>

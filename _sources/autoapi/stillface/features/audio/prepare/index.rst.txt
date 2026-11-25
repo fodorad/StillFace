@@ -1,0 +1,114 @@
+stillface.features.audio.prepare
+================================
+
+.. py:module:: stillface.features.audio.prepare
+
+.. autoapi-nested-parse::
+
+   Prepared analysis audio: one 16 kHz mono WAV per session and phase.
+
+   The source clip is the one chosen by the inventory. The audio is downmixed by the channel
+   mean and resampled, without gain or normalisation, so intensity stays meaningful. Each WAV
+   has a provenance sidecar naming its source and the source hash; outputs whose source and
+   settings did not change are kept.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.prepare.logger
+   stillface.features.audio.prepare.USABLE_STATUSES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.prepare.PrepareReport
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.prepare.wav_path
+   stillface.features.audio.prepare.prepare_phase
+   stillface.features.audio.prepare.prepare_all
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: USABLE_STATUSES
+   :type:  tuple[str, ...]
+   :value: ('ok', 'fallback')
+
+
+   Inventory statuses with a usable source clip.
+
+.. py:function:: wav_path(paths: stillface.config.DatasetPaths, session_id: str, phase: str, track: str = '') -> pathlib.Path
+
+   Prepared WAV of a session phase.
+
+   :param paths: Dataset locations.
+   :param session_id: Session identifier.
+   :param phase: Experiment phase.
+   :param track: Empty for the full phase audio, else a gated track name (``mother``, ``baby``).
+
+   :returns: ``<audio session dir>/wav/<phase>[_<track>].wav``.
+
+
+.. py:class:: PrepareReport
+
+   Outcome of a preparation run.
+
+   .. attribute:: written
+
+      ``<session>/<phase>`` items written.
+
+   .. attribute:: kept
+
+      Items already up to date.
+
+   .. attribute:: failed
+
+      Item mapped to the error message.
+
+
+.. py:function:: prepare_phase(paths: stillface.config.DatasetPaths, row: stillface.features.audio.inventory.InventoryRow, config: stillface.features.audio.config.AudioConfig, overwrite: bool = False) -> bool
+
+   Write the prepared WAV of one inventory row.
+
+   :param paths: Dataset locations.
+   :param row: Inventory row with a usable source.
+   :param config: Audio configuration.
+   :param overwrite: Recompute even if up to date.
+
+   :returns: True if written, False if the existing output was kept.
+
+   :raises ValueError: If the row has no usable source.
+   :raises MediaError: If decoding fails.
+
+
+.. py:function:: prepare_all(paths: stillface.config.DatasetPaths, rows: collections.abc.Iterable[stillface.features.audio.inventory.InventoryRow], config: stillface.features.audio.config.AudioConfig, sessions: set[str] | None = None, overwrite: bool = False) -> PrepareReport
+
+   Prepare every in-scope session phase with a usable source.
+
+   A failing item is logged and recorded; the others continue.
+
+   :param paths: Dataset locations.
+   :param rows: Inventory rows.
+   :param config: Audio configuration.
+   :param sessions: Restrict to these sessions (still only in-scope ones); all if None.
+   :param overwrite: Recompute existing outputs.
+
+   :returns: What was written, kept and failed.
+
+

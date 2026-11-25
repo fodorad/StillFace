@@ -1,0 +1,92 @@
+stillface.features.audio.provenance
+===================================
+
+.. py:module:: stillface.features.audio.provenance
+
+.. autoapi-nested-parse::
+
+   Provenance sidecars: what produced an output, so it can be traced and recomputed.
+
+   Every audio output ``<name>`` has a JSON sidecar ``<name>.json`` next to it. A sidecar
+   stores hashes of the inputs, the config digest and the code version; an output is up to
+   date only if all of them still match.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.provenance.SIDECAR_SUFFIX
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.provenance.file_sha256
+   stillface.features.audio.provenance.sidecar_path
+   stillface.features.audio.provenance.write_sidecar
+   stillface.features.audio.provenance.read_sidecar
+   stillface.features.audio.provenance.is_up_to_date
+
+
+Module Contents
+---------------
+
+.. py:data:: SIDECAR_SUFFIX
+   :type:  str
+   :value: '.json'
+
+
+   Suffix appended to an output's file name to name its sidecar.
+
+.. py:function:: file_sha256(path: pathlib.Path, chunk: int = 1 << 20) -> str
+
+   SHA-256 of a file.
+
+   :param path: File to hash.
+   :param chunk: Read size in bytes.
+
+   :returns: Hex digest.
+
+
+.. py:function:: sidecar_path(output: pathlib.Path) -> pathlib.Path
+
+   Sidecar file of an output.
+
+   :param output: Output file.
+
+   :returns: ``<output>.json``.
+
+
+.. py:function:: write_sidecar(output: pathlib.Path, record: dict[str, Any]) -> None
+
+   Write the sidecar of an output atomically.
+
+   :param output: Output file the record describes.
+   :param record: JSON-compatible provenance.
+
+
+.. py:function:: read_sidecar(output: pathlib.Path) -> dict[str, Any] | None
+
+   Read the sidecar of an output.
+
+   :param output: Output file.
+
+   :returns: The record, None if there is no readable sidecar.
+
+
+.. py:function:: is_up_to_date(output: pathlib.Path, expected: dict[str, Any], overwrite: bool = False) -> bool
+
+   Whether an output exists and its sidecar matches the expected provenance keys.
+
+   :param output: Output file.
+   :param expected: Keys (e.g. input hash, config digest, code version) that must match.
+   :param overwrite: Force recomputation.
+
+   :returns: True if the output can be kept.
+
+

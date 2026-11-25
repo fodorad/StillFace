@@ -217,6 +217,8 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/lanes/index.html">stillface.features.audio.lanes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/media/index.html">stillface.features.audio.media</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/prepare/index.html">stillface.features.audio.prepare</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/provenance/index.html">stillface.features.audio.provenance</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/config/index.html">stillface.features.config</a></li>
@@ -289,10 +291,13 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">wave</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_atomic</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -417,6 +422,54 @@
         <span class="k">raise</span> <span class="n">MediaError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ffmpeg failed on </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;f4"</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">samples</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">channels</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">rate</span></div>
+
+
+
+<div class="viewcode-block" id="write_wav">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/media/index.html#stillface.features.audio.media.write_wav">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_wav</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">samples</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Write mono float samples as PCM 16-bit WAV, atomically.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path: Output file.</span>
+<span class="sd">        samples: Float samples in ``[-1, 1]``, shape ``(n,)`` or ``(1, n)``; values outside</span>
+<span class="sd">            are clipped.</span>
+<span class="sd">        rate: Sample rate.</span>
+<span class="sd">    """</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">32767.0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"&lt;i2"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="n">tmp</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp</span><span class="p">),</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">setnchannels</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">setsampwidth</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">setframerate</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">writeframes</span><span class="p">(</span><span class="n">pcm</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
+
+    <span class="n">write_atomic</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">write</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="read_wav">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/media/index.html#stillface.features.audio.media.read_wav">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_wav</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Read a mono PCM 16-bit WAV written by :func:`write_wav`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path: WAV file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``(samples, rate)``, samples float32 of shape ``(n,)`` in ``[-1, 1]``.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        MediaError: If the file is not mono 16-bit PCM.</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">handle</span><span class="o">.</span><span class="n">getnchannels</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">handle</span><span class="o">.</span><span class="n">getsampwidth</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MediaError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: expected mono 16-bit PCM"</span><span class="p">)</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">getframerate</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">readframes</span><span class="p">(</span><span class="n">handle</span><span class="o">.</span><span class="n">getnframes</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;i2"</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">/</span> <span class="mf">32767.0</span><span class="p">,</span> <span class="n">rate</span></div>
 
 </pre></div>
         </article>

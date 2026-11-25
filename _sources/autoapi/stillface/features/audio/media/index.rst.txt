@@ -45,6 +45,8 @@ Functions
 
    stillface.features.audio.media.probe_audio
    stillface.features.audio.media.decode_audio
+   stillface.features.audio.media.write_wav
+   stillface.features.audio.media.read_wav
 
 
 Module Contents
@@ -119,5 +121,26 @@ Module Contents
    :returns: ``(samples, rate)`` with samples of shape ``(channels, n)``.
 
    :raises MediaError: If the file has no audio stream or ffmpeg fails.
+
+
+.. py:function:: write_wav(path: pathlib.Path, samples: numpy.ndarray, rate: int) -> None
+
+   Write mono float samples as PCM 16-bit WAV, atomically.
+
+   :param path: Output file.
+   :param samples: Float samples in ``[-1, 1]``, shape ``(n,)`` or ``(1, n)``; values outside
+                   are clipped.
+   :param rate: Sample rate.
+
+
+.. py:function:: read_wav(path: pathlib.Path) -> tuple[numpy.ndarray, int]
+
+   Read a mono PCM 16-bit WAV written by :func:`write_wav`.
+
+   :param path: WAV file.
+
+   :returns: ``(samples, rate)``, samples float32 of shape ``(n,)`` in ``[-1, 1]``.
+
+   :raises MediaError: If the file is not mono 16-bit PCM.
 
 

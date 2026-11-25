@@ -217,6 +217,8 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/lanes/index.html">stillface.features.audio.lanes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/media/index.html">stillface.features.audio.media</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/prepare/index.html">stillface.features.audio.prepare</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/provenance/index.html">stillface.features.audio.provenance</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/config/index.html">stillface.features.config</a></li>
@@ -348,6 +350,20 @@
 
 
 
+<div class="viewcode-block" id="PrepareConfig">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.PrepareConfig">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PrepareConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Prepared analysis audio.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        sample_rate: Output sample rate; every model reads 16 kHz mono.</span>
+<span class="sd">    """</span>
+
+    <span class="n">sample_rate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16000</span></div>
+
+
+
 <div class="viewcode-block" id="AudioConfig">
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.AudioConfig">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -359,12 +375,14 @@
 <span class="sd">        source: Microphone choice.</span>
 <span class="sd">        scope: Session selection.</span>
 <span class="sd">        inventory: Inventory statistics.</span>
+<span class="sd">        prepare: Prepared audio format.</span>
 <span class="sd">    """</span>
 
     <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">CONFIG_VERSION</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">SourceConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">SourceConfig</span><span class="p">)</span>
     <span class="n">scope</span><span class="p">:</span> <span class="n">ScopeConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ScopeConfig</span><span class="p">)</span>
     <span class="n">inventory</span><span class="p">:</span> <span class="n">InventoryConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">InventoryConfig</span><span class="p">)</span>
+    <span class="n">prepare</span><span class="p">:</span> <span class="n">PrepareConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">PrepareConfig</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">digest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
