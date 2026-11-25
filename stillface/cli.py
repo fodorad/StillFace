@@ -2,7 +2,8 @@
 
 ``stillface prepare <sync|cut|thumbnails|check-missing>`` runs the data preparation,
 ``stillface features heads`` the head and role pilot of the gaze extraction and
-``stillface features gaze`` the gaze extraction itself.
+``stillface features gaze`` the gaze extraction itself and ``stillface audio …`` the audio
+pipeline.
 """
 
 import argparse
@@ -16,6 +17,7 @@ from stillface.data_preparation.cut import cut, cut_all
 from stillface.data_preparation.metadata import load_metadata, missing_recordings, phase_windows
 from stillface.data_preparation.sync import sync, sync_all
 from stillface.data_preparation.thumbnails import generate_thumbnails
+from stillface.features.audio.cli import add_audio_parser, run_audio
 from stillface.features.gaze.config import DEFAULT_CONFIG_PATH, load_gaze_config
 from stillface.features.gaze.estimator import GazeEstimator
 from stillface.features.gaze.heads import HeadTracker
@@ -64,6 +66,7 @@ def build_parser() -> argparse.ArgumentParser:
         step.add_argument("--no-overlay", action="store_true", help="Skip the overlay videos")
         step.add_argument("--overwrite", action="store_true", help="Recompute existing outputs")
         step.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="Gaze config")
+    add_audio_parser(groups)
     return parser
 
 
@@ -119,6 +122,8 @@ def main(
         args.raw_dir or defaults.raw_dir, args.processed_dir or defaults.processed_dir
     )
 
+    if args.group == "audio":
+        return run_audio(args, paths)
     if args.group == "features":
         config = load_gaze_config(args.config)
         tracker = head_tracker_factory(paths)

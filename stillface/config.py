@@ -135,6 +135,15 @@ class DatasetPaths:
         """Gaze overlay clips of a session."""
         return self.gaze_dir(session_id) / "overlay"
 
+    def audio_session_dir(self, session_id: str) -> Path:
+        """Audio pipeline outputs of a session."""
+        return self.features_dir(session_id, "audio")
+
+    @property
+    def audio_dir(self) -> Path:
+        """Dataset-level audio tables (inventory, QC summary, listening list)."""
+        return self.processed_dir / "audio"
+
     @property
     def thumbnails_dir(self) -> Path:
         """Flat folder with one thumbnail per session."""

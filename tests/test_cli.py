@@ -8,7 +8,7 @@ from stillface.cli import build_parser, main
 from stillface.constants import PHASES
 from stillface.features.timeline import read_timeline
 from tests.features.gaze.fakes import FakeGazeEstimator, FakeHeadTracker, track
-from tests.helpers import make_video
+from tests.helpers import make_audio, make_video
 
 
 def write_metadata(path: Path) -> None:
@@ -138,6 +138,19 @@ class TestFeaturesCli(unittest.TestCase):
             ]
             with self.assertRaisesRegex(RuntimeError, "not available"):
                 main(args, head_tracker_factory=lambda _: FakeHeadTracker({}))
+
+    def test_audio_inventory_writes_the_table(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            raw, out = Path(tmp) / "raw", Path(tmp) / "out"
+            meta = raw / "metadata_database.xlsx"
+            meta.parent.mkdir(parents=True)
+            pd.DataFrame({"ID": [9], "Analysis": ["y"]}).to_excel(meta, index=False)
+            make_audio(raw / "Sessions" / "9" / "processed" / "baby_play.mp4", video=True)
+            code = main(["--raw-dir", str(raw), "--processed-dir", str(out), "audio", "inventory"])
+            self.assertEqual(code, 0)
+            table = pd.read_csv(out / "audio" / "inventory.csv")
+            self.assertEqual(len(table), len(PHASES))
+            self.assertEqual(table.loc[table["phase"] == "play", "status"].item(), "ok")
 
     def test_heads_requires_a_session(self) -> None:
         with self.assertRaises(SystemExit):

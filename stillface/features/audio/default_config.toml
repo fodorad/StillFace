@@ -1,0 +1,17 @@
+# Default audio pipeline settings. Thresholds are vendor or probe defaults until they are
+# tuned on annotations; every value is recorded in the run records.
+version = 1
+
+[source]
+# Tried in order. The baby-cam phone sits next to the mother's head; the side camcorders
+# are fallbacks. The mother-cam phone is not used by default.
+cameras = ["baby", "window", "door"]
+
+[scope]
+analysis_column = "Analysis"
+exclude = []
+
+[inventory]
+frame_s = 0.05
+silence_dbfs = -60.0
+clip_level = 0.999
