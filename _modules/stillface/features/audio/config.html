@@ -216,6 +216,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/config/index.html">stillface.features.audio.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/decisions/index.html">stillface.features.audio.decisions</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/fusion/index.html">stillface.features.audio.fusion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/gating/index.html">stillface.features.audio.gating</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/infer/index.html">stillface.features.audio.infer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/lanes/index.html">stillface.features.audio.lanes</a></li>
@@ -585,6 +586,21 @@
 
 
 
+<div class="viewcode-block" id="GatingConfig">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.GatingConfig">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GatingConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Mother-only and baby-only tracks.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        pad_s: Each role segment is widened by this much on both sides before gating, so</span>
+<span class="sd">            word onsets and offsets survive.</span>
+<span class="sd">    """</span>
+
+    <span class="n">pad_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span></div>
+
+
+
 <div class="viewcode-block" id="AudioConfig">
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.AudioConfig">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -600,6 +616,7 @@
 <span class="sd">        models: Model name mapped to how it is run.</span>
 <span class="sd">        roles: Role assignment settings.</span>
 <span class="sd">        fusion: Fusion rules and thresholds.</span>
+<span class="sd">        gating: Gated track settings.</span>
 <span class="sd">    """</span>
 
     <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">CONFIG_VERSION</span>
@@ -610,6 +627,7 @@
     <span class="n">models</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModelConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
     <span class="n">roles</span><span class="p">:</span> <span class="n">RolesConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">RolesConfig</span><span class="p">)</span>
     <span class="n">fusion</span><span class="p">:</span> <span class="n">FusionConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">FusionConfig</span><span class="p">)</span>
+    <span class="n">gating</span><span class="p">:</span> <span class="n">GatingConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">GatingConfig</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">digest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

@@ -19,6 +19,7 @@ Submodules
    /autoapi/stillface/features/audio/config/index
    /autoapi/stillface/features/audio/decisions/index
    /autoapi/stillface/features/audio/fusion/index
+   /autoapi/stillface/features/audio/gating/index
    /autoapi/stillface/features/audio/infer/index
    /autoapi/stillface/features/audio/inventory/index
    /autoapi/stillface/features/audio/lanes/index

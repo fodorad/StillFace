@@ -37,6 +37,7 @@ Classes
    stillface.features.audio.config.GongConfig
    stillface.features.audio.config.ContextConfig
    stillface.features.audio.config.FusionConfig
+   stillface.features.audio.config.GatingConfig
    stillface.features.audio.config.AudioConfig
 
 
@@ -320,6 +321,16 @@ Module Contents
 
 
 
+.. py:class:: GatingConfig
+
+   Mother-only and baby-only tracks.
+
+   .. attribute:: pad_s
+
+      Each role segment is widened by this much on both sides before gating, so
+      word onsets and offsets survive.
+
+
 .. py:class:: AudioConfig
 
    Audio pipeline configuration.
@@ -355,6 +366,10 @@ Module Contents
    .. attribute:: fusion
 
       Fusion rules and thresholds.
+
+   .. attribute:: gating
+
+      Gated track settings.
 
 
    .. py:property:: digest

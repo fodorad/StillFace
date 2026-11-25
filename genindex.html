@@ -215,6 +215,7 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/config/index.html">stillface.features.audio.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/decisions/index.html">stillface.features.audio.decisions</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/fusion/index.html">stillface.features.audio.fusion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/gating/index.html">stillface.features.audio.gating</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/infer/index.html">stillface.features.audio.infer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/lanes/index.html">stillface.features.audio.lanes</a></li>
@@ -807,6 +808,12 @@
   <h2>G</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/features/audio/gating/index.html#stillface.features.audio.gating.gate">gate() (in module stillface.features.audio.gating)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.AudioConfig.gating">gating (stillface.features.audio.config.AudioConfig attribute)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.GatingConfig">GatingConfig (class in stillface.features.audio.config)</a>
+</li>
         <li><a href="autoapi/stillface/features/overlay/index.html#stillface.features.overlay.OverlayItem.gaze">gaze (stillface.features.overlay.OverlayItem attribute)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.GazeDecision.gaze_class">gaze_class (stillface.features.gaze.classes.GazeDecision attribute)</a>
@@ -960,6 +967,8 @@
         <li><a href="autoapi/stillface/features/run_record/index.html#stillface.features.run_record.installed_version">installed_version() (in module stillface.features.run_record)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.interpolate_boxes">interpolate_boxes() (in module stillface.features.gaze.heads)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/gating/index.html#stillface.features.audio.gating.intersect">intersect() (in module stillface.features.audio.gating)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.AudioConfig.inventory">inventory (stillface.features.audio.config.AudioConfig attribute)</a>
 </li>
@@ -1128,6 +1137,8 @@
 </li>
           <li><a href="autoapi/stillface/features/audio/fusion/index.html#stillface.features.audio.fusion.logger">(in module stillface.features.audio.fusion)</a>
 </li>
+          <li><a href="autoapi/stillface/features/audio/gating/index.html#stillface.features.audio.gating.logger">(in module stillface.features.audio.gating)</a>
+</li>
           <li><a href="autoapi/stillface/features/audio/infer/index.html#stillface.features.audio.infer.logger">(in module stillface.features.audio.infer)</a>
 </li>
           <li><a href="autoapi/stillface/features/audio/inventory/index.html#stillface.features.audio.inventory.logger">(in module stillface.features.audio.inventory)</a>
@@ -1294,6 +1305,8 @@
           <li><a href="autoapi/stillface/features/audio/decisions/index.html#module-stillface.features.audio.decisions">stillface.features.audio.decisions</a>
 </li>
           <li><a href="autoapi/stillface/features/audio/fusion/index.html#module-stillface.features.audio.fusion">stillface.features.audio.fusion</a>
+</li>
+          <li><a href="autoapi/stillface/features/audio/gating/index.html#module-stillface.features.audio.gating">stillface.features.audio.gating</a>
 </li>
           <li><a href="autoapi/stillface/features/audio/infer/index.html#module-stillface.features.audio.infer">stillface.features.audio.infer</a>
 </li>
@@ -1498,6 +1511,10 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/audio/subprocess_adapter/index.html#stillface.features.audio.subprocess_adapter.PACKAGE_ROOT">PACKAGE_ROOT (in module stillface.features.audio.subprocess_adapter)</a>
 </li>
+        <li><a href="autoapi/stillface/features/audio/gating/index.html#stillface.features.audio.gating.pad_intervals">pad_intervals() (in module stillface.features.audio.gating)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.GatingConfig.pad_s">pad_s (stillface.features.audio.config.GatingConfig attribute)</a>
+</li>
         <li><a href="autoapi/stillface/features/audio/workers/vtc/index.html#stillface.features.audio.workers.vtc.parse_rttm">parse_rttm() (in module stillface.features.audio.workers.vtc)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.PARTNER_CLASS">PARTNER_CLASS (in module stillface.features.gaze.classes)</a>
@@ -1548,10 +1565,10 @@
 </li>
         <li><a href="autoapi/stillface/constants/index.html#stillface.constants.PHASES">PHASES (in module stillface.constants)</a>
 </li>
-        <li><a href="autoapi/stillface/data_preparation/metadata/index.html#stillface.data_preparation.metadata.PhaseWindows">PhaseWindows (class in stillface.data_preparation.metadata)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/data_preparation/metadata/index.html#stillface.data_preparation.metadata.PhaseWindows">PhaseWindows (class in stillface.data_preparation.metadata)</a>
+</li>
         <li><a href="autoapi/stillface/data_preparation/sync/index.html#stillface.data_preparation.sync.pick_reference">pick_reference() (in module stillface.data_preparation.sync)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/pilot/index.html#stillface.features.gaze.pilot.PILOT_FEATURE">PILOT_FEATURE (in module stillface.features.gaze.pilot)</a>
@@ -1757,6 +1774,8 @@
         <li><a href="autoapi/stillface/data_preparation/video/index.html#stillface.data_preparation.video.run_ffmpeg">run_ffmpeg() (in module stillface.data_preparation.video)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/fusion/index.html#stillface.features.audio.fusion.run_fusion">run_fusion() (in module stillface.features.audio.fusion)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/gating/index.html#stillface.features.audio.gating.run_gating">run_gating() (in module stillface.features.audio.gating)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/pipeline/index.html#stillface.features.gaze.pipeline.run_gaze">run_gaze() (in module stillface.features.gaze.pipeline)</a>
 </li>
@@ -2051,6 +2070,13 @@
 
         <ul>
           <li><a href="autoapi/stillface/features/audio/fusion/index.html#module-stillface.features.audio.fusion">module</a>
+</li>
+        </ul></li>
+        <li>
+    stillface.features.audio.gating
+
+        <ul>
+          <li><a href="autoapi/stillface/features/audio/gating/index.html#module-stillface.features.audio.gating">module</a>
 </li>
         </ul></li>
         <li>
@@ -2447,6 +2473,8 @@
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack.track_id">track_id (stillface.features.gaze.heads.HeadTrack attribute)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/roles/index.html#stillface.features.gaze.roles.RoleAssignment.track_id">track_id() (stillface.features.gaze.roles.RoleAssignment method)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/gating/index.html#stillface.features.audio.gating.TRACKS">TRACKS (in module stillface.features.audio.gating)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.TypeRule">TypeRule (class in stillface.features.audio.config)</a>
 </li>

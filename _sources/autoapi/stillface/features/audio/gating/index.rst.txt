@@ -1,0 +1,93 @@
+stillface.features.audio.gating
+===============================
+
+.. py:module:: stillface.features.audio.gating
+
+.. autoapi-nested-parse::
+
+   Mother-only and baby-only tracks by time-gating.
+
+   Most of the time only one partner vocalises, so keeping the original samples inside one
+   role's segments (widened by a small pad) and silencing the rest already gives a clean track
+   for ASR and forced alignment. Where mother and baby vocalise at the same time the gated
+   tracks still contain both; those overlap intervals are listed so later stages can exclude
+   them or hand them to a source-separation model (a later phase).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.gating.logger
+   stillface.features.audio.gating.TRACKS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.gating.pad_intervals
+   stillface.features.audio.gating.gate
+   stillface.features.audio.gating.intersect
+   stillface.features.audio.gating.run_gating
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: TRACKS
+   :type:  tuple[str, ...]
+   :value: ('mother', 'baby')
+
+
+   Gated tracks written per phase.
+
+.. py:function:: pad_intervals(intervals: collections.abc.Sequence[tuple[float, float]], pad_s: float, duration_s: float) -> list[tuple[float, float]]
+
+   Widen intervals, clip them to the phase and merge the ones that now touch.
+
+   :param intervals: ``(start, end)`` pairs.
+   :param pad_s: Seconds added on both sides.
+   :param duration_s: Phase duration.
+
+   :returns: Disjoint padded intervals in time order.
+
+
+.. py:function:: gate(samples: numpy.ndarray, rate: int, intervals: collections.abc.Sequence[tuple[float, float]]) -> numpy.ndarray
+
+   Keep samples inside intervals, zero elsewhere.
+
+   :param samples: Mono samples.
+   :param rate: Sample rate.
+   :param intervals: ``(start, end)`` pairs in seconds.
+
+   :returns: Gated copy of the same length.
+
+
+.. py:function:: intersect(first: collections.abc.Sequence[tuple[float, float]], second: collections.abc.Sequence[tuple[float, float]]) -> list[tuple[float, float]]
+
+   Intervals where both disjoint interval lists are active.
+
+   :param first: Disjoint intervals in time order.
+   :param second: Disjoint intervals in time order.
+
+   :returns: Positive-length intersections in time order.
+
+
+.. py:function:: run_gating(paths: stillface.config.DatasetPaths, session: str, config: stillface.features.audio.config.AudioConfig, phases: collections.abc.Sequence[str] = PHASES) -> dict[str, list[tuple[float, float]]]
+
+   Write the gated tracks and the overlap list of every prepared phase.
+
+   :param paths: Dataset locations.
+   :param session: Session identifier.
+   :param config: Audio configuration.
+   :param phases: Phases to process.
+
+   :returns: Phase mapped to its mother-baby overlap intervals.
+
+

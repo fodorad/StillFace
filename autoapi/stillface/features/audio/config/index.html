@@ -217,6 +217,7 @@
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.audio.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../decisions/index.html">stillface.features.audio.decisions</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../fusion/index.html">stillface.features.audio.fusion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../gating/index.html">stillface.features.audio.gating</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../infer/index.html">stillface.features.audio.infer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../lanes/index.html">stillface.features.audio.lanes</a></li>
@@ -366,7 +367,10 @@ is copied into each run record and its hash into every provenance sidecar.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.FusionConfig" title="stillface.features.audio.config.FusionConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FusionConfig</span></code></a></p></td>
 <td><p>Rule-based fusion of the model outputs.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AudioConfig</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.GatingConfig" title="stillface.features.audio.config.GatingConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GatingConfig</span></code></a></p></td>
+<td><p>Mother-only and baby-only tracks.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AudioConfig</span></code></a></p></td>
 <td><p>Audio pipeline configuration.</p></td>
 </tr>
 </tbody>
@@ -758,6 +762,19 @@ listening list.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.audio.config.GatingConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">GatingConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#GatingConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.GatingConfig" title="Link to this definition">¶</a></dt>
+<dd><p>Mother-only and baby-only tracks.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.GatingConfig.pad_s">
+<span class="sig-name descname"><span class="pre">pad_s</span></span><a class="headerlink" href="#stillface.features.audio.config.GatingConfig.pad_s" title="Link to this definition">¶</a></dt>
+<dd><p>Each role segment is widened by this much on both sides before gating, so
+word onsets and offsets survive.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">AudioConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#AudioConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.AudioConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Audio pipeline configuration.</p>
@@ -807,6 +824,12 @@ listening list.</p>
 <dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig.fusion">
 <span class="sig-name descname"><span class="pre">fusion</span></span><a class="headerlink" href="#stillface.features.audio.config.AudioConfig.fusion" title="Link to this definition">¶</a></dt>
 <dd><p>Fusion rules and thresholds.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig.gating">
+<span class="sig-name descname"><span class="pre">gating</span></span><a class="headerlink" href="#stillface.features.audio.config.AudioConfig.gating" title="Link to this definition">¶</a></dt>
+<dd><p>Gated track settings.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -974,6 +997,10 @@ listening list.</p>
 <li><a class="reference internal" href="#stillface.features.audio.config.FusionConfig.threshold"><code class="docutils literal notranslate"><span class="pre">FusionConfig.threshold()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#stillface.features.audio.config.GatingConfig"><code class="docutils literal notranslate"><span class="pre">GatingConfig</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.config.GatingConfig.pad_s"><code class="docutils literal notranslate"><span class="pre">GatingConfig.pad_s</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig"><code class="docutils literal notranslate"><span class="pre">AudioConfig</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.version"><code class="docutils literal notranslate"><span class="pre">AudioConfig.version</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.source"><code class="docutils literal notranslate"><span class="pre">AudioConfig.source</span></code></a></li>
@@ -983,6 +1010,7 @@ listening list.</p>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.models"><code class="docutils literal notranslate"><span class="pre">AudioConfig.models</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.roles"><code class="docutils literal notranslate"><span class="pre">AudioConfig.roles</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.fusion"><code class="docutils literal notranslate"><span class="pre">AudioConfig.fusion</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.gating"><code class="docutils literal notranslate"><span class="pre">AudioConfig.gating</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.digest"><code class="docutils literal notranslate"><span class="pre">AudioConfig.digest</span></code></a></li>
 </ul>
 </li>
