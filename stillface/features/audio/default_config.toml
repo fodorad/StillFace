@@ -81,3 +81,13 @@ env = "vad"
 module = "stillface.features.audio.workers.pyannote_worker"
 weights_revision = "3533c8cf8e369892e6b79ff1bf80f7b0286a54ee"
 input = "segments"
+
+[models.littlebeats]
+# LittleBeats wav2vec2 (LL_4300 fine-tuned): speaker / infant / adult vocalisation heads on
+# 2 s windows. Disabled until its environment builds (fairseq) and its outputs are checked.
+env = "littlebeats"
+module = "stillface.features.audio.workers.littlebeats"
+weights_revision = "b3250219066482f571ef3868413b0b0f1ad92502"
+window_s = 2.0
+hop_s = 1.0
+enabled = false

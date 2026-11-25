@@ -64,11 +64,15 @@ def smoke(
         models: Model names; every configured model if None.
 
     Returns:
-        Model name mapped to ``ok: <kind>/<group>, ...``, ``not installed`` or ``error: <message>``.
+        Model name mapped to ``ok: <kind>/<group>, ...``, ``disabled``, ``not installed`` or
+        ``error: <message>``.
     """
     status = {}
     for name in models or sorted(config.models):
         model = config.models[name]
+        if not model.enabled:
+            status[name] = "disabled"
+            continue
         if model.env and not env_python(root, model.env).exists():
             status[name] = "not installed"
             continue

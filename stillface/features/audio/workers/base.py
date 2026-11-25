@@ -14,6 +14,8 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any, Protocol
 
+import numpy as np
+
 from stillface.features.audio.models import (
     InferenceRequest,
     InferenceResult,
@@ -132,3 +134,25 @@ def window_starts(duration_s: float, window_s: float, hop_s: float) -> list[floa
         return [0.0]
     n = int(last // hop_s + 1e-9) + 1
     return [round(i * hop_s, 6) for i in range(n)]
+
+
+def fixed_windows(
+    samples: np.ndarray, rate: int, starts: list[float], window_s: float
+) -> np.ndarray:
+    """Cut equal-length windows, zero-padding the ones that run past the end.
+
+    Args:
+        samples: Mono samples.
+        rate: Sample rate.
+        starts: Window start times.
+        window_s: Window length.
+
+    Returns:
+        Array of shape ``(len(starts), round(window_s * rate))``.
+    """
+    size = round(window_s * rate)
+    out = np.zeros((len(starts), size), dtype=np.float32)
+    for i, start in enumerate(starts):
+        part = samples[round(start * rate) :][:size]
+        out[i, : len(part)] = part
+    return out

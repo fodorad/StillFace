@@ -93,6 +93,9 @@ def run_audio(args: argparse.Namespace, paths: DatasetPaths) -> int:
         write_atomic(paths.audio_dir / "prepare_report.json", lambda tmp: tmp.write_text(text))
         return 1 if report.failed else 0
     elif args.command == "infer":
+        if args.model in config.models and not config.models[args.model].enabled:
+            logger.error("Model %s is disabled in the config", args.model)
+            return 1
         adapter = build_adapter(args.model, config, args.envs)
         sessions = args.session_id or scope_sessions(paths)
         result = run_model(
