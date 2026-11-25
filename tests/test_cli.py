@@ -152,6 +152,24 @@ class TestFeaturesCli(unittest.TestCase):
             self.assertEqual(len(table), len(PHASES))
             self.assertEqual(table.loc[table["phase"] == "play", "status"].item(), "ok")
 
+    def test_audio_prepare_needs_inventory_then_writes_wavs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            raw, out = Path(tmp) / "raw", Path(tmp) / "out"
+            meta = raw / "metadata_database.xlsx"
+            meta.parent.mkdir(parents=True)
+            pd.DataFrame({"ID": [9], "Analysis": ["y"]}).to_excel(meta, index=False)
+            make_audio(raw / "Sessions" / "9" / "processed" / "baby_play.mp4", video=True)
+            base = ["--raw-dir", str(raw), "--processed-dir", str(out), "audio"]
+            self.assertEqual(main([*base, "prepare"]), 1)
+            main([*base, "inventory"])
+            self.assertEqual(main([*base, "prepare", "--session-id", "9"]), 0)
+            wav = out / "Sessions" / "9" / "features" / "audio" / "wav" / "play.wav"
+            self.assertTrue(wav.exists())
+            report = (out / "audio" / "prepare_report.json").read_text()
+            self.assertIn("9/play", report)
+            (raw / "Sessions" / "9" / "processed" / "baby_play.mp4").write_bytes(b"x")
+            self.assertEqual(main([*base, "prepare", "--overwrite"]), 1)
+
     def test_heads_requires_a_session(self) -> None:
         with self.assertRaises(SystemExit):
             build_parser().parse_args(["features", "heads"])
