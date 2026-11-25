@@ -8,10 +8,13 @@ returned as float32 samples in ``[-1, 1]`` with shape ``(channels, samples)``.
 import json
 import logging
 import subprocess
+import wave
 from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
+
+from stillface.features.io import write_atomic
 
 logger = logging.getLogger(__name__)
 
@@ -125,3 +128,45 @@ def decode_audio(
         raise MediaError(f"ffmpeg failed on {path.name}: {result.stderr.decode().strip()}")
     samples = np.frombuffer(result.stdout, dtype="<f4").astype(np.float32)
     return samples.reshape(-1, channels).T.copy(), rate
+
+
+def write_wav(path: Path, samples: np.ndarray, rate: int) -> None:
+    """Write mono float samples as PCM 16-bit WAV, atomically.
+
+    Args:
+        path: Output file.
+        samples: Float samples in ``[-1, 1]``, shape ``(n,)`` or ``(1, n)``; values outside
+            are clipped.
+        rate: Sample rate.
+    """
+    x = np.asarray(samples, dtype=np.float64).reshape(-1)
+    pcm = np.round(np.clip(x, -1.0, 1.0) * 32767.0).astype("<i2")
+
+    def write(tmp: Path) -> None:
+        with wave.open(str(tmp), "wb") as handle:
+            handle.setnchannels(1)
+            handle.setsampwidth(2)
+            handle.setframerate(rate)
+            handle.writeframes(pcm.tobytes())
+
+    write_atomic(path, write)
+
+
+def read_wav(path: Path) -> tuple[np.ndarray, int]:
+    """Read a mono PCM 16-bit WAV written by :func:`write_wav`.
+
+    Args:
+        path: WAV file.
+
+    Returns:
+        ``(samples, rate)``, samples float32 of shape ``(n,)`` in ``[-1, 1]``.
+
+    Raises:
+        MediaError: If the file is not mono 16-bit PCM.
+    """
+    with wave.open(str(path), "rb") as handle:
+        if handle.getnchannels() != 1 or handle.getsampwidth() != 2:
+            raise MediaError(f"{path.name}: expected mono 16-bit PCM")
+        rate = handle.getframerate()
+        data = handle.readframes(handle.getnframes())
+    return np.frombuffer(data, dtype="<i2").astype(np.float32) / 32767.0, rate

@@ -59,6 +59,17 @@ class InventoryConfig:
 
 
 @dataclass(frozen=True)
+class PrepareConfig:
+    """Prepared analysis audio.
+
+    Attributes:
+        sample_rate: Output sample rate; every model reads 16 kHz mono.
+    """
+
+    sample_rate: int = 16000
+
+
+@dataclass(frozen=True)
 class AudioConfig:
     """Audio pipeline configuration.
 
@@ -67,12 +78,14 @@ class AudioConfig:
         source: Microphone choice.
         scope: Session selection.
         inventory: Inventory statistics.
+        prepare: Prepared audio format.
     """
 
     version: int = CONFIG_VERSION
     source: SourceConfig = field(default_factory=SourceConfig)
     scope: ScopeConfig = field(default_factory=ScopeConfig)
     inventory: InventoryConfig = field(default_factory=InventoryConfig)
+    prepare: PrepareConfig = field(default_factory=PrepareConfig)
 
     @property
     def digest(self) -> str:
