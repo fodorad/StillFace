@@ -85,6 +85,8 @@ class ModelConfig:
         options: Further model-specific options, passed to the worker as text.
         input: ``wav`` for whole-phase models (first pass), ``segments`` for models that
             score role segments (second pass).
+        enabled: False keeps a configured model out of every run (recorded as disabled),
+            e.g. until its outputs are verified.
     """
 
     env: str = ""
@@ -97,6 +99,7 @@ class ModelConfig:
     hop_s: float = 0.0
     options: dict[str, str] = field(default_factory=dict)
     input: str = "wav"
+    enabled: bool = True
 
     def __post_init__(self) -> None:
         """Validate the input kind."""

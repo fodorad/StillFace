@@ -1,0 +1,19 @@
+[project]
+name = "stillface-audio-littlebeats"
+version = "0.1.0"
+description = "LittleBeats wav2vec2 infant/adult vocalisation model of the StillFace audio pipeline."
+requires-python = ">=3.10,<3.11"
+dependencies = [
+  "fairseq==0.12.2",
+  "huggingface-hub",
+  "numpy<2",
+  "speechbrain",
+  "torch<2.2",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+# SpeechBrain fork with the LittleBeats recipe modules (branch infant-voc-classification).
+speechbrain = { git = "https://github.com/jialuli3/speechbrain", rev = "7125879536238c72ea9d4f743d9e3a9aca110a71" }
