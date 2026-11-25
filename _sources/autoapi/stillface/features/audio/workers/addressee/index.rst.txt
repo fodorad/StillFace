@@ -1,0 +1,145 @@
+stillface.features.audio.workers.addressee
+==========================================
+
+.. py:module:: stillface.features.audio.workers.addressee
+
+.. autoapi-nested-parse::
+
+   Addressee worker: who an adult speaks to (environment ``vtc``).
+
+   The LAAC-LSCP addressee classifier (Charlot et al., Interspeech 2026) is BabyHuBERT
+   fine-tuned to label adult (``FEM`` / ``MAL``) utterances as ``KCDS`` (key-child-directed,
+   i.e. infant-directed speech), ``ADS`` (adult-directed) or ``Other`` (overheard, unsure). It
+   sees each utterance with 10 s of context and was trained on utterances up to 30 s, so longer
+   segments are split before scoring. There is no audio-only equivalent for the baby.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.addressee.MODEL_ORDER
+   stillface.features.audio.workers.addressee.NAMES
+   stillface.features.audio.workers.addressee.ADULT_LABELS
+   stillface.features.audio.workers.addressee.MAX_UTTERANCE_S
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.addressee.AddresseeWorker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.addressee.split_long_segments
+   stillface.features.audio.workers.addressee.softmax
+   stillface.features.audio.workers.addressee.postprocess
+   stillface.features.audio.workers.addressee.labels
+
+
+Module Contents
+---------------
+
+.. py:data:: MODEL_ORDER
+   :type:  tuple[str, ...]
+   :value: ('ADS', 'KCDS', 'Other')
+
+
+   Class order of the model's logits (``addressee.dataloaders.id2label``).
+
+.. py:data:: NAMES
+   :type:  tuple[str, ...]
+   :value: ('KCDS', 'ADS', 'Other')
+
+
+   Output class order.
+
+.. py:data:: ADULT_LABELS
+   :type:  tuple[str, ...]
+   :value: ('FEM', 'MAL')
+
+
+   VTC labels the model scores.
+
+.. py:data:: MAX_UTTERANCE_S
+   :type:  float
+   :value: 30.0
+
+
+   Longest utterance seen in training.
+
+.. py:function:: split_long_segments(segments: tuple[stillface.features.audio.models.Segment, ...], max_s: float = MAX_UTTERANCE_S) -> tuple[stillface.features.audio.models.Segment, ...]
+
+   Split segments longer than ``max_s`` into equal parts of at most ``max_s``.
+
+   :param segments: Segments.
+   :param max_s: Longest allowed duration.
+
+   :returns: Segments in order, long ones replaced by their parts (same role and label).
+
+
+.. py:function:: softmax(logits: numpy.ndarray) -> numpy.ndarray
+
+   Row-wise softmax.
+
+   :param logits: Shape ``(m, k)``.
+
+   :returns: Probabilities of the same shape.
+
+
+.. py:function:: postprocess(segments: tuple[stillface.features.audio.models.Segment, ...], logits: numpy.ndarray) -> stillface.features.audio.models.SegmentScores
+
+   Probabilities per segment in :data:`NAMES` order.
+
+   :param segments: Scored adult segments.
+   :param logits: Model logits, shape ``(len(segments), 3)`` in :data:`MODEL_ORDER`.
+
+   :returns: The segment scores.
+
+   :raises ValueError: If shapes disagree.
+
+
+.. py:function:: labels(scores: stillface.features.audio.models.SegmentScores) -> list[str]
+
+   Most probable class per segment.
+
+   :param scores: Output of :func:`postprocess`.
+
+   :returns: One of :data:`NAMES` per segment.
+
+
+.. py:class:: AddresseeWorker
+
+   Scores adult segments of one phase.
+
+
+   .. py:method:: load(options: dict[str, Any]) -> dict[str, Any]
+
+      Download the checkpoint and config at the pinned revision and build the model.
+
+
+
+   .. py:method:: forward(request: stillface.features.audio.models.InferenceRequest, segments: tuple[stillface.features.audio.models.Segment, ...]) -> numpy.ndarray
+
+      Logits of the adult segments of one request.
+
+
+
+   .. py:method:: infer(request: stillface.features.audio.models.InferenceRequest) -> stillface.features.audio.models.InferenceResult
+
+      Addressee probabilities of the adult segments of one phase.
+
+      :param request: Request whose segments carry VTC labels; non-adult ones are ignored.
+
+      :returns: ``addressee`` segment scores.
+
+
+

@@ -1,0 +1,119 @@
+stillface.features.audio.workers.vtc
+====================================
+
+.. py:module:: stillface.features.audio.workers.vtc
+
+.. autoapi-nested-parse::
+
+   VTC 2.2 worker: voice-type scores and segments (environment ``vtc``).
+
+   The Voice Type Classifier (Lavechin et al.; VTC 2 on BabyHuBERT, Charlot et al. 2025) gives
+   four independent sigmoid scores every 20 ms: ``KCHI`` key child, ``OCH`` other child,
+   ``MAL`` adult male, ``FEM`` adult female. With no siblings present, KCHI and OCH are both the
+   baby. Scores are thresholded per class (``f1`` balanced set by default, ``hp`` high
+   precision) and merged into segments, written as RTTM. VTC classifies voice *type*: it cannot
+   tell the mother from a female experimenter; the roles stage does that with voice embeddings.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.vtc.LABELS
+   stillface.features.audio.workers.vtc.FRAME_S
+   stillface.features.audio.workers.vtc.URI
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.vtc.VtcWorker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.vtc.parse_rttm
+   stillface.features.audio.workers.vtc.postprocess
+
+
+Module Contents
+---------------
+
+.. py:data:: LABELS
+   :type:  tuple[str, ...]
+   :value: ('KCHI', 'OCH', 'MAL', 'FEM')
+
+
+   VTC classes in output order.
+
+.. py:data:: FRAME_S
+   :type:  float
+   :value: 0.02
+
+
+   VTC frame step (320 samples at 16 kHz).
+
+.. py:data:: URI
+   :type:  str
+   :value: 'audio'
+
+
+   File stem used for the temporary input of a request.
+
+.. py:function:: parse_rttm(text: str) -> list[stillface.features.audio.models.Segment]
+
+   Parse RTTM ``SPEAKER`` lines.
+
+   :param text: RTTM content.
+
+   :returns: Segments with the speaker label as ``label``, sorted by start.
+
+
+.. py:function:: postprocess(probs: dict[str, numpy.ndarray], rttm_text: str, frame_s: float = FRAME_S) -> tuple[stillface.features.audio.models.FrameScores, stillface.features.audio.models.SegmentScores]
+
+   Frame scores and scored segments from VTC's outputs.
+
+   :param probs: Class name mapped to its per-frame probability.
+   :param rttm_text: Merged RTTM of the thresholded segments.
+   :param frame_s: Frame step.
+
+   :returns: ``(frames, segments)``; each segment's ``mean_prob`` is the mean probability of its
+             class over the frames it covers.
+
+   :raises ValueError: If a class is missing or the arrays differ in length.
+
+
+.. py:class:: VtcWorker
+
+   Runs VTC on whole phases.
+
+
+   .. py:method:: load(options: dict[str, Any]) -> dict[str, Any]
+
+      Prepare the VTC run settings (the package loads the model per call).
+
+
+
+   .. py:method:: forward(wav: pathlib.Path) -> tuple[dict[str, numpy.ndarray], str, dict[str, Any]]
+
+      Run VTC on one WAV: probabilities, merged RTTM and the thresholds used.
+
+
+
+   .. py:method:: infer(request: stillface.features.audio.models.InferenceRequest) -> stillface.features.audio.models.InferenceResult
+
+      Voice types of one phase.
+
+      :param request: Whole-phase request.
+
+      :returns: ``voice_type`` frame scores, ``voice_type`` segments and the RTTM artefact.
+
+
+

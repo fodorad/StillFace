@@ -24,8 +24,10 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   /autoapi/stillface/features/audio/workers/addressee/index
    /autoapi/stillface/features/audio/workers/ast_audioset/index
    /autoapi/stillface/features/audio/workers/base/index
    /autoapi/stillface/features/audio/workers/silero/index
+   /autoapi/stillface/features/audio/workers/vtc/index
 
 
