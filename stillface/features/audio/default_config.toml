@@ -68,3 +68,16 @@ env = "vtc"
 module = "stillface.features.audio.workers.addressee"
 weights_revision = "080532e23a25ad08e40a8c183bb522380e916f62"
 input = "segments"
+
+[models.pyannote_vad]
+# pyannote community-1 segmentation: speech probability (third VAD opinion). Gated: HF_TOKEN.
+env = "vad"
+module = "stillface.features.audio.workers.pyannote_worker"
+weights_revision = "3533c8cf8e369892e6b79ff1bf80f7b0286a54ee"
+
+[models.pyannote_embedding]
+# pyannote community-1 speaker embeddings per female segment (mother enrolment). Gated.
+env = "vad"
+module = "stillface.features.audio.workers.pyannote_worker"
+weights_revision = "3533c8cf8e369892e6b79ff1bf80f7b0286a54ee"
+input = "segments"

@@ -15,7 +15,7 @@ repository on `PYTHONPATH`; they import nothing from the package's own dependenc
 
 | Environment | Models |
 |---|---|
-| `vad` | Silero VAD |
+| `vad` | Silero VAD, pyannote segmentation and speaker embeddings |
 | `hf` | AST AudioSet |
 | `vtc` | VTC 2.2 voice types, addressee (KCDS / ADS / Other) |
 
