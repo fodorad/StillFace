@@ -15,6 +15,7 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   /autoapi/stillface/features/audio/index
    /autoapi/stillface/features/config/index
    /autoapi/stillface/features/gaze/index
    /autoapi/stillface/features/io/index

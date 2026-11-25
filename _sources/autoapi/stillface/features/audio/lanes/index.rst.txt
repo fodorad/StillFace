@@ -1,0 +1,498 @@
+stillface.features.audio.lanes
+==============================
+
+.. py:module:: stillface.features.audio.lanes
+
+.. autoapi-nested-parse::
+
+   Lanes, bands and events: the one data model of the audio pipeline.
+
+   Every audio signal is stored twice on a common phase-local grid (seconds from the start of
+   the phase clip, :data:`GRID_RATE_HZ`):
+
+   - a **lane**: the raw continuous value of one quantity from one source, with a fixed range,
+     NaN where it does not apply (e.g. mother affect outside mother segments);
+   - a **band**: a boolean presence derived from a lane by a documented threshold or rule.
+
+   Bands become **events** (maximal runs with optional merging and a minimum duration). Lanes
+   and bands are written as one wide CSV per phase, events as a long CSV, and the metadata of
+   both as a legend JSON, so a table can always be traced back to the rule that produced it.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.lanes.GRID_RATE_HZ
+   stillface.features.audio.lanes.ROLES
+   stillface.features.audio.lanes.ORIGINS
+   stillface.features.audio.lanes.EVENT_COLUMNS
+   stillface.features.audio.lanes.LEGEND_VERSION
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.lanes.Aggregation
+   stillface.features.audio.lanes.LaneSpec
+   stillface.features.audio.lanes.BandSpec
+   stillface.features.audio.lanes.Lane
+   stillface.features.audio.lanes.Band
+   stillface.features.audio.lanes.Event
+   stillface.features.audio.lanes.Legend
+   stillface.features.audio.lanes.LaneTable
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.lanes.grid_times
+   stillface.features.audio.lanes.to_grid
+   stillface.features.audio.lanes.threshold_band
+   stillface.features.audio.lanes.runs
+   stillface.features.audio.lanes.band_to_events
+   stillface.features.audio.lanes.legend_to_dict
+   stillface.features.audio.lanes.legend_from_dict
+   stillface.features.audio.lanes.write_lanes
+   stillface.features.audio.lanes.read_lanes
+   stillface.features.audio.lanes.write_events
+   stillface.features.audio.lanes.read_events
+
+
+Module Contents
+---------------
+
+.. py:data:: GRID_RATE_HZ
+   :type:  float
+   :value: 10.0
+
+
+   Sampling rate of the common lane grid.
+
+.. py:data:: ROLES
+   :type:  tuple[str, ...]
+   :value: ('baby', 'mother', 'other', 'context', 'dyad')
+
+
+   Who a lane, band or event describes; ``context`` covers non-vocal sounds.
+
+.. py:data:: ORIGINS
+   :type:  tuple[str, ...]
+   :value: ('vendor', 'probe', 'config')
+
+
+   the model's published default, the probe, or our config.
+
+   :type: Where a threshold comes from
+
+.. py:data:: EVENT_COLUMNS
+   :type:  tuple[str, ...]
+   :value: ('start_s', 'end_s', 'role', 'label', 'confidence', 'source', 'threshold', 'rule_id')
+
+
+   Event CSV columns, in file order.
+
+.. py:data:: LEGEND_VERSION
+   :type:  int
+   :value: 1
+
+
+   Version of the legend JSON layout.
+
+.. py:class:: Aggregation
+
+   Bases: :py:obj:`enum.StrEnum`
+
+
+   How native-rate samples falling into one grid bin are combined.
+
+   Initialize self.  See help(type(self)) for accurate signature.
+
+
+   .. py:attribute:: MAX
+      :value: 'max'
+
+
+      Maximum; used for class probabilities so short peaks survive.
+
+
+   .. py:attribute:: MEAN
+      :value: 'mean'
+
+
+      Mean of the finite samples; used for continuous features.
+
+
+   .. py:attribute:: MAJORITY
+      :value: 'majority'
+
+
+      Most frequent category code; ties go to the lower code.
+
+
+.. py:class:: LaneSpec
+
+   What a lane contains.
+
+   .. attribute:: source
+
+      Producing model or stage, e.g. ``vtc`` or ``fusion``.
+
+   .. attribute:: quantity
+
+      Measured quantity, e.g. ``KCHI`` or ``f0``.
+
+   .. attribute:: role
+
+      One of :data:`ROLES`.
+
+   .. attribute:: unit
+
+      Unit of the values, e.g. ``prob``, ``Hz``, ``dB``.
+
+   .. attribute:: value_range
+
+      Inclusive ``(low, high)`` every finite value must respect.
+
+   .. attribute:: aggregation
+
+      Bin aggregation used by :func:`to_grid`.
+
+   .. attribute:: categories
+
+      Category names of a categorical lane; values are indices into it.
+
+   .. attribute:: note
+
+      Free-text description for the legend.
+
+
+   .. py:property:: name
+      :type: str
+
+
+      Column name ``<source>.<quantity>.<role>``.
+
+
+.. py:class:: BandSpec
+
+   How a band was derived.
+
+   .. attribute:: name
+
+      Column name, by default ``<lane>.on``.
+
+   .. attribute:: lane
+
+      Name of the lane the band was derived from, empty for multi-lane rules.
+
+   .. attribute:: threshold
+
+      Threshold applied to the lane, None for rule-based bands.
+
+   .. attribute:: origin
+
+      One of :data:`ORIGINS`.
+
+   .. attribute:: rule_id
+
+      Identifier of the rule in the decision tables.
+
+
+.. py:function:: grid_times(duration_s: float, rate_hz: float = GRID_RATE_HZ) -> numpy.ndarray
+
+   Times of the lane grid of a phase.
+
+   :param duration_s: Phase duration in seconds.
+   :param rate_hz: Grid rate.
+
+   :returns: ``k / rate_hz`` for ``k = 0 … floor(rate_hz * duration_s)``.
+
+
+.. py:class:: Lane
+
+   One quantity on the grid.
+
+   .. attribute:: spec
+
+      Lane description.
+
+   .. attribute:: values
+
+      Float array on the grid; NaN where the lane does not apply.
+
+
+.. py:class:: Band
+
+   Boolean presence on the grid.
+
+   .. attribute:: spec
+
+      Band description.
+
+   .. attribute:: values
+
+      Boolean array on the grid.
+
+
+.. py:class:: Event
+
+   A time interval with a label.
+
+   .. attribute:: start_s
+
+      Phase-local start.
+
+   .. attribute:: end_s
+
+      Phase-local end (exclusive).
+
+   .. attribute:: role
+
+      One of :data:`ROLES`.
+
+   .. attribute:: label
+
+      Event label, e.g. ``cry``.
+
+   .. attribute:: confidence
+
+      Confidence in ``[0, 1]``.
+
+   .. attribute:: source
+
+      Producing model or stage.
+
+   .. attribute:: threshold
+
+      Threshold of the band it came from, None for rules.
+
+   .. attribute:: rule_id
+
+      Identifier of the rule in the decision tables.
+
+
+.. py:function:: to_grid(times: numpy.ndarray, values: numpy.ndarray, duration_s: float, spec: LaneSpec, rate_hz: float = GRID_RATE_HZ) -> Lane
+
+   Resample native-rate samples onto the lane grid.
+
+   Bin ``k`` collects the samples with ``round(t * rate_hz) == k``. Samples outside the
+   phase and NaN samples are ignored; empty bins are NaN.
+
+   :param times: Sample times in seconds, phase-local.
+   :param values: Sample values; category indices for majority lanes.
+   :param duration_s: Phase duration.
+   :param spec: Lane description, its aggregation is applied.
+   :param rate_hz: Grid rate.
+
+   :returns: The lane.
+
+
+.. py:function:: threshold_band(lane: Lane, threshold: float, origin: str, rule_id: str, name: str | None = None) -> Band
+
+   Presence where a lane reaches a threshold.
+
+   :param lane: Source lane; NaN never counts as present.
+   :param threshold: Inclusive threshold.
+   :param origin: One of :data:`ORIGINS`.
+   :param rule_id: Identifier of the rule in the decision tables.
+   :param name: Column name, defaults to ``<lane>.on``.
+
+   :returns: The band.
+
+
+.. py:function:: runs(mask: numpy.ndarray) -> list[tuple[int, int]]
+
+   Maximal runs of True values.
+
+   :param mask: Boolean array.
+
+   :returns: ``(start, stop)`` index pairs, ``stop`` exclusive.
+
+
+.. py:function:: band_to_events(band: Band, role: str, label: str, source: str, confidence: Lane | None = None, merge_gap_s: float = 0.0, min_duration_s: float = 0.0, rate_hz: float = GRID_RATE_HZ) -> list[Event]
+
+   Turn a band into events.
+
+   Runs separated by at most ``merge_gap_s`` are merged first, then runs shorter than
+   ``min_duration_s`` are dropped. An event of a run covering bins ``a … b-1`` spans
+   ``[a / rate, b / rate)``.
+
+   :param band: Presence band.
+   :param role: Role of the events.
+   :param label: Label of the events.
+   :param source: Producing model or stage.
+   :param confidence: Lane whose mean over the run is the confidence (clipped to [0, 1]);
+                      confidence 1 if None or all NaN.
+   :param merge_gap_s: Largest gap that is bridged.
+   :param min_duration_s: Shortest kept event.
+   :param rate_hz: Grid rate.
+
+   :returns: Events in time order.
+
+
+.. py:class:: Legend
+
+   Metadata of a lane table.
+
+   .. attribute:: duration_s
+
+      Phase duration.
+
+   .. attribute:: rate_hz
+
+      Grid rate.
+
+   .. attribute:: lanes
+
+      Lane descriptions in column order.
+
+   .. attribute:: bands
+
+      Band descriptions in column order (after the lanes).
+
+   .. attribute:: notes
+
+      Free-form extra metadata (e.g. session, phase, config hash).
+
+
+   .. py:property:: columns
+      :type: tuple[str, ...]
+
+
+      ``time_s``, then lanes, then bands.
+
+      :type: CSV columns
+
+
+.. py:class:: LaneTable
+
+   All lanes and bands of one session phase.
+
+   .. attribute:: duration_s
+
+      Phase duration.
+
+   .. attribute:: lanes
+
+      Lanes on the grid.
+
+   .. attribute:: bands
+
+      Bands on the grid.
+
+   .. attribute:: rate_hz
+
+      Grid rate.
+
+   .. attribute:: notes
+
+      Free-form extra metadata copied to the legend.
+
+
+   .. py:property:: times
+      :type: numpy.ndarray
+
+
+      Grid times.
+
+
+   .. py:property:: legend
+      :type: Legend
+
+
+      Metadata of the table.
+
+
+   .. py:method:: lane(name: str) -> Lane
+
+      Look up a lane by column name.
+
+      :param name: Lane column name.
+
+      :returns: The lane.
+
+      :raises KeyError: If there is no such lane.
+
+
+
+   .. py:method:: band(name: str) -> Band
+
+      Look up a band by column name.
+
+      :param name: Band column name.
+
+      :returns: The band.
+
+      :raises KeyError: If there is no such band.
+
+
+
+.. py:function:: legend_to_dict(legend: Legend) -> dict
+
+   Serialisable form of a legend.
+
+   :param legend: Legend to convert.
+
+   :returns: JSON-compatible dictionary including :data:`LEGEND_VERSION`.
+
+
+.. py:function:: legend_from_dict(data: dict) -> Legend
+
+   Rebuild a legend from :func:`legend_to_dict` output.
+
+   :param data: Dictionary read from JSON.
+
+   :returns: The legend.
+
+   :raises ValueError: If the version is not :data:`LEGEND_VERSION`.
+
+
+.. py:function:: write_lanes(table: LaneTable, csv_path: pathlib.Path, legend_path: pathlib.Path) -> None
+
+   Write a lane table as a wide CSV plus its legend JSON, atomically.
+
+   NaN lane values are empty cells; band values are 0 / 1.
+
+   :param table: Table to write.
+   :param csv_path: CSV output.
+   :param legend_path: Legend JSON output.
+
+
+.. py:function:: read_lanes(csv_path: pathlib.Path, legend_path: pathlib.Path) -> LaneTable
+
+   Read a lane table written by :func:`write_lanes`.
+
+   :param csv_path: CSV file.
+   :param legend_path: Legend JSON file.
+
+   :returns: The table.
+
+   :raises ValueError: If the CSV header does not match the legend.
+
+
+.. py:function:: write_events(events: list[Event], path: pathlib.Path) -> None
+
+   Write events as CSV, atomically.
+
+   :param events: Events; may be empty.
+   :param path: Output file.
+
+
+.. py:function:: read_events(path: pathlib.Path) -> list[Event]
+
+   Read events written by :func:`write_events`.
+
+   :param path: Event CSV.
+
+   :returns: The events.
+
+   :raises ValueError: If the header does not match :data:`EVENT_COLUMNS`.
+
+

@@ -1,0 +1,20 @@
+stillface.features.audio
+========================
+
+.. py:module:: stillface.features.audio
+
+.. autoapi-nested-parse::
+
+   Audio analysis: who vocalises, how, and how mother and baby voices relate.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/stillface/features/audio/lanes/index
+
+
