@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html"><link rel="next" title="stillface.features.config" href="../../../config/index.html"><link rel="prev" title="stillface.features.audio.workers" href="../index.html">
+<link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html"><link rel="next" title="stillface.features.audio.workers.silero" href="../silero/index.html"><link rel="prev" title="stillface.features.audio.workers.ast_audioset" href="../ast_audioset/index.html">
         <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/audio/workers/base/index.html">
         <link rel="prefetch" href="../../../../../../_static/logo.svg" as="image">
 
@@ -224,9 +224,12 @@
 <li class="toctree-l5"><a class="reference internal" href="../../prosody/index.html">stillface.features.audio.prosody</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../provenance/index.html">stillface.features.audio.provenance</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../registry/index.html">stillface.features.audio.registry</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../smoke/index.html">stillface.features.audio.smoke</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../subprocess_adapter/index.html">stillface.features.audio.subprocess_adapter</a></li>
 <li class="toctree-l5 current has-children"><a class="reference internal" href="../index.html">stillface.features.audio.workers</a><input aria-label="Toggle navigation of stillface.features.audio.workers" checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l6"><a class="reference internal" href="../ast_audioset/index.html">stillface.features.audio.workers.ast_audioset</a></li>
 <li class="toctree-l6 current current-page"><a class="current reference internal" href="#">stillface.features.audio.workers.base</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../silero/index.html">stillface.features.audio.workers.silero</a></li>
 </ul>
 </li>
 </ul>
@@ -345,6 +348,12 @@ model exits non-zero and the adapter turns it into an error for every request.</
 <tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.base.serve" title="stillface.features.audio.workers.base.serve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serve</span></code></a>(→ int)</p></td>
 <td><p>Process a request file with a worker.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.base.torch_device" title="stillface.features.audio.workers.base.torch_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_device</span></code></a>(→ str)</p></td>
+<td><p>Pick a torch device, falling back to CPU when the preferred one is unavailable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.base.window_starts" title="stillface.features.audio.workers.base.window_starts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">window_starts</span></code></a>(→ list[float])</p></td>
+<td><p>Start times of analysis windows covering a signal.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -426,6 +435,41 @@ model exits non-zero and the adapter turns it into an error for every request.</
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.workers.base.torch_device">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.base.</span></span><span class="sig-name descname"><span class="pre">torch_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preferred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/base.html#torch_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.base.torch_device" title="Link to this definition">¶</a></dt>
+<dd><p>Pick a torch device, falling back to CPU when the preferred one is unavailable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>preferred</strong> – <code class="docutils literal notranslate"><span class="pre">mps</span></code>, <code class="docutils literal notranslate"><span class="pre">cuda</span></code> or <code class="docutils literal notranslate"><span class="pre">cpu</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The device name to use.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.workers.base.window_starts">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.base.</span></span><span class="sig-name descname"><span class="pre">window_starts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/base.html#window_starts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.base.window_starts" title="Link to this definition">¶</a></dt>
+<dd><p>Start times of analysis windows covering a signal.</p>
+<p>Windows advance by <code class="docutils literal notranslate"><span class="pre">hop_s</span></code>; the last start is the last one whose window still
+starts inside the signal and ends at most at <code class="docutils literal notranslate"><span class="pre">duration_s</span></code>. A signal shorter than one
+window gets a single window at 0 (the model pads it).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>duration_s</strong> – Signal duration.</p></li>
+<li><p><strong>window_s</strong> – Window length.</p></li>
+<li><p><strong>hop_s</strong> – Hop between window starts.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Start times in seconds.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -434,23 +478,23 @@ model exits non-zero and the adapter turns it into an error for every request.</
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../../../config/index.html">
+          <a class="next-page" href="../silero/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">stillface.features.config</div>
+                <div class="title">stillface.features.audio.workers.silero</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../index.html">
+          <a class="prev-page" href="../ast_audioset/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">stillface.features.audio.workers</div>
+                <div class="title">stillface.features.audio.workers.ast_audioset</div>
                 
               </div>
             </a>
@@ -499,6 +543,8 @@ model exits non-zero and the adapter turns it into an error for every request.</
 <li><a class="reference internal" href="#stillface.features.audio.workers.base.result_path"><code class="docutils literal notranslate"><span class="pre">result_path()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.base.error_path"><code class="docutils literal notranslate"><span class="pre">error_path()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.base.serve"><code class="docutils literal notranslate"><span class="pre">serve()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.base.torch_device"><code class="docutils literal notranslate"><span class="pre">torch_device()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.base.window_starts"><code class="docutils literal notranslate"><span class="pre">window_starts()</span></code></a></li>
 </ul>
 </li>
 </ul>

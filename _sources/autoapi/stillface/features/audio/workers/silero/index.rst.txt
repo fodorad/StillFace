@@ -1,0 +1,86 @@
+stillface.features.audio.workers.silero
+=======================================
+
+.. py:module:: stillface.features.audio.workers.silero
+
+.. autoapi-nested-parse::
+
+   Silero VAD worker: speech probability per 32 ms chunk (environment ``vad``).
+
+   Silero is trained on speech; how it treats infant cries is untested, which is why it is
+   only a second opinion next to the VTC voice-type union.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.silero.CHUNK
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.silero.SileroWorker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.silero.postprocess
+
+
+Module Contents
+---------------
+
+.. py:data:: CHUNK
+   :type:  int
+   :value: 512
+
+
+   Samples per Silero chunk at 16 kHz (32 ms).
+
+.. py:function:: postprocess(probs: numpy.ndarray, rate: int, chunk: int = CHUNK) -> stillface.features.audio.models.FrameScores
+
+   Turn chunk probabilities into frame scores at the chunk centres.
+
+   :param probs: Speech probability per chunk, shape ``(n,)``.
+   :param rate: Sample rate.
+   :param chunk: Samples per chunk.
+
+   :returns: One ``speech`` score per chunk, centred at ``(i + 0.5) * chunk / rate``.
+
+
+.. py:class:: SileroWorker
+
+   Runs Silero VAD on whole phases.
+
+
+   .. py:method:: load(options: dict[str, Any]) -> dict[str, Any]
+
+      Load the packaged Silero model (CPU, its weights ship with the package).
+
+
+
+   .. py:method:: forward(samples: numpy.ndarray, rate: int) -> numpy.ndarray
+
+      Chunk probabilities of a mono signal.
+
+
+
+   .. py:method:: infer(request: stillface.features.audio.models.InferenceRequest) -> stillface.features.audio.models.InferenceResult
+
+      Speech probabilities of one phase.
+
+      :param request: Whole-phase request.
+
+      :returns: The ``speech`` frame scores.
+
+
+

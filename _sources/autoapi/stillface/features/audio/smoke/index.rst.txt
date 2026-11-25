@@ -1,0 +1,85 @@
+stillface.features.audio.smoke
+==============================
+
+.. py:module:: stillface.features.audio.smoke
+
+.. autoapi-nested-parse::
+
+   Smoke test of the installed models on a synthetic clip (local only, not in CI).
+
+   ``python -m stillface.features.audio.smoke`` writes a 10 s synthetic clip (tones and noise
+   bursts), runs every configured model whose environment exists, and reports per model
+   whether it returned well-formed output. It checks the plumbing (environments, workers,
+   weights), not model quality.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.smoke.logger
+   stillface.features.audio.smoke.SMOKE_SECONDS
+   stillface.features.audio.smoke.SMOKE_SEGMENTS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.smoke.synthetic_clip
+   stillface.features.audio.smoke.smoke
+   stillface.features.audio.smoke.main
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: SMOKE_SECONDS
+   :type:  float
+   :value: 10.0
+
+
+   Length of the synthetic clip.
+
+.. py:data:: SMOKE_SEGMENTS
+   :type:  tuple[stillface.features.audio.models.Segment, ...]
+
+   Segments given to segment models.
+
+.. py:function:: synthetic_clip(path: pathlib.Path, seconds: float = SMOKE_SECONDS, rate: int = 16000) -> pathlib.Path
+
+   Write a clip with a 220 Hz tone, a 450 Hz tone and noise bursts.
+
+   :param path: Output WAV.
+   :param seconds: Duration.
+   :param rate: Sample rate.
+
+   :returns: The path.
+
+
+.. py:function:: smoke(config: stillface.features.audio.config.AudioConfig, root: pathlib.Path, wav: pathlib.Path, models: collections.abc.Sequence[str] | None = None) -> dict[str, str]
+
+   Run the models on a clip.
+
+   :param config: Audio configuration.
+   :param root: Folder of the model environments.
+   :param wav: Input clip.
+   :param models: Model names; every configured model if None.
+
+   :returns: Model name mapped to ``ok: <kind>/<group>, ...``, ``not installed`` or ``error: <message>``.
+
+
+.. py:function:: main(argv: collections.abc.Sequence[str] | None = None) -> int
+
+   Command line entry point.
+
+   :param argv: Arguments; ``sys.argv[1:]`` if None.
+
+   :returns: 0 if no installed model failed.
+
+

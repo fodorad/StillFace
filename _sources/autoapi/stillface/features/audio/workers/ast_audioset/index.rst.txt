@@ -1,0 +1,98 @@
+stillface.features.audio.workers.ast_audioset
+=============================================
+
+.. py:module:: stillface.features.audio.workers.ast_audioset
+
+.. autoapi-nested-parse::
+
+   AST AudioSet worker: 527 sound-event probabilities per window (environment ``hf``).
+
+   Audio Spectrogram Transformer fine-tuned on AudioSet (Gong et al. 2021): 128-bin log-mel
+   input, sigmoid output per class. Windows of ``window_s`` (default 2 s) advance by ``hop_s``
+   (default 0.25 s), as in the probe; each window's scores are placed at its centre.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.ast_audioset.MODEL_ID
+   stillface.features.audio.workers.ast_audioset.N_CLASSES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.ast_audioset.AstWorker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.ast_audioset.postprocess
+
+
+Module Contents
+---------------
+
+.. py:data:: MODEL_ID
+   :type:  str
+   :value: 'MIT/ast-finetuned-audioset-10-10-0.4593'
+
+
+   Hugging Face model id.
+
+.. py:data:: N_CLASSES
+   :type:  int
+   :value: 527
+
+
+   Number of AudioSet classes.
+
+.. py:function:: postprocess(starts: list[float], window_s: float, probs: numpy.ndarray, names: tuple[str, ...]) -> stillface.features.audio.models.FrameScores
+
+   Turn per-window probabilities into frame scores at the window centres.
+
+   :param starts: Window start times.
+   :param window_s: Window length.
+   :param probs: Sigmoid outputs, shape ``(len(starts), len(names))``.
+   :param names: Class names in index order.
+
+   :returns: The frame scores.
+
+   :raises ValueError: If shapes disagree or probabilities leave ``[0, 1]``.
+
+
+.. py:class:: AstWorker
+
+   Runs AST on overlapping windows of whole phases.
+
+
+   .. py:method:: load(options: dict[str, Any]) -> dict[str, Any]
+
+      Load the extractor and model at the configured revision.
+
+
+
+   .. py:method:: forward(windows: list[numpy.ndarray], rate: int) -> numpy.ndarray
+
+      Sigmoid outputs of a list of windows.
+
+
+
+   .. py:method:: infer(request: stillface.features.audio.models.InferenceRequest) -> stillface.features.audio.models.InferenceResult
+
+      Class probabilities of one phase.
+
+      :param request: Whole-phase request.
+
+      :returns: The ``audioset`` frame scores.
+
+
+

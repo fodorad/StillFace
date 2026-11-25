@@ -146,6 +146,11 @@ Module Contents
 
       Further model-specific options, passed to the worker as text.
 
+   .. attribute:: input
+
+      ``wav`` for whole-phase models (first pass), ``segments`` for models that
+      score role segments (second pass).
+
 
    .. py:property:: digest
       :type: str

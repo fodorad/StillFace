@@ -40,6 +40,8 @@ Functions
    stillface.features.audio.workers.base.result_path
    stillface.features.audio.workers.base.error_path
    stillface.features.audio.workers.base.serve
+   stillface.features.audio.workers.base.torch_device
+   stillface.features.audio.workers.base.window_starts
 
 
 Module Contents
@@ -100,5 +102,29 @@ Module Contents
    :param argv: ``[request.json]``; ``sys.argv[1:]`` if None.
 
    :returns: Exit code 0 once every request has a result or error file.
+
+
+.. py:function:: torch_device(preferred: str) -> str
+
+   Pick a torch device, falling back to CPU when the preferred one is unavailable.
+
+   :param preferred: ``mps``, ``cuda`` or ``cpu``.
+
+   :returns: The device name to use.
+
+
+.. py:function:: window_starts(duration_s: float, window_s: float, hop_s: float) -> list[float]
+
+   Start times of analysis windows covering a signal.
+
+   Windows advance by ``hop_s``; the last start is the last one whose window still
+   starts inside the signal and ends at most at ``duration_s``. A signal shorter than one
+   window gets a single window at 0 (the model pads it).
+
+   :param duration_s: Signal duration.
+   :param window_s: Window length.
+   :param hop_s: Hop between window starts.
+
+   :returns: Start times in seconds.
 
 
