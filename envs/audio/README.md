@@ -17,5 +17,6 @@ repository on `PYTHONPATH`; they import nothing from the package's own dependenc
 |---|---|
 | `vad` | Silero VAD |
 | `hf` | AST AudioSet |
+| `vtc` | VTC 2.2 voice types, addressee (KCDS / ADS / Other) |
 
 Gated Hugging Face models read the token from the `HF_TOKEN` environment variable.

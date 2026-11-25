@@ -1,0 +1,17 @@
+[project]
+name = "stillface-audio-vtc"
+version = "0.1.0"
+description = "BabyHuBERT models of the StillFace audio pipeline (VTC 2.2 voice types, addressee)."
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "addressee",
+  "numpy",
+  "vtc",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+vtc = { git = "https://github.com/LAAC-LSCP/VTC", rev = "1e6901e180e63bf8793106fd9b8616de8af3fd61" }
+addressee = { git = "https://github.com/LAAC-LSCP/addressee", rev = "37f69d7b53d216678d015689ee89e9a92b18bb0a" }
