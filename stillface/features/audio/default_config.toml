@@ -191,3 +191,24 @@ window_s = 3.0
 hop_s = 0.5
 input = "segments"
 segment_source = "roles:mother"
+
+[models.crisperwhisper]
+# CrisperWhisper 2.0 large on the mother-only track: verbatim and intended transcripts.
+env = "cw2"
+module = "stillface.features.audio.workers.crisperwhisper"
+weights_revision = "f4334f6e8193f2691212d49b20fa12d370e13896"
+[models.crisperwhisper.options]
+track = "mother"
+language = "hu"
+
+[models.mfa]
+# Montreal Forced Aligner, Hungarian CV dictionary and acoustic model (XPF phones).
+env = "mfa"
+module = "stillface.features.audio.workers.mfa"
+weights_revision = "hungarian_cv-2.0.0"
+device = "cpu"
+input = "segments"
+segment_source = "asr:mother"
+[models.mfa.options]
+dictionary = "hungarian_cv"
+acoustic_model = "hungarian_cv"

@@ -1,0 +1,12 @@
+# Montreal Forced Aligner environment (conda-forge only, so not a uv project).
+# Create it with `make audio-envs` (needs pixi); the first run writes pixi.lock, which is
+# then committed so later installs are reproducible.
+[workspace]
+name = "stillface-audio-mfa"
+channels = ["conda-forge"]
+platforms = ["osx-arm64", "linux-64"]
+
+[dependencies]
+python = "3.12.*"
+montreal-forced-aligner = "3.*"
+numpy = "*"

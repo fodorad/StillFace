@@ -1,0 +1,12 @@
+[project]
+name = "stillface-audio-cw2"
+version = "0.1.0"
+description = "CrisperWhisper 2 (verbatim and intended ASR) of the StillFace audio pipeline."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "crisperwhisper[transformers]==2.1.0",
+  "numpy",
+]
+
+[tool.uv]
+package = false

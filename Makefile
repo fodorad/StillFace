@@ -14,6 +14,7 @@ help:
 # $STILLFACE_AUDIO_ENVS, outside the repository.
 
 AUDIO_ENVS := $(notdir $(patsubst %/,%,$(dir $(wildcard envs/audio/*/pyproject.toml))))
+AUDIO_PIXI_ENVS := $(notdir $(patsubst %/,%,$(dir $(wildcard envs/audio/*/pixi.toml))))
 
 audio-envs:
 	@test -n "$(STILLFACE_AUDIO_ENVS)" || (echo "Set STILLFACE_AUDIO_ENVS first" && exit 1)
@@ -21,6 +22,11 @@ audio-envs:
 		echo "== $$name"; \
 		UV_PROJECT_ENVIRONMENT="$(STILLFACE_AUDIO_ENVS)/$$name" \
 			uv sync --frozen --project "envs/audio/$$name" || exit 1; \
+	done
+	@for name in $(AUDIO_PIXI_ENVS); do \
+		echo "== $$name (pixi)"; \
+		pixi install --manifest-path "envs/audio/$$name/pixi.toml" || exit 1; \
+		ln -sfn "$(CURDIR)/envs/audio/$$name/.pixi/envs/default" "$(STILLFACE_AUDIO_ENVS)/$$name"; \
 	done
 
 audio-smoke:

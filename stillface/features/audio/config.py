@@ -116,7 +116,8 @@ class ModelConfig:
             e.g. until its outputs are verified.
         segment_source: For ``segments`` models, where the segments come from:
             ``vtc:<labels>`` (VTC segments with these classes, e.g. ``vtc:FEM,MAL``) or
-            ``roles:<roles>`` (role segments, e.g. ``roles:mother,baby``).
+            ``roles:<roles>`` (role segments, e.g. ``roles:mother,baby``) or ``asr:<track>``
+            (one segment per transcribed utterance of a gated track, for the aligner).
     """
 
     env: str = ""
@@ -138,8 +139,10 @@ class ModelConfig:
             raise ValueError(f"model input must be 'wav' or 'segments', not {self.input!r}")
         if self.segment_source:
             kind, _, names = self.segment_source.partition(":")
-            if kind not in ("vtc", "roles") or not names:
-                raise ValueError("segment_source must be 'vtc:<labels>' or 'roles:<roles>'")
+            if kind not in ("vtc", "roles", "asr") or not names:
+                raise ValueError(
+                    "segment_source must be 'vtc:<labels>', 'roles:<roles>' or 'asr:<track>'"
+                )
 
     @property
     def digest(self) -> str:
