@@ -95,6 +95,14 @@ class TestToGrid(unittest.TestCase):
         self.assertEqual(lane.values.shape, (31,))
         self.assertTrue(np.isfinite(lane.values).all())
 
+    def test_hold_fills_gaps_of_slow_sources(self):
+        times = np.array([0.125, 0.375, 0.625])
+        lane = to_grid(times, np.array([0.1, 0.5, 0.9]), 1.0, PROB, hold_s=0.175)
+        np.testing.assert_allclose(lane.values[:9], [0.1, 0.1, 0.1, 0.5, 0.5, 0.5, 0.9, 0.9, 0.9])
+        self.assertTrue(np.isnan(lane.values[9:]).all())
+        single = to_grid(np.array([0.5]), np.array([0.3]), 1.0, PROB, hold_s=0.2)
+        self.assertEqual(int(np.isfinite(single.values).sum()), 5)
+
     def test_mismatched_inputs(self):
         with self.assertRaises(ValueError):
             to_grid(np.zeros(3), np.zeros(2), 1.0, PROB)

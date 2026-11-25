@@ -11,8 +11,12 @@ class TestAudioConfig(unittest.TestCase):
         from dataclasses import replace
 
         loaded = load_audio_config()
-        self.assertEqual(replace(loaded, models={}), AudioConfig())
+        self.assertEqual(replace(loaded, models={}, fusion=AudioConfig().fusion), AudioConfig())
         self.assertIn("prosody", loaded.models)
+        self.assertEqual(loaded.fusion.threshold("ast_type").origin, "probe")
+        self.assertIn("cry", loaded.fusion.baby_types)
+        with self.assertRaises(KeyError):
+            loaded.fusion.threshold("nope")
 
     def test_values_and_digest(self):
         config = load_audio_config()

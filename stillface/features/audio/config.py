@@ -149,6 +149,103 @@ class ModelConfig:
 
 
 @dataclass(frozen=True)
+class Threshold:
+    """A documented threshold.
+
+    Attributes:
+        value: Inclusive threshold on a score.
+        origin: ``vendor`` (the model's published default), ``probe`` (our 3-session probe)
+            or ``config`` (placeholder set here); see
+            :data:`stillface.features.audio.lanes.ORIGINS`.
+    """
+
+    value: float = 0.5
+    origin: str = "config"
+
+
+@dataclass(frozen=True)
+class TypeRule:
+    """Model classes that vote for one vocalisation type.
+
+    Attributes:
+        ast: AudioSet class names (AST).
+        littlebeats: LittleBeats head classes.
+    """
+
+    ast: tuple[str, ...] = ()
+    littlebeats: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class GongConfig:
+    """Phase-boundary gong detection.
+
+    Attributes:
+        classes: AudioSet classes counted as the gong.
+        edge_s: Only the first and last ``edge_s`` seconds of a phase are searched.
+        dilate_s: The detected gong is widened by this much on both sides.
+    """
+
+    classes: tuple[str, ...] = ("Gong", "Bell", "Chime", "Singing bowl")
+    edge_s: float = 5.0
+    dilate_s: float = 0.5
+
+
+@dataclass(frozen=True)
+class ContextConfig:
+    """Non-vocal context sounds to flag.
+
+    Attributes:
+        classes: AudioSet classes summarised per phase.
+        listen_share: A class present at least this share of a phase sends the session to
+            the listening list.
+    """
+
+    classes: tuple[str, ...] = ("Music",)
+    listen_share: float = 0.2
+
+
+@dataclass(frozen=True)
+class FusionConfig:
+    """Rule-based fusion of the model outputs.
+
+    Attributes:
+        thresholds: Named thresholds (``silero``, ``pyannote``, ``ast_type``, ``littlebeats``,
+            ``gong``, ``context``).
+        gong: Gong detection.
+        context: Context flags.
+        baby_types: Baby vocalisation type mapped to its voting classes.
+        mother_types: Mother vocalisation type mapped to its AST classes; ``speech`` is the
+            default when none reaches the threshold.
+        disagreement_listen_share: VAD disagreement share of a phase that sends it to the
+            listening list.
+    """
+
+    thresholds: dict[str, Threshold] = field(default_factory=dict)
+    gong: GongConfig = field(default_factory=GongConfig)
+    context: ContextConfig = field(default_factory=ContextConfig)
+    baby_types: dict[str, TypeRule] = field(default_factory=dict)
+    mother_types: dict[str, TypeRule] = field(default_factory=dict)
+    disagreement_listen_share: float = 0.2
+
+    def threshold(self, name: str) -> Threshold:
+        """A named threshold.
+
+        Args:
+            name: Threshold name.
+
+        Returns:
+            The threshold.
+
+        Raises:
+            KeyError: If it is not configured.
+        """
+        if name not in self.thresholds:
+            raise KeyError(f"Threshold {name!r} is not configured")
+        return self.thresholds[name]
+
+
+@dataclass(frozen=True)
 class AudioConfig:
     """Audio pipeline configuration.
 
@@ -160,6 +257,7 @@ class AudioConfig:
         prepare: Prepared audio format.
         models: Model name mapped to how it is run.
         roles: Role assignment settings.
+        fusion: Fusion rules and thresholds.
     """
 
     version: int = CONFIG_VERSION
@@ -169,6 +267,7 @@ class AudioConfig:
     prepare: PrepareConfig = field(default_factory=PrepareConfig)
     models: dict[str, ModelConfig] = field(default_factory=dict)
     roles: RolesConfig = field(default_factory=RolesConfig)
+    fusion: FusionConfig = field(default_factory=FusionConfig)
 
     @property
     def digest(self) -> str:

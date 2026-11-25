@@ -26,8 +26,9 @@ from stillface.features.io import write_atomic
 GRID_RATE_HZ: float = 10.0
 """Sampling rate of the common lane grid."""
 
-ROLES: tuple[str, ...] = ("baby", "mother", "other", "context", "dyad")
-"""Who a lane, band or event describes; ``context`` covers non-vocal sounds."""
+ROLES: tuple[str, ...] = ("baby", "mother", "other", "adult", "context", "dyad")
+"""Who a lane, band or event describes: ``adult`` is an adult voice before the mother /
+other split, ``context`` covers non-vocal sounds, ``dyad`` both partners together."""
 
 ORIGINS: tuple[str, ...] = ("vendor", "probe", "config")
 """Where a threshold comes from: the model's published default, the probe, or our config."""
@@ -215,11 +216,14 @@ def to_grid(
     duration_s: float,
     spec: LaneSpec,
     rate_hz: float = GRID_RATE_HZ,
+    hold_s: float = 0.0,
 ) -> Lane:
     """Resample native-rate samples onto the lane grid.
 
     Bin ``k`` collects the samples with ``round(t * rate_hz) == k``. Samples outside the
-    phase and NaN samples are ignored; empty bins are NaN.
+    phase and NaN samples are ignored; empty bins are NaN unless a sample lies within
+    ``hold_s`` of the bin time, whose value is then held (for sources slower than the grid,
+    e.g. AST windows every 0.25 s).
 
     Args:
         times: Sample times in seconds, phase-local.
@@ -227,6 +231,7 @@ def to_grid(
         duration_s: Phase duration.
         spec: Lane description, its aggregation is applied.
         rate_hz: Grid rate.
+        hold_s: Largest distance to the nearest sample for filling an empty bin.
 
     Returns:
         The lane.
@@ -254,6 +259,18 @@ def to_grid(
         np.add.at(counts, (index, codes), 1)
         filled = counts.sum(axis=1) > 0
         out[filled] = counts[filled].argmax(axis=1)
+    if hold_s > 0 and index.size:
+        grid = grid_times(duration_s, rate_hz)
+        order = np.argsort(times[keep])
+        sample_times, sample_values = times[keep][order], values[order]
+        empty = np.flatnonzero(np.isnan(out))
+        pos = np.searchsorted(sample_times, grid[empty])
+        lo = np.clip(pos - 1, 0, len(sample_times) - 1)
+        hi = np.clip(pos, 0, len(sample_times) - 1)
+        left = np.abs(grid[empty] - sample_times[lo]) <= np.abs(sample_times[hi] - grid[empty])
+        nearest = np.where(left, lo, hi)
+        close = np.abs(sample_times[nearest] - grid[empty]) <= hold_s + 1e-9
+        out[empty[close]] = sample_values[nearest[close]]
     return Lane(spec, out)
 
 
