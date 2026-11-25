@@ -68,7 +68,7 @@ class AudeeringWorker:
                 self.dropout = nn.Dropout(config.final_dropout)
                 self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
 
-            def forward(self, x: Any) -> Any:  # ty: ignore[invalid-mutable-override]
+            def forward(self, x: Any) -> Any:
                 x = self.dropout(x)
                 x = torch.tanh(self.dense(x))
                 return self.out_proj(self.dropout(x))
@@ -80,7 +80,7 @@ class AudeeringWorker:
                 self.classifier = RegressionHead(config)
                 self.post_init()
 
-            def forward(self, input_values: Any) -> Any:  # ty: ignore[invalid-mutable-override]
+            def forward(self, input_values: Any) -> Any:
                 hidden = self.wav2vec2(input_values)[0].mean(dim=1)
                 return hidden, self.classifier(hidden)
 

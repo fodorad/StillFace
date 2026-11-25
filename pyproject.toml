@@ -128,3 +128,6 @@ include = [
 
 [tool.ty.overrides.rules]
 unresolved-import = "ignore"
+# torch modules defined in the workers override nn.Module.forward; whether ty flags that
+# depends on torch being installed (locally yes, in CI no), so it is off for these files.
+invalid-mutable-override = "ignore"
