@@ -43,6 +43,7 @@ Functions
    stillface.features.audio.workers.base.torch_device
    stillface.features.audio.workers.base.window_starts
    stillface.features.audio.workers.base.fixed_windows
+   stillface.features.audio.workers.base.segment_windows
 
 
 Module Contents
@@ -139,5 +140,19 @@ Module Contents
    :param window_s: Window length.
 
    :returns: Array of shape ``(len(starts), round(window_s * rate))``.
+
+
+.. py:function:: segment_windows(segments: tuple[stillface.features.audio.models.Segment, ...], window_s: float, hop_s: float) -> tuple[stillface.features.audio.models.Segment, ...]
+
+   Analysis windows inside segments.
+
+   Windows never cross a segment edge: a segment shorter than ``window_s`` gives one window
+   equal to the segment, a longer one gives windows every ``hop_s`` that end inside it.
+
+   :param segments: Role segments.
+   :param window_s: Window length.
+   :param hop_s: Hop between windows.
+
+   :returns: Windows in time order, carrying the role and label of their segment.
 
 

@@ -228,7 +228,9 @@
 <li class="toctree-l5 has-children"><a class="reference internal" href="../../../../../autoapi/stillface/features/audio/workers/index.html">stillface.features.audio.workers</a><input aria-label="Toggle navigation of stillface.features.audio.workers" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l6"><a class="reference internal" href="../../../../../autoapi/stillface/features/audio/workers/addressee/index.html">stillface.features.audio.workers.addressee</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../../../../autoapi/stillface/features/audio/workers/ast_audioset/index.html">stillface.features.audio.workers.ast_audioset</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../../autoapi/stillface/features/audio/workers/audeering/index.html">stillface.features.audio.workers.audeering</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../../../../autoapi/stillface/features/audio/workers/base/index.html">stillface.features.audio.workers.base</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../../autoapi/stillface/features/audio/workers/emotion2vec/index.html">stillface.features.audio.workers.emotion2vec</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../../../../autoapi/stillface/features/audio/workers/littlebeats/index.html">stillface.features.audio.workers.littlebeats</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../../../../autoapi/stillface/features/audio/workers/pyannote_worker/index.html">stillface.features.audio.workers.pyannote_worker</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../../../../../autoapi/stillface/features/audio/workers/silero/index.html">stillface.features.audio.workers.silero</a></li>
@@ -318,6 +320,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.models</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">InferenceRequest</span><span class="p">,</span>
     <span class="n">InferenceResult</span><span class="p">,</span>
+    <span class="n">Segment</span><span class="p">,</span>
     <span class="n">request_from_dict</span><span class="p">,</span>
     <span class="n">save_result</span><span class="p">,</span>
 <span class="p">)</span>
@@ -481,6 +484,37 @@
         <span class="n">part</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">start</span> <span class="o">*</span> <span class="n">rate</span><span class="p">)</span> <span class="p">:][:</span><span class="n">size</span><span class="p">]</span>
         <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">part</span><span class="p">)]</span> <span class="o">=</span> <span class="n">part</span>
     <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="segment_windows">
+<a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/base/index.html#stillface.features.audio.workers.base.segment_windows">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">segment_windows</span><span class="p">(</span>
+    <span class="n">segments</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Segment</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">window_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">hop_s</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Segment</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Analysis windows inside segments.</span>
+
+<span class="sd">    Windows never cross a segment edge: a segment shorter than ``window_s`` gives one window</span>
+<span class="sd">    equal to the segment, a longer one gives windows every ``hop_s`` that end inside it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        segments: Role segments.</span>
+<span class="sd">        window_s: Window length.</span>
+<span class="sd">        hop_s: Hop between windows.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Windows in time order, carrying the role and label of their segment.</span>
+<span class="sd">    """</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">:</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">end_s</span> <span class="o">-</span> <span class="n">segment</span><span class="o">.</span><span class="n">start_s</span>
+        <span class="k">if</span> <span class="n">duration</span> <span class="o">&lt;=</span> <span class="n">window_s</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="n">window_starts</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">window_s</span><span class="p">,</span> <span class="n">hop_s</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">start_s</span> <span class="o">+</span> <span class="n">start</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Segment</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">window_s</span><span class="p">,</span> <span class="n">segment</span><span class="o">.</span><span class="n">role</span><span class="p">,</span> <span class="n">segment</span><span class="o">.</span><span class="n">label</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

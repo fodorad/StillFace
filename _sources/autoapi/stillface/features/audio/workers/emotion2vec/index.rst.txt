@@ -1,0 +1,112 @@
+stillface.features.audio.workers.emotion2vec
+============================================
+
+.. py:module:: stillface.features.audio.workers.emotion2vec
+
+.. autoapi-nested-parse::
+
+   emotion2vec+ worker: nine emotion category probabilities per window (environment ``e2v``).
+
+   emotion2vec+ large (Ma et al. 2024) is a data2vec-style speech emotion model fine-tuned on
+   about 40k h of pseudo-labelled speech. Input: the raw 16 kHz waveform of one window;
+   output: probabilities of nine categories and an utterance embedding. It cross-checks the
+   audEERING dimensions for the mother (valence and arousal are derived from the categories in
+   the affect stage).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.emotion2vec.MODEL_ID
+   stillface.features.audio.workers.emotion2vec.CLASSES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.emotion2vec.Emotion2vecWorker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.emotion2vec.class_name
+   stillface.features.audio.workers.emotion2vec.postprocess
+
+
+Module Contents
+---------------
+
+.. py:data:: MODEL_ID
+   :type:  str
+   :value: 'emotion2vec/emotion2vec_plus_large'
+
+
+   Hugging Face model id.
+
+.. py:data:: CLASSES
+   :type:  tuple[str, ...]
+   :value: ('angry', 'disgusted', 'fearful', 'happy', 'neutral', 'other', 'sad', 'surprised', 'unknown')
+
+
+   Output categories in model order (``tokens.txt``; ``<unk>`` is ``unknown``).
+
+.. py:function:: class_name(token: str) -> str
+
+   English category of a model token such as ``开心/happy`` or ``<unk>``.
+
+   :param token: Model label.
+
+   :returns: One of :data:`CLASSES`.
+
+   :raises ValueError: If the token is not a known category.
+
+
+.. py:function:: postprocess(windows: tuple[stillface.features.audio.models.Segment, ...], labels: list[list[str]], scores: list[list[float]], embeddings: numpy.ndarray) -> stillface.features.audio.models.SegmentScores
+
+   Window probabilities in :data:`CLASSES` order, renormalised to sum to one.
+
+   :param windows: Scored windows.
+   :param labels: Model labels per window.
+   :param scores: Scores per window, aligned with ``labels``.
+   :param embeddings: Utterance embeddings, shape ``(n, d)``.
+
+   :returns: The window scores.
+
+   :raises ValueError: If counts disagree.
+
+
+.. py:class:: Emotion2vecWorker
+
+   Scores windows inside the requested segments.
+
+
+   .. py:method:: load(options: dict[str, Any]) -> dict[str, Any]
+
+      Load emotion2vec+ through FunASR from the Hugging Face hub.
+
+
+
+   .. py:method:: forward(clips: list[numpy.ndarray], rate: int) -> tuple[list[list[str]], list[list[float]], numpy.ndarray]
+
+      Labels, scores and embeddings for each clip.
+
+
+
+   .. py:method:: infer(request: stillface.features.audio.models.InferenceRequest) -> stillface.features.audio.models.InferenceResult
+
+      Emotion probabilities of every window of the requested segments.
+
+      :param request: Segment request.
+
+      :returns: ``windows`` segment scores.
+
+
+

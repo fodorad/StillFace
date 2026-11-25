@@ -1,0 +1,99 @@
+stillface.features.audio.workers.audeering
+==========================================
+
+.. py:module:: stillface.features.audio.workers.audeering
+
+.. autoapi-nested-parse::
+
+   audEERING worker: arousal, dominance and valence per window (environment ``hf``).
+
+   wav2vec 2.0 large-robust (12 layers) fine-tuned on MSP-Podcast for dimensional emotion
+   (Wagner et al. 2023). Input: the raw 16 kHz waveform of one window; output: arousal,
+   dominance and valence, each roughly in ``[0, 1]``, plus the pooled 1024-d hidden state. It is
+   already trained; we only run it. Trained on adult podcast speech: acceptable for the mother,
+   experimental for the baby.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.audeering.MODEL_ID
+   stillface.features.audio.workers.audeering.DIMENSIONS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.audeering.AudeeringWorker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.audeering.postprocess
+
+
+Module Contents
+---------------
+
+.. py:data:: MODEL_ID
+   :type:  str
+   :value: 'audeering/wav2vec2-large-robust-12-ft-emotion-msp-dim'
+
+
+   Hugging Face model id.
+
+.. py:data:: DIMENSIONS
+   :type:  tuple[str, ...]
+   :value: ('arousal', 'dominance', 'valence')
+
+
+   Output order of the regression head.
+
+.. py:function:: postprocess(windows: tuple[stillface.features.audio.models.Segment, ...], values: numpy.ndarray, embeddings: numpy.ndarray) -> stillface.features.audio.models.SegmentScores
+
+   Window scores with values clipped to ``[0, 1]``.
+
+   :param windows: Scored windows.
+   :param values: Regression outputs, shape ``(n, 3)`` in :data:`DIMENSIONS` order.
+   :param embeddings: Pooled hidden states, shape ``(n, d)``.
+
+   :returns: The window scores.
+
+   :raises ValueError: If shapes disagree.
+
+
+.. py:class:: AudeeringWorker
+
+   Scores windows inside the requested segments.
+
+
+   .. py:method:: load(options: dict[str, Any]) -> dict[str, Any]
+
+      Build the model card's EmotionModel and load the pinned weights.
+
+
+
+   .. py:method:: forward(clips: list[numpy.ndarray], rate: int) -> tuple[numpy.ndarray, numpy.ndarray]
+
+      Regression outputs and pooled states for each clip.
+
+
+
+   .. py:method:: infer(request: stillface.features.audio.models.InferenceRequest) -> stillface.features.audio.models.InferenceResult
+
+      Affect dimensions of every window of the requested segments.
+
+      :param request: Segment request.
+
+      :returns: ``windows`` segment scores.
+
+
+
