@@ -9,6 +9,7 @@ from pathlib import Path
 from stillface.config import DatasetPaths
 from stillface.constants import PHASES
 from stillface.data_preparation.metadata import load_metadata
+from stillface.features.audio.affect import run_affect
 from stillface.features.audio.asr import builder_for, run_asr_flags
 from stillface.features.audio.config import DEFAULT_CONFIG_PATH, load_audio_config
 from stillface.features.audio.decisions import decision_rows, to_html, to_markdown
@@ -56,7 +57,9 @@ def add_audio_parser(groups: argparse._SubParsersAction) -> None:
     gate.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
     asr = audio.add_parser("asr", help="Flag ASR words outside the mother's segments")
     asr.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
-    for step in (inventory, prepare, infer, roles, fuse, gate, asr):
+    affect = audio.add_parser("affect", help="Mother and baby arousal / valence lanes")
+    affect.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
+    for step in (inventory, prepare, infer, roles, fuse, gate, asr, affect):
         step.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="Audio config")
 
 
@@ -138,4 +141,7 @@ def run_audio(args: argparse.Namespace, paths: DatasetPaths) -> int:
     elif args.command == "asr":
         for session in args.session_id or scope_sessions(paths):
             run_asr_flags(paths, session, config)
+    elif args.command == "affect":
+        for session in args.session_id or scope_sessions(paths):
+            run_affect(paths, session, config)
     return 0

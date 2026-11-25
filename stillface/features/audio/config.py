@@ -261,6 +261,25 @@ class GatingConfig:
 
 
 @dataclass(frozen=True)
+class AffectConfig:
+    """Affect lanes.
+
+    Attributes:
+        baby_valence_weights: Weight of each baby type probability in the derived valence
+            (``valence = sum(weight * p(type))``, clipped to ``[-1, 1]``).
+        baby_arousal_features: Features averaged (after within-session min-max scaling) into
+            the derived baby arousal: ``intensity``, ``f0`` and ``cry``.
+        min_agreement_frames: Fewest shared frames needed for a model agreement value.
+    """
+
+    baby_valence_weights: dict[str, float] = field(
+        default_factory=lambda: {"cry": -1.0, "fuss": -0.5, "laugh": 1.0}
+    )
+    baby_arousal_features: tuple[str, ...] = ("intensity", "f0", "cry")
+    min_agreement_frames: int = 20
+
+
+@dataclass(frozen=True)
 class AudioConfig:
     """Audio pipeline configuration.
 
@@ -274,6 +293,7 @@ class AudioConfig:
         roles: Role assignment settings.
         fusion: Fusion rules and thresholds.
         gating: Gated track settings.
+        affect: Affect lane settings.
     """
 
     version: int = CONFIG_VERSION
@@ -285,6 +305,7 @@ class AudioConfig:
     roles: RolesConfig = field(default_factory=RolesConfig)
     fusion: FusionConfig = field(default_factory=FusionConfig)
     gating: GatingConfig = field(default_factory=GatingConfig)
+    affect: AffectConfig = field(default_factory=AffectConfig)
 
     @property
     def digest(self) -> str:

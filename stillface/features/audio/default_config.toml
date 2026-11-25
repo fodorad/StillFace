@@ -92,6 +92,16 @@ ast = ["Laughter", "Giggle", "Chuckle, chortle", "Belly laugh"]
 # pad_s, silence elsewhere; overlaps are listed, not separated (phase 1).
 pad_s = 0.3
 
+[affect]
+# Baby valence = -1 p(cry) - 0.5 p(fuss) + 1 p(laugh); arousal = mean of the session-scaled
+# loudness, F0 and p(cry). Equal weights until the descriptive statistics.
+baby_arousal_features = ["intensity", "f0", "cry"]
+min_agreement_frames = 20
+[affect.baby_valence_weights]
+cry = -1.0
+fuss = -0.5
+laugh = 1.0
+
 [prepare]
 # 16-bit PCM mono, no gain or normalisation: levels stay comparable across sessions.
 sample_rate = 16000
