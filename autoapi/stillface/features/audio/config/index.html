@@ -224,6 +224,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../prosody/index.html">stillface.features.audio.prosody</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../provenance/index.html">stillface.features.audio.provenance</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../registry/index.html">stillface.features.audio.registry</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../roles/index.html">stillface.features.audio.roles</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../smoke/index.html">stillface.features.audio.smoke</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../subprocess_adapter/index.html">stillface.features.audio.subprocess_adapter</a></li>
 <li class="toctree-l5 has-children"><a class="reference internal" href="../workers/index.html">stillface.features.audio.workers</a><input aria-label="Toggle navigation of stillface.features.audio.workers" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -342,10 +343,13 @@ is copied into each run record and its hash into every provenance sidecar.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.PrepareConfig" title="stillface.features.audio.config.PrepareConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrepareConfig</span></code></a></p></td>
 <td><p>Prepared analysis audio.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.ModelConfig" title="stillface.features.audio.config.ModelConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModelConfig</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.RolesConfig" title="stillface.features.audio.config.RolesConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RolesConfig</span></code></a></p></td>
+<td><p>Who is who: VTC voice types to roles, and the mother's voice enrolment.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.ModelConfig" title="stillface.features.audio.config.ModelConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModelConfig</span></code></a></p></td>
 <td><p>How one model is run.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AudioConfig</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AudioConfig</span></code></a></p></td>
 <td><p>Audio pipeline configuration.</p></td>
 </tr>
 </tbody>
@@ -446,6 +450,66 @@ The baby-cam phone lies next to the mother’s head and hears both partners.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.audio.config.RolesConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">RolesConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#RolesConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.RolesConfig" title="Link to this definition">¶</a></dt>
+<dd><p>Who is who: VTC voice types to roles, and the mother’s voice enrolment.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.RolesConfig.vtc_model">
+<span class="sig-name descname"><span class="pre">vtc_model</span></span><a class="headerlink" href="#stillface.features.audio.config.RolesConfig.vtc_model" title="Link to this definition">¶</a></dt>
+<dd><p>Model whose segments give the voice types.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.RolesConfig.embedding_model">
+<span class="sig-name descname"><span class="pre">embedding_model</span></span><a class="headerlink" href="#stillface.features.audio.config.RolesConfig.embedding_model" title="Link to this definition">¶</a></dt>
+<dd><p>Model whose segment embeddings identify the mother.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.RolesConfig.baby_labels">
+<span class="sig-name descname"><span class="pre">baby_labels</span></span><a class="headerlink" href="#stillface.features.audio.config.RolesConfig.baby_labels" title="Link to this definition">¶</a></dt>
+<dd><p>VTC classes that are the baby (no siblings: key child and other child).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.RolesConfig.enrol_phase">
+<span class="sig-name descname"><span class="pre">enrol_phase</span></span><a class="headerlink" href="#stillface.features.audio.config.RolesConfig.enrol_phase" title="Link to this definition">¶</a></dt>
+<dd><p>Phase whose female speech enrols the mother’s voice.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.RolesConfig.fallback_phase">
+<span class="sig-name descname"><span class="pre">fallback_phase</span></span><a class="headerlink" href="#stillface.features.audio.config.RolesConfig.fallback_phase" title="Link to this definition">¶</a></dt>
+<dd><p>Phase used when the enrolment phase has too little speech.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.RolesConfig.enrol_total_s">
+<span class="sig-name descname"><span class="pre">enrol_total_s</span></span><a class="headerlink" href="#stillface.features.audio.config.RolesConfig.enrol_total_s" title="Link to this definition">¶</a></dt>
+<dd><p>Longest female segments are used up to this total.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.RolesConfig.enrol_min_s">
+<span class="sig-name descname"><span class="pre">enrol_min_s</span></span><a class="headerlink" href="#stillface.features.audio.config.RolesConfig.enrol_min_s" title="Link to this definition">¶</a></dt>
+<dd><p>Less enrolment speech than this leaves the session unresolved.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.RolesConfig.tau_high">
+<span class="sig-name descname"><span class="pre">tau_high</span></span><a class="headerlink" href="#stillface.features.audio.config.RolesConfig.tau_high" title="Link to this definition">¶</a></dt>
+<dd><p>Cosine similarity at or above which a female segment is the mother.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.RolesConfig.tau_low">
+<span class="sig-name descname"><span class="pre">tau_low</span></span><a class="headerlink" href="#stillface.features.audio.config.RolesConfig.tau_low" title="Link to this definition">¶</a></dt>
+<dd><p>Cosine similarity at or below which it is another woman.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">ModelConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#ModelConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.ModelConfig" title="Link to this definition">¶</a></dt>
 <dd><p>How one model is run.</p>
@@ -517,6 +581,14 @@ score role segments (second pass).</p>
 e.g. until its outputs are verified.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.segment_source">
+<span class="sig-name descname"><span class="pre">segment_source</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.segment_source" title="Link to this definition">¶</a></dt>
+<dd><p>For <code class="docutils literal notranslate"><span class="pre">segments</span></code> models, where the segments come from:
+<code class="docutils literal notranslate"><span class="pre">vtc:&lt;labels&gt;</span></code> (VTC segments with these classes, e.g. <code class="docutils literal notranslate"><span class="pre">vtc:FEM,MAL</span></code>) or
+<code class="docutils literal notranslate"><span class="pre">roles:&lt;roles&gt;</span></code> (role segments, e.g. <code class="docutils literal notranslate"><span class="pre">roles:mother,baby</span></code>).</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.digest">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">digest</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.digest" title="Link to this definition">¶</a></dt>
@@ -563,6 +635,12 @@ e.g. until its outputs are verified.</p>
 <dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig.models">
 <span class="sig-name descname"><span class="pre">models</span></span><a class="headerlink" href="#stillface.features.audio.config.AudioConfig.models" title="Link to this definition">¶</a></dt>
 <dd><p>Model name mapped to how it is run.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig.roles">
+<span class="sig-name descname"><span class="pre">roles</span></span><a class="headerlink" href="#stillface.features.audio.config.AudioConfig.roles" title="Link to this definition">¶</a></dt>
+<dd><p>Role assignment settings.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -671,6 +749,18 @@ e.g. until its outputs are verified.</p>
 <li><a class="reference internal" href="#stillface.features.audio.config.PrepareConfig.sample_rate"><code class="docutils literal notranslate"><span class="pre">PrepareConfig.sample_rate</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#stillface.features.audio.config.RolesConfig"><code class="docutils literal notranslate"><span class="pre">RolesConfig</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.config.RolesConfig.vtc_model"><code class="docutils literal notranslate"><span class="pre">RolesConfig.vtc_model</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.RolesConfig.embedding_model"><code class="docutils literal notranslate"><span class="pre">RolesConfig.embedding_model</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.RolesConfig.baby_labels"><code class="docutils literal notranslate"><span class="pre">RolesConfig.baby_labels</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.RolesConfig.enrol_phase"><code class="docutils literal notranslate"><span class="pre">RolesConfig.enrol_phase</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.RolesConfig.fallback_phase"><code class="docutils literal notranslate"><span class="pre">RolesConfig.fallback_phase</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.RolesConfig.enrol_total_s"><code class="docutils literal notranslate"><span class="pre">RolesConfig.enrol_total_s</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.RolesConfig.enrol_min_s"><code class="docutils literal notranslate"><span class="pre">RolesConfig.enrol_min_s</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.RolesConfig.tau_high"><code class="docutils literal notranslate"><span class="pre">RolesConfig.tau_high</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.RolesConfig.tau_low"><code class="docutils literal notranslate"><span class="pre">RolesConfig.tau_low</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig"><code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.env"><code class="docutils literal notranslate"><span class="pre">ModelConfig.env</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.module"><code class="docutils literal notranslate"><span class="pre">ModelConfig.module</span></code></a></li>
@@ -683,6 +773,7 @@ e.g. until its outputs are verified.</p>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.options"><code class="docutils literal notranslate"><span class="pre">ModelConfig.options</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.input"><code class="docutils literal notranslate"><span class="pre">ModelConfig.input</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.enabled"><code class="docutils literal notranslate"><span class="pre">ModelConfig.enabled</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.segment_source"><code class="docutils literal notranslate"><span class="pre">ModelConfig.segment_source</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.digest"><code class="docutils literal notranslate"><span class="pre">ModelConfig.digest</span></code></a></li>
 </ul>
 </li>
@@ -693,6 +784,7 @@ e.g. until its outputs are verified.</p>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.inventory"><code class="docutils literal notranslate"><span class="pre">AudioConfig.inventory</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.prepare"><code class="docutils literal notranslate"><span class="pre">AudioConfig.prepare</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.models"><code class="docutils literal notranslate"><span class="pre">AudioConfig.models</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.roles"><code class="docutils literal notranslate"><span class="pre">AudioConfig.roles</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.digest"><code class="docutils literal notranslate"><span class="pre">AudioConfig.digest</span></code></a></li>
 </ul>
 </li>

@@ -1,0 +1,247 @@
+stillface.features.audio.roles
+==============================
+
+.. py:module:: stillface.features.audio.roles
+
+.. autoapi-nested-parse::
+
+   Roles: turn VTC voice types into mother, baby and other speakers.
+
+   VTC tells voice *types* apart (key child, other child, adult female, adult male), not
+   people. Here:
+
+   - the baby is every ``KCHI`` or ``OCH`` segment (no siblings take part), merged;
+   - an adult male (``MAL``) is another adult (father, experimenter);
+   - an adult female (``FEM``) segment is the mother only if its speaker embedding is close to
+     the mother's enrolled voice. Enrolment takes the dominant female voice of the play phase
+     (segments without baby overlap), see :func:`enrol`; with too little speech the reunion
+     phase is tried, and failing that the session stays unresolved.
+
+   Every decision carries a rule id; uncertain female segments, male segments and unresolved
+   sessions go to the listening list for the user to annotate.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.roles.logger
+   stillface.features.audio.roles.RULES
+   stillface.features.audio.roles.LISTENING_COLUMNS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.roles.Enrolment
+   stillface.features.audio.roles.ListeningItem
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.roles.merge_intervals
+   stillface.features.audio.roles.overlaps
+   stillface.features.audio.roles.vtc_segments
+   stillface.features.audio.roles.enrol
+   stillface.features.audio.roles.classify_female
+   stillface.features.audio.roles.roles_dir
+   stillface.features.audio.roles.role_events_path
+   stillface.features.audio.roles.assign_roles
+   stillface.features.audio.roles.role_segments
+   stillface.features.audio.roles.segment_builder
+   stillface.features.audio.roles.write_listening
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: RULES
+   :type:  dict[str, str]
+
+   Role rules, by id (rendered in the decision tables).
+
+.. py:function:: merge_intervals(segments: collections.abc.Sequence[stillface.features.audio.models.Segment]) -> list[tuple[float, float]]
+
+   Union of overlapping or touching intervals.
+
+   :param segments: Segments in any order.
+
+   :returns: Disjoint ``(start, end)`` intervals in time order.
+
+
+.. py:function:: overlaps(segment: stillface.features.audio.models.Segment, intervals: collections.abc.Sequence[tuple[float, float]]) -> bool
+
+   Whether a segment overlaps any interval.
+
+   :param segment: Segment.
+   :param intervals: ``(start, end)`` intervals.
+
+   :returns: True on a positive-length overlap.
+
+
+.. py:function:: vtc_segments(paths: stillface.config.DatasetPaths, session: str, phase: str, model: str) -> list[stillface.features.audio.models.Segment]
+
+   VTC segments of a phase, empty if VTC has not run.
+
+   :param paths: Dataset locations.
+   :param session: Session identifier.
+   :param phase: Experiment phase.
+   :param model: VTC model name.
+
+   :returns: Segments with the VTC class as ``label``.
+
+
+.. py:class:: Enrolment
+
+   The mother's enrolled voice.
+
+   .. attribute:: status
+
+      ``enrolled`` or ``no_enrolment``.
+
+   .. attribute:: phase
+
+      Phase the enrolment speech came from, empty if none.
+
+   .. attribute:: seconds
+
+      Total enrolment speech.
+
+   .. attribute:: segments
+
+      ``(start, end)`` of the segments used.
+
+   .. attribute:: centroid
+
+      Unit-length mean embedding, empty if not enrolled.
+
+
+.. py:function:: enrol(candidates: dict[str, list[tuple[stillface.features.audio.models.Segment, numpy.ndarray | None]]], baby: dict[str, list[tuple[float, float]]], config: stillface.features.audio.config.RolesConfig) -> Enrolment
+
+   Enrol the mother's voice from female segments.
+
+   The experimenter may speak in the enrolment phase too, so the female speech is not simply
+   averaged. Among the female segments without baby overlap, the *dominant voice* is the
+   segment whose embedding has the largest duration-weighted similarity to all the others
+   (the medoid; the mother speaks most). The enrolment then keeps the segments with
+   similarity ``>= tau_high`` to it, longest first, up to ``enrol_total_s``, and their
+   duration-weighted mean is the mother's voice.
+
+   :param candidates: Phase mapped to its FEM segments with their embeddings (None if missing).
+   :param baby: Phase mapped to the merged baby intervals.
+   :param config: Enrolment settings.
+
+   :returns: The enrolment; ``no_enrolment`` if neither phase has enough clean speech of one voice.
+
+
+.. py:function:: classify_female(similarity: float | None, enrolled: bool, config: stillface.features.audio.config.RolesConfig) -> tuple[str, str, str, float]
+
+   Role of a female segment.
+
+   :param similarity: Cosine similarity to the enrolled voice, None without embedding.
+   :param enrolled: Whether the session has an enrolment.
+   :param config: Thresholds.
+
+   :returns: ``(role, label, rule_id, confidence)``.
+
+
+.. py:class:: ListeningItem
+
+   Something the user should listen to and annotate.
+
+   .. attribute:: session
+
+      Session identifier.
+
+   .. attribute:: phase
+
+      Experiment phase, empty for session-level items.
+
+   .. attribute:: item
+
+      What it is (``uncertain_female``, ``male_adult``, ``no_enrolment`` ...).
+
+   .. attribute:: start_s
+
+      Phase-local start, NaN for session-level items.
+
+   .. attribute:: end_s
+
+      Phase-local end, NaN for session-level items.
+
+   .. attribute:: detail
+
+      Extra information (similarity, rule).
+
+
+.. py:function:: roles_dir(paths: stillface.config.DatasetPaths, session: str) -> pathlib.Path
+
+   Folder of the role outputs of a session.
+
+
+.. py:function:: role_events_path(paths: stillface.config.DatasetPaths, session: str, phase: str) -> pathlib.Path
+
+   Role events of a phase.
+
+
+.. py:function:: assign_roles(paths: stillface.config.DatasetPaths, session: str, config: stillface.features.audio.config.AudioConfig, phases: collections.abc.Sequence[str] = PHASES) -> list[ListeningItem]
+
+   Assign roles to every VTC segment of a session and write them.
+
+   Writes ``roles/<phase>.csv`` (events) and ``roles/enrolment.json``.
+
+   :param paths: Dataset locations.
+   :param session: Session identifier.
+   :param config: Audio configuration.
+   :param phases: Phases to process.
+
+   :returns: The session's listening items.
+
+
+.. py:function:: role_segments(paths: stillface.config.DatasetPaths, session: str, phase: str, roles: collections.abc.Sequence[str]) -> list[stillface.features.audio.models.Segment]
+
+   Role segments of a phase.
+
+   :param paths: Dataset locations.
+   :param session: Session identifier.
+   :param phase: Experiment phase.
+   :param roles: Roles to keep (``mother``, ``baby``, ``other``).
+
+   :returns: Segments with the role and the label, empty if roles were not assigned.
+
+
+.. py:function:: segment_builder(source: str, vtc_model: str = 'vtc') -> stillface.features.audio.infer.RequestBuilder
+
+   Request builder for a segment model.
+
+   :param source: ``vtc:<labels>`` or ``roles:<roles>`` (comma-separated names).
+   :param vtc_model: Name of the VTC model whose segments ``vtc:`` sources read.
+
+   :returns: A builder giving one request per phase with the matching segments (None if there
+             are none or no WAV).
+
+
+.. py:data:: LISTENING_COLUMNS
+   :type:  tuple[str, ...]
+   :value: ('session', 'phase', 'item', 'start_s', 'end_s', 'detail')
+
+
+   Columns of the listening list CSV.
+
+.. py:function:: write_listening(items: collections.abc.Sequence[ListeningItem], path: pathlib.Path) -> None
+
+   Write listening items as CSV, atomically.
+
+   :param items: Items.
+   :param path: Output file.
+
+

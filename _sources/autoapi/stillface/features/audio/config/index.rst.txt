@@ -30,6 +30,7 @@ Classes
    stillface.features.audio.config.ScopeConfig
    stillface.features.audio.config.InventoryConfig
    stillface.features.audio.config.PrepareConfig
+   stillface.features.audio.config.RolesConfig
    stillface.features.audio.config.ModelConfig
    stillface.features.audio.config.AudioConfig
 
@@ -106,6 +107,47 @@ Module Contents
       Output sample rate; every model reads 16 kHz mono.
 
 
+.. py:class:: RolesConfig
+
+   Who is who: VTC voice types to roles, and the mother's voice enrolment.
+
+   .. attribute:: vtc_model
+
+      Model whose segments give the voice types.
+
+   .. attribute:: embedding_model
+
+      Model whose segment embeddings identify the mother.
+
+   .. attribute:: baby_labels
+
+      VTC classes that are the baby (no siblings: key child and other child).
+
+   .. attribute:: enrol_phase
+
+      Phase whose female speech enrols the mother's voice.
+
+   .. attribute:: fallback_phase
+
+      Phase used when the enrolment phase has too little speech.
+
+   .. attribute:: enrol_total_s
+
+      Longest female segments are used up to this total.
+
+   .. attribute:: enrol_min_s
+
+      Less enrolment speech than this leaves the session unresolved.
+
+   .. attribute:: tau_high
+
+      Cosine similarity at or above which a female segment is the mother.
+
+   .. attribute:: tau_low
+
+      Cosine similarity at or below which it is another woman.
+
+
 .. py:class:: ModelConfig
 
    How one model is run.
@@ -156,6 +198,12 @@ Module Contents
       False keeps a configured model out of every run (recorded as disabled),
       e.g. until its outputs are verified.
 
+   .. attribute:: segment_source
+
+      For ``segments`` models, where the segments come from:
+      ``vtc:<labels>`` (VTC segments with these classes, e.g. ``vtc:FEM,MAL``) or
+      ``roles:<roles>`` (role segments, e.g. ``roles:mother,baby``).
+
 
    .. py:property:: digest
       :type: str
@@ -191,6 +239,10 @@ Module Contents
    .. attribute:: models
 
       Model name mapped to how it is run.
+
+   .. attribute:: roles
+
+      Role assignment settings.
 
 
    .. py:property:: digest
