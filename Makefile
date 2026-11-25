@@ -15,11 +15,11 @@ install:
 
 dev:
 	uv venv --python 3.13
-	uv pip install -e ".[dev,docs]"
+	uv pip install -e ".[dev,docs,audio]"
 	.venv/bin/pre-commit install
 
 upgrade:
-	uv pip install --upgrade -e ".[dev,docs]"
+	uv pip install --upgrade -e ".[dev,docs,audio]"
 
 # ── Dev helpers (modify files) ─────────────────────────────────────────────────
 

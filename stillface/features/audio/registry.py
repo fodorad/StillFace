@@ -14,8 +14,21 @@ ENVS_VAR: str = "STILLFACE_AUDIO_ENVS"
 InProcessFactory = Callable[[str, ModelConfig], ModelAdapter]
 """Builds an in-process adapter from the model name and its settings."""
 
-IN_PROCESS: dict[str, InProcessFactory] = {}
-"""In-process models (no ``env``), registered by their modules."""
+
+def _prosody(name: str, model: ModelConfig) -> ModelAdapter:
+    from stillface.features.audio.prosody import ProsodyAdapter
+
+    return ProsodyAdapter(name, model)
+
+
+def _egemaps(name: str, model: ModelConfig) -> ModelAdapter:
+    from stillface.features.audio.prosody import EgemapsAdapter
+
+    return EgemapsAdapter(name, model)
+
+
+IN_PROCESS: dict[str, InProcessFactory] = {"prosody": _prosody, "egemaps": _egemaps}
+"""In-process models (no ``env``) by name."""
 
 
 def envs_root(environ: Mapping[str, str] = os.environ) -> Path:

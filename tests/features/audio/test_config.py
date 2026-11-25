@@ -8,7 +8,11 @@ from stillface.features.config import ConfigError
 
 class TestAudioConfig(unittest.TestCase):
     def test_default_file_matches_dataclass_defaults(self):
-        self.assertEqual(load_audio_config(), AudioConfig())
+        from dataclasses import replace
+
+        loaded = load_audio_config()
+        self.assertEqual(replace(loaded, models={}), AudioConfig())
+        self.assertIn("prosody", loaded.models)
 
     def test_values_and_digest(self):
         config = load_audio_config()

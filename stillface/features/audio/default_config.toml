@@ -19,3 +19,19 @@ clip_level = 0.999
 [prepare]
 # 16-bit PCM mono, no gain or normalisation: levels stay comparable across sessions.
 sample_rate = 16000
+
+# ── Models ─────────────────────────────────────────────────────────────────────
+# In-process models have no `env`. Subprocess models name their environment below
+# $STILLFACE_AUDIO_ENVS, the worker module and the exact weights revision.
+
+[models.prosody]
+# Parselmouth (Praat) F0 in two ranges, intensity and HNR every 10 ms.
+[models.prosody.options]
+time_step = "0.01"
+adult_f0_min = "100"
+adult_f0_max = "700"
+infant_f0_min = "150"
+infant_f0_max = "1000"
+
+[models.egemaps]
+# openSMILE eGeMAPS v02 functionals per role segment.
