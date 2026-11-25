@@ -1,0 +1,170 @@
+stillface.features.audio.infer
+==============================
+
+.. py:module:: stillface.features.audio.infer
+
+.. autoapi-nested-parse::
+
+   Inference stage: run one model over every pending session phase.
+
+   The stage is model-major: it collects every request whose output is missing or stale,
+   hands them to the adapter in one batch (one model load), and stores each result as
+   ``raw/<model>/<phase>[_<track>].npz`` with its text artefacts next to it and a provenance
+   sidecar. An output is stale when the input WAV, the scored segments, the model settings, the
+   worker version or the weights revision changed.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.infer.logger
+   stillface.features.audio.infer.RequestBuilder
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.infer.StageReport
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.infer.split_key
+   stillface.features.audio.infer.raw_path
+   stillface.features.audio.infer.wav_duration
+   stillface.features.audio.infer.full_wav_request
+   stillface.features.audio.infer.segments_digest
+   stillface.features.audio.infer.expected_provenance
+   stillface.features.audio.infer.run_model
+   stillface.features.audio.infer.load_raw
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: RequestBuilder
+
+   Builds the request of ``(paths, session, phase)``, None if its input is not available.
+
+.. py:function:: split_key(key: str) -> tuple[str, str, str]
+
+   Split a request key.
+
+   :param key: ``<session>/<phase>[/<track>]``.
+
+   :returns: ``(session, phase, track)``, track empty for the full phase audio.
+
+
+.. py:function:: raw_path(paths: stillface.config.DatasetPaths, model: str, key: str) -> pathlib.Path
+
+   Raw output of a model for a request key.
+
+   :param paths: Dataset locations.
+   :param model: Model name.
+   :param key: Request key.
+
+   :returns: ``<audio session dir>/raw/<model>/<phase>[_<track>].npz``.
+
+
+.. py:function:: wav_duration(path: pathlib.Path) -> float
+
+   Duration of a prepared WAV, from its sidecar if present.
+
+   :param path: Prepared WAV.
+
+   :returns: Seconds.
+
+
+.. py:function:: full_wav_request(paths: stillface.config.DatasetPaths, session: str, phase: str) -> stillface.features.audio.models.InferenceRequest | None
+
+   Request for the whole prepared WAV of a phase (first-pass models).
+
+   :param paths: Dataset locations.
+   :param session: Session identifier.
+   :param phase: Experiment phase.
+
+   :returns: The request, None if the WAV was not prepared.
+
+
+.. py:function:: segments_digest(request: stillface.features.audio.models.InferenceRequest) -> str | None
+
+   Hash of the scored segments, None for whole-WAV requests.
+
+   :param request: Request.
+
+   :returns: Short SHA-256 of the segment list.
+
+
+.. py:function:: expected_provenance(adapter: stillface.features.audio.models.ModelAdapter, model: stillface.features.audio.config.ModelConfig, request: stillface.features.audio.models.InferenceRequest) -> dict[str, Any]
+
+   Sidecar keys that must match for an output to be up to date.
+
+   :param adapter: Model adapter.
+   :param model: Model settings.
+   :param request: Request of the output.
+
+   :returns: Input hash, segment hash, model name and settings digest, worker version and
+             weights revision.
+
+
+.. py:class:: StageReport
+
+   Outcome of an inference stage.
+
+   .. attribute:: model
+
+      Model name.
+
+   .. attribute:: written
+
+      Request keys whose output was written.
+
+   .. attribute:: kept
+
+      Request keys already up to date.
+
+   .. attribute:: skipped
+
+      ``session/phase`` items without input.
+
+   .. attribute:: failed
+
+      Request key mapped to the error message.
+
+
+.. py:function:: run_model(paths: stillface.config.DatasetPaths, adapter: stillface.features.audio.models.ModelAdapter, model: stillface.features.audio.config.ModelConfig, sessions: collections.abc.Iterable[str], phases: collections.abc.Sequence[str] = PHASES, builder: RequestBuilder = full_wav_request, overwrite: bool = False) -> StageReport
+
+   Run a model on every pending session phase in one batch.
+
+   :param paths: Dataset locations.
+   :param adapter: Model adapter.
+   :param model: Model settings (their digest goes into the sidecars).
+   :param sessions: Sessions to process.
+   :param phases: Phases to process.
+   :param builder: Request builder; whole prepared WAVs by default.
+   :param overwrite: Recompute up-to-date outputs.
+
+   :returns: The report, also written to ``<audio dir>/runs/<model>.json``.
+
+
+.. py:function:: load_raw(paths: stillface.config.DatasetPaths, model: str, key: str) -> stillface.features.audio.models.InferenceResult | None
+
+   Load a stored raw output.
+
+   :param paths: Dataset locations.
+   :param model: Model name.
+   :param key: Request key.
+
+   :returns: The stored result, None if missing.
+
+

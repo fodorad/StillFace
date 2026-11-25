@@ -1,0 +1,86 @@
+stillface.features.audio.subprocess_adapter
+===========================================
+
+.. py:module:: stillface.features.audio.subprocess_adapter
+
+.. autoapi-nested-parse::
+
+   Run a model worker in its own environment as a child process.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.subprocess_adapter.logger
+   stillface.features.audio.subprocess_adapter.PACKAGE_ROOT
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.subprocess_adapter.SubprocessAdapter
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: PACKAGE_ROOT
+   :type:  pathlib.Path
+
+   Folder containing the ``stillface`` package, put on the worker's ``PYTHONPATH``.
+
+.. py:class:: SubprocessAdapter
+
+   Model adapter that runs a worker module with another interpreter.
+
+   .. attribute:: name
+
+      Model name.
+
+   .. attribute:: python
+
+      Interpreter of the model environment.
+
+   .. attribute:: module
+
+      Worker module, run with ``-m``.
+
+   .. attribute:: worker_version
+
+      Version of the worker code.
+
+   .. attribute:: weights_revision
+
+      Exact weights revision; required.
+
+   .. attribute:: options
+
+      Model options passed to the worker's ``load``.
+
+   .. attribute:: timeout_s
+
+      Wall-clock limit for one batch.
+
+   .. attribute:: pythonpath
+
+      Extra import roots; the package root by default.
+
+
+   .. py:method:: run(requests: list[stillface.features.audio.models.InferenceRequest]) -> list[stillface.features.audio.models.InferenceResult | stillface.features.audio.models.InferenceError]
+
+      Run the worker once for the whole batch.
+
+      :param requests: Inputs.
+
+      :returns: One result or error per request; a timeout or crash turns every request without
+                an output into an error.
+
+
+

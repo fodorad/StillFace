@@ -1,0 +1,238 @@
+stillface.features.audio.models
+===============================
+
+.. py:module:: stillface.features.audio.models
+
+.. autoapi-nested-parse::
+
+   Model adapters: one interface for every model of the audio pipeline.
+
+   A model adapter turns a batch of :class:`InferenceRequest` (a prepared WAV, optionally
+   with segments to score) into one :class:`InferenceResult` or :class:`InferenceError` per
+   request. Heavy models run in their own environments as worker processes
+   (:class:`~stillface.features.audio.subprocess_adapter.SubprocessAdapter`), light ones
+   in-process; the stages never know which.
+
+   This module is imported by the worker processes too, so it depends on nothing but the
+   standard library and numpy.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.models.Segment
+   stillface.features.audio.models.InferenceRequest
+   stillface.features.audio.models.FrameScores
+   stillface.features.audio.models.SegmentScores
+   stillface.features.audio.models.InferenceResult
+   stillface.features.audio.models.InferenceError
+   stillface.features.audio.models.ModelAdapter
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.models.save_result
+   stillface.features.audio.models.load_result
+   stillface.features.audio.models.request_to_dict
+   stillface.features.audio.models.request_from_dict
+
+
+Module Contents
+---------------
+
+.. py:class:: Segment
+
+   A time interval to score.
+
+   .. attribute:: start_s
+
+      Phase-local start.
+
+   .. attribute:: end_s
+
+      Phase-local end.
+
+   .. attribute:: role
+
+      Role of the segment (``baby``, ``mother``, ...).
+
+   .. attribute:: label
+
+      Optional label, e.g. the VTC class.
+
+
+.. py:class:: InferenceRequest
+
+   One input of a model.
+
+   .. attribute:: key
+
+      Identifier of the item, ``<session>/<phase>[/<track>]``.
+
+   .. attribute:: wav
+
+      Prepared 16 kHz mono WAV.
+
+   .. attribute:: duration_s
+
+      Duration of the WAV.
+
+   .. attribute:: segments
+
+      Segments to score; None for models that read the whole WAV.
+
+   .. attribute:: options
+
+      Per-request options.
+
+
+.. py:class:: FrameScores
+
+   Scores on a time axis.
+
+   .. attribute:: times
+
+      Frame centre times in seconds, shape ``(n,)``.
+
+   .. attribute:: names
+
+      Score names, length ``k``.
+
+   .. attribute:: values
+
+      Scores, shape ``(n, k)``.
+
+
+.. py:class:: SegmentScores
+
+   Scores per segment.
+
+   .. attribute:: segments
+
+      Scored segments, length ``m``.
+
+   .. attribute:: names
+
+      Score names, length ``k``.
+
+   .. attribute:: values
+
+      Scores, shape ``(m, k)``.
+
+   .. attribute:: embeddings
+
+      Optional vectors, shape ``(m, d)``.
+
+
+.. py:class:: InferenceResult
+
+   Native output of a model for one request.
+
+   .. attribute:: key
+
+      Request key.
+
+   .. attribute:: frames
+
+      Named frame-score groups.
+
+   .. attribute:: segments
+
+      Named segment-score groups.
+
+   .. attribute:: artefacts
+
+      Named text outputs (RTTM, transcript JSON, TextGrid) by file suffix.
+
+   .. attribute:: meta
+
+      Extra provenance reported by the model (device, model version).
+
+
+.. py:class:: InferenceError
+
+   A request a model could not process.
+
+   .. attribute:: key
+
+      Request key.
+
+   .. attribute:: message
+
+      What went wrong.
+
+
+.. py:class:: ModelAdapter
+
+   Bases: :py:obj:`Protocol`
+
+
+   Runs one model on batches of requests.
+
+   .. attribute:: name
+
+      Model name, the folder of its raw outputs.
+
+   .. attribute:: worker_version
+
+      Version of the adapter or worker code.
+
+   .. attribute:: weights_revision
+
+      Exact weights revision (e.g. a Hugging Face commit hash).
+
+
+   .. py:method:: run(requests: list[InferenceRequest]) -> list[InferenceResult | InferenceError]
+
+      Process requests, one result or error per request, in order.
+
+      :param requests: Inputs; the model is loaded once for the batch.
+
+      :returns: One entry per request.
+
+
+
+.. py:function:: save_result(result: InferenceResult, path: pathlib.Path) -> None
+
+   Store a result as ``.npz`` (arrays) with its names and metadata embedded.
+
+   Artefacts are stored inside the archive as text; :func:`write_artefacts` writes them
+   out as files.
+
+   :param result: Result to store.
+   :param path: ``.npz`` file; the parent folder must exist.
+
+
+.. py:function:: load_result(path: pathlib.Path) -> InferenceResult
+
+   Load a result stored by :func:`save_result`.
+
+   :param path: ``.npz`` file.
+
+   :returns: The result.
+
+
+.. py:function:: request_to_dict(request: InferenceRequest) -> dict[str, Any]
+
+   JSON form of a request, for worker processes.
+
+   :param request: Request.
+
+   :returns: Dictionary with plain types.
+
+
+.. py:function:: request_from_dict(data: dict[str, Any]) -> InferenceRequest
+
+   Rebuild a request from :func:`request_to_dict`.
+
+   :param data: Dictionary read from JSON.
+
+   :returns: The request.
+
+

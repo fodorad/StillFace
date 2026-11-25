@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.audio.inventory" href="../inventory/index.html"><link rel="prev" title="stillface.features.audio.cli" href="../cli/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="stillface.features.audio.infer" href="../infer/index.html"><link rel="prev" title="stillface.features.audio.cli" href="../cli/index.html">
         <link rel="canonical" href="https://fodorad.github.io/StillFace/autoapi/stillface/features/audio/config/index.html">
         <link rel="prefetch" href="../../../../../_static/logo.svg" as="image">
 
@@ -215,15 +215,23 @@
 <li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">stillface.features.audio</a><input aria-label="Toggle navigation of stillface.features.audio" checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5"><a class="reference internal" href="../cli/index.html">stillface.features.audio.cli</a></li>
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.audio.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../infer/index.html">stillface.features.audio.infer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../lanes/index.html">stillface.features.audio.lanes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../media/index.html">stillface.features.audio.media</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../models/index.html">stillface.features.audio.models</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../prepare/index.html">stillface.features.audio.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../provenance/index.html">stillface.features.audio.provenance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../registry/index.html">stillface.features.audio.registry</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../subprocess_adapter/index.html">stillface.features.audio.subprocess_adapter</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../workers/index.html">stillface.features.audio.workers</a><input aria-label="Toggle navigation of stillface.features.audio.workers" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../workers/base/index.html">stillface.features.audio.workers.base</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../config/index.html">stillface.features.config</a></li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../../gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../gaze/classes/index.html">stillface.features.gaze.classes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../gaze/config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../gaze/estimator/index.html">stillface.features.gaze.estimator</a></li>
@@ -324,7 +332,10 @@ is copied into each run record and its hash into every provenance sidecar.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.PrepareConfig" title="stillface.features.audio.config.PrepareConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrepareConfig</span></code></a></p></td>
 <td><p>Prepared analysis audio.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AudioConfig</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.ModelConfig" title="stillface.features.audio.config.ModelConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModelConfig</span></code></a></p></td>
+<td><p>How one model is run.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AudioConfig</span></code></a></p></td>
 <td><p>Audio pipeline configuration.</p></td>
 </tr>
 </tbody>
@@ -425,6 +436,72 @@ The baby-cam phone lies next to the mother’s head and hears both partners.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">ModelConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#ModelConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.ModelConfig" title="Link to this definition">¶</a></dt>
+<dd><p>How one model is run.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.env">
+<span class="sig-name descname"><span class="pre">env</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.env" title="Link to this definition">¶</a></dt>
+<dd><p>Environment folder below <code class="docutils literal notranslate"><span class="pre">$STILLFACE_AUDIO_ENVS</span></code>; empty for in-process models.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.module">
+<span class="sig-name descname"><span class="pre">module</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.module" title="Link to this definition">¶</a></dt>
+<dd><p>Worker module run inside the environment.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.weights_revision">
+<span class="sig-name descname"><span class="pre">weights_revision</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.weights_revision" title="Link to this definition">¶</a></dt>
+<dd><p>Exact weights revision (e.g. a Hugging Face commit hash).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.worker_version">
+<span class="sig-name descname"><span class="pre">worker_version</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.worker_version" title="Link to this definition">¶</a></dt>
+<dd><p>Version of the worker code; bump it when its output changes.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.device">
+<span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.device" title="Link to this definition">¶</a></dt>
+<dd><p>Preferred device (<code class="docutils literal notranslate"><span class="pre">mps</span></code>, <code class="docutils literal notranslate"><span class="pre">cuda</span></code>, <code class="docutils literal notranslate"><span class="pre">cpu</span></code>); workers fall back to CPU.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.timeout_s">
+<span class="sig-name descname"><span class="pre">timeout_s</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.timeout_s" title="Link to this definition">¶</a></dt>
+<dd><p>Wall-clock limit of one batch.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.window_s">
+<span class="sig-name descname"><span class="pre">window_s</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.window_s" title="Link to this definition">¶</a></dt>
+<dd><p>Analysis window for windowed models, 0 if not applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.hop_s">
+<span class="sig-name descname"><span class="pre">hop_s</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.hop_s" title="Link to this definition">¶</a></dt>
+<dd><p>Hop between windows, 0 if not applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.options">
+<span class="sig-name descname"><span class="pre">options</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.options" title="Link to this definition">¶</a></dt>
+<dd><p>Further model-specific options, passed to the worker as text.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.digest">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">digest</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.digest" title="Link to this definition">¶</a></dt>
+<dd><p>Short SHA-256 of these settings; a change recomputes only this model’s outputs.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">AudioConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#AudioConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.AudioConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Audio pipeline configuration.</p>
@@ -458,6 +535,12 @@ The baby-cam phone lies next to the mother’s head and hears both partners.</p>
 <dd><p>Prepared audio format.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig.models">
+<span class="sig-name descname"><span class="pre">models</span></span><a class="headerlink" href="#stillface.features.audio.config.AudioConfig.models" title="Link to this definition">¶</a></dt>
+<dd><p>Model name mapped to how it is run.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig.digest">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">digest</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#stillface.features.audio.config.AudioConfig.digest" title="Link to this definition">¶</a></dt>
@@ -488,12 +571,12 @@ The baby-cam phone lies next to the mother’s head and hears both partners.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../inventory/index.html">
+          <a class="next-page" href="../infer/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">stillface.features.audio.inventory</div>
+                <div class="title">stillface.features.audio.infer</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -564,12 +647,26 @@ The baby-cam phone lies next to the mother’s head and hears both partners.</p>
 <li><a class="reference internal" href="#stillface.features.audio.config.PrepareConfig.sample_rate"><code class="docutils literal notranslate"><span class="pre">PrepareConfig.sample_rate</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig"><code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.env"><code class="docutils literal notranslate"><span class="pre">ModelConfig.env</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.module"><code class="docutils literal notranslate"><span class="pre">ModelConfig.module</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.weights_revision"><code class="docutils literal notranslate"><span class="pre">ModelConfig.weights_revision</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.worker_version"><code class="docutils literal notranslate"><span class="pre">ModelConfig.worker_version</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.device"><code class="docutils literal notranslate"><span class="pre">ModelConfig.device</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.timeout_s"><code class="docutils literal notranslate"><span class="pre">ModelConfig.timeout_s</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.window_s"><code class="docutils literal notranslate"><span class="pre">ModelConfig.window_s</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.hop_s"><code class="docutils literal notranslate"><span class="pre">ModelConfig.hop_s</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.options"><code class="docutils literal notranslate"><span class="pre">ModelConfig.options</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.digest"><code class="docutils literal notranslate"><span class="pre">ModelConfig.digest</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig"><code class="docutils literal notranslate"><span class="pre">AudioConfig</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.version"><code class="docutils literal notranslate"><span class="pre">AudioConfig.version</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.source"><code class="docutils literal notranslate"><span class="pre">AudioConfig.source</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.scope"><code class="docutils literal notranslate"><span class="pre">AudioConfig.scope</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.inventory"><code class="docutils literal notranslate"><span class="pre">AudioConfig.inventory</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.prepare"><code class="docutils literal notranslate"><span class="pre">AudioConfig.prepare</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.models"><code class="docutils literal notranslate"><span class="pre">AudioConfig.models</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.digest"><code class="docutils literal notranslate"><span class="pre">AudioConfig.digest</span></code></a></li>
 </ul>
 </li>

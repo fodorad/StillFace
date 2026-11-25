@@ -214,15 +214,23 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/index.html">stillface.features.audio</a><input aria-label="Toggle navigation of stillface.features.audio" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/cli/index.html">stillface.features.audio.cli</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/config/index.html">stillface.features.audio.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/infer/index.html">stillface.features.audio.infer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/lanes/index.html">stillface.features.audio.lanes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/media/index.html">stillface.features.audio.media</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/models/index.html">stillface.features.audio.models</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/prepare/index.html">stillface.features.audio.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/provenance/index.html">stillface.features.audio.provenance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/registry/index.html">stillface.features.audio.registry</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/subprocess_adapter/index.html">stillface.features.audio.subprocess_adapter</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/workers/index.html">stillface.features.audio.workers</a><input aria-label="Toggle navigation of stillface.features.audio.workers" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/workers/base/index.html">stillface.features.audio.workers.base</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/config/index.html">stillface.features.config</a></li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/classes/index.html">stillface.features.gaze.classes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/estimator/index.html">stillface.features.gaze.estimator</a></li>
@@ -364,6 +372,42 @@
 
 
 
+<div class="viewcode-block" id="ModelConfig">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.ModelConfig">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""How one model is run.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        env: Environment folder below ``$STILLFACE_AUDIO_ENVS``; empty for in-process models.</span>
+<span class="sd">        module: Worker module run inside the environment.</span>
+<span class="sd">        weights_revision: Exact weights revision (e.g. a Hugging Face commit hash).</span>
+<span class="sd">        worker_version: Version of the worker code; bump it when its output changes.</span>
+<span class="sd">        device: Preferred device (``mps``, ``cuda``, ``cpu``); workers fall back to CPU.</span>
+<span class="sd">        timeout_s: Wall-clock limit of one batch.</span>
+<span class="sd">        window_s: Analysis window for windowed models, 0 if not applicable.</span>
+<span class="sd">        hop_s: Hop between windows, 0 if not applicable.</span>
+<span class="sd">        options: Further model-specific options, passed to the worker as text.</span>
+<span class="sd">    """</span>
+
+    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">module</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">weights_revision</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">worker_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"1"</span>
+    <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"mps"</span>
+    <span class="n">timeout_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">7200.0</span>
+    <span class="n">window_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">hop_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">digest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Short SHA-256 of these settings; a change recomputes only this model's outputs."""</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">16</span><span class="p">]</span></div>
+
+
+
 <div class="viewcode-block" id="AudioConfig">
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.AudioConfig">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -376,6 +420,7 @@
 <span class="sd">        scope: Session selection.</span>
 <span class="sd">        inventory: Inventory statistics.</span>
 <span class="sd">        prepare: Prepared audio format.</span>
+<span class="sd">        models: Model name mapped to how it is run.</span>
 <span class="sd">    """</span>
 
     <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">CONFIG_VERSION</span>
@@ -383,6 +428,7 @@
     <span class="n">scope</span><span class="p">:</span> <span class="n">ScopeConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ScopeConfig</span><span class="p">)</span>
     <span class="n">inventory</span><span class="p">:</span> <span class="n">InventoryConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">InventoryConfig</span><span class="p">)</span>
     <span class="n">prepare</span><span class="p">:</span> <span class="n">PrepareConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">PrepareConfig</span><span class="p">)</span>
+    <span class="n">models</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModelConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">digest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

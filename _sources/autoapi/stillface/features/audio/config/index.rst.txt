@@ -30,6 +30,7 @@ Classes
    stillface.features.audio.config.ScopeConfig
    stillface.features.audio.config.InventoryConfig
    stillface.features.audio.config.PrepareConfig
+   stillface.features.audio.config.ModelConfig
    stillface.features.audio.config.AudioConfig
 
 
@@ -105,6 +106,54 @@ Module Contents
       Output sample rate; every model reads 16 kHz mono.
 
 
+.. py:class:: ModelConfig
+
+   How one model is run.
+
+   .. attribute:: env
+
+      Environment folder below ``$STILLFACE_AUDIO_ENVS``; empty for in-process models.
+
+   .. attribute:: module
+
+      Worker module run inside the environment.
+
+   .. attribute:: weights_revision
+
+      Exact weights revision (e.g. a Hugging Face commit hash).
+
+   .. attribute:: worker_version
+
+      Version of the worker code; bump it when its output changes.
+
+   .. attribute:: device
+
+      Preferred device (``mps``, ``cuda``, ``cpu``); workers fall back to CPU.
+
+   .. attribute:: timeout_s
+
+      Wall-clock limit of one batch.
+
+   .. attribute:: window_s
+
+      Analysis window for windowed models, 0 if not applicable.
+
+   .. attribute:: hop_s
+
+      Hop between windows, 0 if not applicable.
+
+   .. attribute:: options
+
+      Further model-specific options, passed to the worker as text.
+
+
+   .. py:property:: digest
+      :type: str
+
+
+      Short SHA-256 of these settings; a change recomputes only this model's outputs.
+
+
 .. py:class:: AudioConfig
 
    Audio pipeline configuration.
@@ -128,6 +177,10 @@ Module Contents
    .. attribute:: prepare
 
       Prepared audio format.
+
+   .. attribute:: models
+
+      Model name mapped to how it is run.
 
 
    .. py:property:: digest

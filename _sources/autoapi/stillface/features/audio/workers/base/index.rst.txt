@@ -1,0 +1,104 @@
+stillface.features.audio.workers.base
+=====================================
+
+.. py:module:: stillface.features.audio.workers.base
+
+.. autoapi-nested-parse::
+
+   Worker process entry point shared by every model worker.
+
+   A worker is started as ``python -m <worker module> <request.json>``. The request file
+   names the output folder, the model options and the requests. The model is loaded once;
+   each request then writes ``<i>.npz`` (see :func:`~stillface.features.audio.models.save_result`)
+   or ``<i>.error.txt``, so one bad input never loses the others. A failure while loading the
+   model exits non-zero and the adapter turns it into an error for every request.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.base.logger
+   stillface.features.audio.workers.base.ERROR_SUFFIX
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.base.Worker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.base.result_path
+   stillface.features.audio.workers.base.error_path
+   stillface.features.audio.workers.base.serve
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: ERROR_SUFFIX
+   :type:  str
+   :value: '.error.txt'
+
+
+   Suffix of the per-request error file written instead of a result.
+
+.. py:class:: Worker
+
+   Bases: :py:obj:`Protocol`
+
+
+   A model inside its worker process.
+
+
+   .. py:method:: load(options: dict[str, Any]) -> dict[str, Any]
+
+      Load the model.
+
+      :param options: Model options from the config (device, window, thresholds ...).
+
+      :returns: Provenance added to every result's ``meta`` (e.g. the device actually used).
+
+
+
+   .. py:method:: infer(request: stillface.features.audio.models.InferenceRequest) -> stillface.features.audio.models.InferenceResult
+
+      Run the model on one request.
+
+      :param request: Input.
+
+      :returns: The native result.
+
+
+
+.. py:function:: result_path(out_dir: pathlib.Path, index: int) -> pathlib.Path
+
+   Result file of the request at ``index``.
+
+
+.. py:function:: error_path(out_dir: pathlib.Path, index: int) -> pathlib.Path
+
+   Error file of the request at ``index``.
+
+
+.. py:function:: serve(worker: Worker, argv: collections.abc.Sequence[str] | None = None) -> int
+
+   Process a request file with a worker.
+
+   :param worker: Model worker.
+   :param argv: ``[request.json]``; ``sys.argv[1:]`` if None.
+
+   :returns: Exit code 0 once every request has a result or error file.
+
+

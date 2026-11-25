@@ -17,10 +17,15 @@ Submodules
 
    /autoapi/stillface/features/audio/cli/index
    /autoapi/stillface/features/audio/config/index
+   /autoapi/stillface/features/audio/infer/index
    /autoapi/stillface/features/audio/inventory/index
    /autoapi/stillface/features/audio/lanes/index
    /autoapi/stillface/features/audio/media/index
+   /autoapi/stillface/features/audio/models/index
    /autoapi/stillface/features/audio/prepare/index
    /autoapi/stillface/features/audio/provenance/index
+   /autoapi/stillface/features/audio/registry/index
+   /autoapi/stillface/features/audio/subprocess_adapter/index
+   /autoapi/stillface/features/audio/workers/index
 
 

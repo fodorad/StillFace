@@ -1,0 +1,94 @@
+stillface.features.audio.registry
+=================================
+
+.. py:module:: stillface.features.audio.registry
+
+.. autoapi-nested-parse::
+
+   Build the adapter of a configured model.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.registry.ENVS_VAR
+   stillface.features.audio.registry.InProcessFactory
+   stillface.features.audio.registry.IN_PROCESS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.registry.envs_root
+   stillface.features.audio.registry.env_python
+   stillface.features.audio.registry.worker_options
+   stillface.features.audio.registry.build_adapter
+
+
+Module Contents
+---------------
+
+.. py:data:: ENVS_VAR
+   :type:  str
+   :value: 'STILLFACE_AUDIO_ENVS'
+
+
+   Environment variable naming the folder that holds one virtual environment per model.
+
+.. py:data:: InProcessFactory
+
+   Builds an in-process adapter from the model name and its settings.
+
+.. py:data:: IN_PROCESS
+   :type:  dict[str, InProcessFactory]
+
+   In-process models (no ``env``), registered by their modules.
+
+.. py:function:: envs_root(environ: collections.abc.Mapping[str, str] = os.environ) -> pathlib.Path
+
+   Folder of the model environments.
+
+   :param environ: Environment variables.
+
+   :returns: The path from :data:`ENVS_VAR`.
+
+   :raises RuntimeError: If the variable is not set.
+
+
+.. py:function:: env_python(root: pathlib.Path, env: str) -> pathlib.Path
+
+   Interpreter of a model environment (POSIX layout).
+
+   :param root: Folder of the model environments.
+   :param env: Environment name.
+
+   :returns: ``<root>/<env>/bin/python``.
+
+
+.. py:function:: worker_options(model: stillface.features.audio.config.ModelConfig) -> dict[str, str]
+
+   Options passed to a worker's ``load``.
+
+   :param model: Model settings.
+
+   :returns: Device, window and hop (as text) merged with the model-specific options.
+
+
+.. py:function:: build_adapter(name: str, config: stillface.features.audio.config.AudioConfig, root: pathlib.Path | None = None) -> stillface.features.audio.models.ModelAdapter
+
+   Create the adapter of a configured model.
+
+   :param name: Model name, a key of ``config.models``.
+   :param config: Audio configuration.
+   :param root: Folder of the model environments; from :data:`ENVS_VAR` if None.
+
+   :returns: A subprocess adapter, or the registered in-process adapter for models without ``env``.
+
+   :raises ValueError: If the model is unknown or has no runner.
+
+

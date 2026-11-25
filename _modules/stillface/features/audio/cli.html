@@ -214,15 +214,23 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/index.html">stillface.features.audio</a><input aria-label="Toggle navigation of stillface.features.audio" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/cli/index.html">stillface.features.audio.cli</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/config/index.html">stillface.features.audio.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/infer/index.html">stillface.features.audio.infer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/inventory/index.html">stillface.features.audio.inventory</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/lanes/index.html">stillface.features.audio.lanes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/media/index.html">stillface.features.audio.media</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/models/index.html">stillface.features.audio.models</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/prepare/index.html">stillface.features.audio.prepare</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/provenance/index.html">stillface.features.audio.provenance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/registry/index.html">stillface.features.audio.registry</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/subprocess_adapter/index.html">stillface.features.audio.subprocess_adapter</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/workers/index.html">stillface.features.audio.workers</a><input aria-label="Toggle navigation of stillface.features.audio.workers" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/workers/base/index.html">stillface.features.audio.workers.base</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../autoapi/stillface/features/config/index.html">stillface.features.config</a></li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/index.html">stillface.features.gaze</a><input aria-label="Toggle navigation of stillface.features.gaze" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/classes/index.html">stillface.features.gaze.classes</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/config/index.html">stillface.features.gaze.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/gaze/estimator/index.html">stillface.features.gaze.estimator</a></li>
@@ -290,10 +298,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetPaths</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">PHASES</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.data_preparation.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_metadata</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_CONFIG_PATH</span><span class="p">,</span> <span class="n">load_audio_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.infer</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_model</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.inventory</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_inventory</span><span class="p">,</span> <span class="n">read_inventory</span><span class="p">,</span> <span class="n">write_inventory</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.prepare</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_all</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_adapter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_atomic</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -317,8 +328,34 @@
     <span class="n">prepare</span> <span class="o">=</span> <span class="n">audio</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"prepare"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Write the 16 kHz mono WAV of every phase"</span><span class="p">)</span>
     <span class="n">prepare</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--session-id"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Sessions; all in scope if omitted"</span><span class="p">)</span>
     <span class="n">prepare</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--overwrite"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Recompute existing outputs"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="p">(</span><span class="n">inventory</span><span class="p">,</span> <span class="n">prepare</span><span class="p">):</span>
+    <span class="n">infer</span> <span class="o">=</span> <span class="n">audio</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"infer"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Run one model on every pending session phase"</span><span class="p">)</span>
+    <span class="n">infer</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Model name from the config"</span><span class="p">)</span>
+    <span class="n">infer</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--session-id"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Sessions; all in scope if omitted"</span><span class="p">)</span>
+    <span class="n">infer</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--phase"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">PHASES</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">PHASES</span><span class="p">))</span>
+    <span class="n">infer</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--overwrite"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Recompute existing outputs"</span><span class="p">)</span>
+    <span class="n">infer</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--envs"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Model environments (default: $STILLFACE_AUDIO_ENVS)"</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="p">(</span><span class="n">inventory</span><span class="p">,</span> <span class="n">prepare</span><span class="p">,</span> <span class="n">infer</span><span class="p">):</span>
         <span class="n">step</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--config"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_CONFIG_PATH</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Audio config"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="scope_sessions">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/cli/index.html#stillface.features.audio.cli.scope_sessions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">scope_sessions</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="n">DatasetPaths</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""In-scope sessions of the inventory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        paths: Dataset locations.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Sorted session ids; empty if there is no inventory yet.</span>
+<span class="sd">    """</span>
+    <span class="n">inventory_path</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">audio_dir</span> <span class="o">/</span> <span class="n">INVENTORY_FILE</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">inventory_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">({</span><span class="n">r</span><span class="o">.</span><span class="n">session_id</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">read_inventory</span><span class="p">(</span><span class="n">inventory_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">in_scope</span><span class="p">})</span></div>
 
 
 
@@ -354,6 +391,18 @@
         <span class="n">text</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">asdict</span><span class="p">(</span><span class="n">report</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">write_atomic</span><span class="p">(</span><span class="n">paths</span><span class="o">.</span><span class="n">audio_dir</span> <span class="o">/</span> <span class="s2">"prepare_report.json"</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">tmp</span><span class="p">:</span> <span class="n">tmp</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">failed</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"infer"</span><span class="p">:</span>
+        <span class="n">adapter</span> <span class="o">=</span> <span class="n">build_adapter</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">envs</span><span class="p">)</span>
+        <span class="n">sessions</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">session_id</span> <span class="ow">or</span> <span class="n">scope_sessions</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">run_model</span><span class="p">(</span>
+            <span class="n">paths</span><span class="p">,</span>
+            <span class="n">adapter</span><span class="p">,</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="p">],</span>
+            <span class="n">sessions</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span>
+            <span class="n">overwrite</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">failed</span> <span class="k">else</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="mi">0</span></div>
 
 </pre></div>

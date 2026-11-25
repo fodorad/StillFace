@@ -24,6 +24,7 @@ Functions
 .. autoapisummary::
 
    stillface.features.audio.cli.add_audio_parser
+   stillface.features.audio.cli.scope_sessions
    stillface.features.audio.cli.run_audio
 
 
@@ -44,6 +45,15 @@ Module Contents
    Register the ``audio`` command group.
 
    :param groups: Sub-parser collection of the top-level parser.
+
+
+.. py:function:: scope_sessions(paths: stillface.config.DatasetPaths) -> list[str]
+
+   In-scope sessions of the inventory.
+
+   :param paths: Dataset locations.
+
+   :returns: Sorted session ids; empty if there is no inventory yet.
 
 
 .. py:function:: run_audio(args: argparse.Namespace, paths: stillface.config.DatasetPaths) -> int
