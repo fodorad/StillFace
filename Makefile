@@ -1,11 +1,30 @@
-.PHONY: install dev upgrade fix lint type-check test docs docs-serve diagrams check clean help
+.PHONY: install dev upgrade fix lint type-check test docs docs-serve diagrams check clean help \
+	audio-envs audio-smoke
 
 help:
 	@echo "Setup:    install | dev | upgrade"
 	@echo "Fix:      fix"
 	@echo "Checks:   lint | type-check | test | docs | check"
 	@echo "Docs:     docs-serve | diagrams"
+	@echo "Audio:    audio-envs | audio-smoke  (need STILLFACE_AUDIO_ENVS)"
 	@echo "Cleanup:  clean"
+
+# ── Audio model environments (local only, not in CI) ───────────────────────────
+# One uv project per model group in envs/audio/; the environments are created below
+# $STILLFACE_AUDIO_ENVS, outside the repository.
+
+AUDIO_ENVS := $(notdir $(patsubst %/,%,$(dir $(wildcard envs/audio/*/pyproject.toml))))
+
+audio-envs:
+	@test -n "$(STILLFACE_AUDIO_ENVS)" || (echo "Set STILLFACE_AUDIO_ENVS first" && exit 1)
+	@for name in $(AUDIO_ENVS); do \
+		echo "== $$name"; \
+		UV_PROJECT_ENVIRONMENT="$(STILLFACE_AUDIO_ENVS)/$$name" \
+			uv sync --frozen --project "envs/audio/$$name" || exit 1; \
+	done
+
+audio-smoke:
+	uv run python -m stillface.features.audio.smoke
 
 # ── Setup ──────────────────────────────────────────────────────────────────────
 

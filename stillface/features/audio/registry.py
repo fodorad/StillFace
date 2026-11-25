@@ -75,6 +75,7 @@ def worker_options(model: ModelConfig) -> dict[str, str]:
         "device": model.device,
         "window_s": repr(model.window_s),
         "hop_s": repr(model.hop_s),
+        "weights_revision": model.weights_revision,
         **model.options,
     }
 

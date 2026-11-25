@@ -90,3 +90,45 @@ def serve(worker: Worker, argv: Sequence[str] | None = None) -> int:
             message = f"{type(error).__name__}: {error}"
             write_atomic(error_path(out_dir, index), lambda tmp, m=message: tmp.write_text(m))
     return 0
+
+
+def torch_device(preferred: str) -> str:
+    """Pick a torch device, falling back to CPU when the preferred one is unavailable.
+
+    Args:
+        preferred: ``mps``, ``cuda`` or ``cpu``.
+
+    Returns:
+        The device name to use.
+    """
+    import torch
+
+    if preferred == "mps" and torch.backends.mps.is_available():
+        return "mps"
+    if preferred == "cuda" and torch.cuda.is_available():
+        return "cuda"
+    return "cpu"
+
+
+def window_starts(duration_s: float, window_s: float, hop_s: float) -> list[float]:
+    """Start times of analysis windows covering a signal.
+
+    Windows advance by ``hop_s``; the last start is the last one whose window still
+    starts inside the signal and ends at most at ``duration_s``. A signal shorter than one
+    window gets a single window at 0 (the model pads it).
+
+    Args:
+        duration_s: Signal duration.
+        window_s: Window length.
+        hop_s: Hop between window starts.
+
+    Returns:
+        Start times in seconds.
+    """
+    if window_s <= 0 or hop_s <= 0:
+        raise ValueError("window and hop must be positive")
+    last = duration_s - window_s
+    if last <= 0:
+        return [0.0]
+    n = int(last // hop_s + 1e-9) + 1
+    return [round(i * hop_s, 6) for i in range(n)]

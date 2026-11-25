@@ -83,6 +83,8 @@ class ModelConfig:
         window_s: Analysis window for windowed models, 0 if not applicable.
         hop_s: Hop between windows, 0 if not applicable.
         options: Further model-specific options, passed to the worker as text.
+        input: ``wav`` for whole-phase models (first pass), ``segments`` for models that
+            score role segments (second pass).
     """
 
     env: str = ""
@@ -94,6 +96,12 @@ class ModelConfig:
     window_s: float = 0.0
     hop_s: float = 0.0
     options: dict[str, str] = field(default_factory=dict)
+    input: str = "wav"
+
+    def __post_init__(self) -> None:
+        """Validate the input kind."""
+        if self.input not in ("wav", "segments"):
+            raise ValueError(f"model input must be 'wav' or 'segments', not {self.input!r}")
 
     @property
     def digest(self) -> str:

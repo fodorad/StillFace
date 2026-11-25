@@ -1,0 +1,13 @@
+[project]
+name = "stillface-audio-vad"
+version = "0.1.0"
+description = "Voice activity models of the StillFace audio pipeline (Silero VAD)."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "numpy",
+  "silero-vad==6.3",
+  "torch",
+]
+
+[tool.uv]
+package = false

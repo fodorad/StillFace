@@ -1,7 +1,11 @@
 """Model workers: one module per model, each run inside that model's own environment.
 
 A worker module imports only the standard library, numpy, :mod:`~stillface.features.audio.models`,
-:mod:`~stillface.features.audio.workers.base` and its model's libraries (inside its
-``load`` boundary), so every model environment needs nothing of the package's own
-dependencies.
+:mod:`~stillface.features.audio.media` (WAV reading), :mod:`~stillface.features.audio.workers.base`
+and its model's libraries (inside its ``load`` and ``forward`` boundaries), so every model
+environment needs nothing of the package's own dependencies.
+
+Each worker has a pure ``postprocess`` function, unit-tested in CI with random arrays shaped
+like the model output, and ``load`` / ``forward`` boundaries that need the model environment;
+those are excluded from CI coverage by name and exercised by ``make audio-smoke``.
 """
