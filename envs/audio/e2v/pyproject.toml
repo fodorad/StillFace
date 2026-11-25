@@ -1,0 +1,15 @@
+[project]
+name = "stillface-audio-e2v"
+version = "0.1.0"
+description = "emotion2vec+ (FunASR) model of the StillFace audio pipeline."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "funasr==1.4.29",
+  "huggingface-hub",
+  "numpy",
+  "torch",
+  "torchaudio",
+]
+
+[tool.uv]
+package = false

@@ -104,8 +104,8 @@ exclude_lines = [
   "if TYPE_CHECKING:",
   # Audio model workers: the load / forward boundaries and the entry point need the model
   # environments and weights; they run in `make audio-smoke`, not in CI.
-  "def load\\(self",
-  "def forward\\(self",
+  "def load\\(",
+  "def forward\\(",
   "def torch_device\\(",
   "if __name__ == .__main__.:",
 ]
