@@ -72,6 +72,7 @@ class TestPrepare(unittest.TestCase):
         self.assertAlmostEqual(float(np.abs(y[2000:-2000]).max()), 0.05, delta=0.01)
         side = read_sidecar(out)
         self.assertEqual(side["camera"], "baby")
+        self.assertEqual(side["video_fps"], 10.0)
         self.assertEqual(side["source"], "Sessions/1/processed/baby_play.mp4")
         self.assertEqual(
             side["source_sha256"], file_sha256(self.paths.phase_clip("1", "baby", "play"))

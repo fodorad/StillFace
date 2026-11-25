@@ -62,6 +62,15 @@ class TestPhaseClips(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.paths.phase_clip("7", "baby", "dinner")
 
+    def test_phase_clip_accepts_the_split_window_cameras(self) -> None:
+        self.assertEqual(self.paths.phase_clip("7", "window_2", "play").name, "window_2_play.mp4")
+
+    def test_available_phase_clips_lists_only_the_grid_cameras(self) -> None:
+        processed = self.paths.raw_dir / "Sessions" / "7" / "processed"
+        processed.mkdir(parents=True)
+        (processed / "window_1_play.mp4").write_bytes(b"")
+        self.assertEqual(self.paths.available_phase_clips("7"), {})
+
     def test_available_phase_clips_lists_existing_and_ignores_visualize(self) -> None:
         processed = self.paths.raw_dir / "Sessions" / "7" / "processed"
         processed.mkdir(parents=True)

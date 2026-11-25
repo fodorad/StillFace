@@ -10,7 +10,7 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-from stillface.constants import CAMERAS, PHASES
+from stillface.constants import CAMERAS, CLIP_CAMERAS, PHASES
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ class DatasetPaths:
 
         Args:
             session_id: Session identifier.
-            camera: One of :data:`stillface.constants.CAMERAS`.
+            camera: One of :data:`stillface.constants.CLIP_CAMERAS`.
             phase: One of :data:`stillface.constants.PHASES`.
 
         Returns:
@@ -75,8 +75,8 @@ class DatasetPaths:
         Raises:
             ValueError: If ``camera`` or ``phase`` is unknown.
         """
-        if camera not in CAMERAS:
-            raise ValueError(f"Unknown camera {camera!r}, expected one of {CAMERAS}")
+        if camera not in CLIP_CAMERAS:
+            raise ValueError(f"Unknown camera {camera!r}, expected one of {CLIP_CAMERAS}")
         if phase not in PHASES:
             raise ValueError(f"Unknown phase {phase!r}, expected one of {PHASES}")
         return self.raw_dir / "Sessions" / session_id / "processed" / f"{camera}_{phase}.mp4"

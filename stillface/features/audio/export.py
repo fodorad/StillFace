@@ -58,7 +58,9 @@ def video_id(session: str, camera: str, phase: str) -> str:
     return f"{session}_{camera}_{phase}"
 
 
-def band_events(band: Band, track: str, label: str, rate_hz: float) -> list[dict]:
+def band_events(
+    band: Band, track: str, label: str, rate_hz: float, fps: float = TARGET_FPS
+) -> list[dict]:
     """Runs of a band as Annie event records.
 
     Args:
@@ -66,9 +68,10 @@ def band_events(band: Band, track: str, label: str, rate_hz: float) -> list[dict
         track: Annie track.
         label: Event label.
         rate_hz: Grid rate.
+        fps: Frame rate of the Annie video.
 
     Returns:
-        Event records with frames at :data:`~stillface.constants.TARGET_FPS`.
+        Event records with frames at ``fps``.
     """
     out = []
     for start, stop in runs(band.values):
@@ -85,25 +88,27 @@ def band_events(band: Band, track: str, label: str, rate_hz: float) -> list[dict
                     band.spec.rule_id,
                 ),
                 track,
+                fps,
             )
         )
     return out
 
 
-def annie_event(event: Event, track: str) -> dict:
+def annie_event(event: Event, track: str, fps: float = TARGET_FPS) -> dict:
     """One event in Annie's export record layout.
 
     Args:
         event: Event.
         track: Annie track.
+        fps: Frame rate of the Annie video.
 
     Returns:
         Record with frames and seconds, label, type and the provenance as attributes.
     """
     return {
         "track": track,
-        "start_frame": int(round(event.start_s * TARGET_FPS)),
-        "end_frame": int(round(event.end_s * TARGET_FPS)),
+        "start_frame": int(round(event.start_s * fps)),
+        "end_frame": int(round(event.end_s * fps)),
         "start_sec": round(event.start_s, 3),
         "end_sec": round(event.end_s, 3),
         "label": event.label,
@@ -119,7 +124,12 @@ def annie_event(event: Event, track: str) -> dict:
 
 
 def build_annie_tree(
-    session: str, phase: str, camera: str, events: Sequence[Event], table: LaneTable
+    session: str,
+    phase: str,
+    camera: str,
+    events: Sequence[Event],
+    table: LaneTable,
+    fps: float = TARGET_FPS,
 ) -> dict:
     """Annie export tree of one phase.
 
@@ -129,6 +139,7 @@ def build_annie_tree(
         camera: Camera whose clip the audio came from (the Annie video).
         events: Role and fusion events.
         table: Fusion lane table (its exported bands become events).
+        fps: Frame rate of the Annie video (the clip the audio came from).
 
     Returns:
         ``{video_id: {"fps", "tracks", "meta"}}``.
@@ -136,13 +147,13 @@ def build_annie_tree(
     tracks: dict[str, list[dict]] = {}
     for event in events:
         track = f"{event.role}:{event.source}"
-        record = annie_event(event, track)
+        record = annie_event(event, track, fps)
         record.pop("track")
         tracks.setdefault(track, []).append(record)
     for band in table.bands:
         if band.spec.name in BAND_TRACKS:
             track, label = BAND_TRACKS[band.spec.name]
-            for record in band_events(band, track, label, table.rate_hz):
+            for record in band_events(band, track, label, table.rate_hz, fps):
                 record.pop("track")
                 tracks.setdefault(track, []).append(record)
     for records in tracks.values():
@@ -150,9 +161,7 @@ def build_annie_tree(
         for number, record in enumerate(records, start=1):
             record["event_id"] = number
     meta = {"session": session, "phase": phase, "audio_camera": camera}
-    return {
-        video_id(session, camera, phase): {"fps": float(TARGET_FPS), "tracks": tracks, "meta": meta}
-    }
+    return {video_id(session, camera, phase): {"fps": float(fps), "tracks": tracks, "meta": meta}}
 
 
 def export_phase(paths: DatasetPaths, session: str, phase: str) -> Path | None:
@@ -179,12 +188,13 @@ def export_phase(paths: DatasetPaths, session: str, phase: str) -> Path | None:
         lanes += read_lanes(affect, affect.with_suffix(".json")).lanes
     side = read_sidecar(wav_path(paths, session, phase)) or {}
     camera = str(side.get("camera", "baby"))
+    fps = float(side.get("video_fps") or TARGET_FPS)
     folder = paths.audio_session_dir(session) / "annie"
     merged = LaneTable(table.duration_s, lanes, table.bands, table.rate_hz, dict(table.notes))
     write_lanes(
         merged, folder / f"{session}_{phase}_lanes.csv", folder / f"{session}_{phase}_lanes.json"
     )
-    tree = build_annie_tree(session, phase, camera, events, table)
+    tree = build_annie_tree(session, phase, camera, events, table, fps)
     target = folder / f"{session}_{phase}.json"
     text = json.dumps(tree, indent=2, ensure_ascii=False) + "\n"
     write_atomic(target, lambda tmp: tmp.write_text(text))

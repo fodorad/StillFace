@@ -20,7 +20,7 @@ class TestAudioConfig(unittest.TestCase):
 
     def test_values_and_digest(self):
         config = load_audio_config()
-        self.assertEqual(config.source.cameras, ("baby", "window", "door"))
+        self.assertEqual(config.source.cameras, ("baby", "window", "window_2", "window_1", "door"))
         self.assertEqual(len(config.digest), 16)
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "c.toml"

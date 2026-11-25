@@ -43,7 +43,7 @@ NAMES = {
 def fused_session(paths):
     wav = wav_path(paths, "1", "play")
     write_wav(wav, np.zeros(int(DURATION * 16000)), 16000)
-    write_sidecar(wav, {"camera": "window", "duration_s": DURATION})
+    write_sidecar(wav, {"camera": "window", "duration_s": DURATION, "video_fps": 50.0})
     inputs = make_inputs()
     for key, model in NAMES.items():
         out = raw_path(paths, model, "1/play")
@@ -68,6 +68,17 @@ class TestAnnieTree(unittest.TestCase):
         self.assertEqual([r["event_id"] for r in node["tracks"]["dyad:vad"]][:2], [1, 2])
         self.assertTrue(set(BAND_TRACKS) <= {b.spec.name for b in result.table.bands})
 
+    def test_tree_frames_follow_the_clip_frame_rate(self):
+        inputs = make_inputs()
+        result = fuse_phase(inputs, CONFIG)
+        events = inputs.roles + result.events
+        tree = build_annie_tree("1", "play", "window_2", events, result.table, fps=50.0)
+        node = tree[video_id("1", "window_2", "play")]
+        self.assertEqual(node["fps"], 50.0)
+        cry = node["tracks"]["baby:fusion"][0]
+        self.assertEqual((cry["start_frame"], cry["end_frame"]), (100, 200))
+        self.assertEqual((cry["start_sec"], cry["end_sec"]), (2.0, 4.0))
+
 
 class TestExportAndQc(unittest.TestCase):
     def setUp(self):
@@ -83,6 +94,7 @@ class TestExportAndQc(unittest.TestCase):
         self.assertIsNone(export_phase(self.paths, "1", "reunion"))
         tree = json.loads(target.read_text())
         self.assertEqual(list(tree), ["1_window_play"])
+        self.assertEqual(tree["1_window_play"]["fps"], 50.0)
         folder = target.parent
         lanes = read_lanes(folder / "1_play_lanes.csv", folder / "1_play_lanes.json")
         self.assertIn("fusion.p_cry.baby", [lane.spec.name for lane in lanes.lanes])

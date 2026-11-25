@@ -4,8 +4,9 @@ version = 1
 
 [source]
 # Tried in order. The baby-cam phone sits next to the mother's head; the side camcorders
-# are fallbacks. The mother-cam phone is not used by default.
-cameras = ["baby", "window", "door"]
+# are fallbacks. Early sessions with two window camcorders: window_2 (mostly the baby) before
+# window_1 (mostly the mother). The mother-cam phone is not used by default.
+cameras = ["baby", "window", "window_2", "window_1", "door"]
 
 [scope]
 analysis_column = "Analysis"

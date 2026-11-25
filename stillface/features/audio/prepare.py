@@ -7,6 +7,7 @@ settings did not change are kept.
 """
 
 import logging
+import math
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -95,6 +96,7 @@ def prepare_phase(
             "inventory_status": row.status,
             "source_sample_rate": row.sample_rate,
             "source_channels": row.channels,
+            "video_fps": None if math.isnan(row.video_fps) else row.video_fps,
             "source_rms_dbfs": row.rms_dbfs,
             "source_peak_dbfs": row.peak_dbfs,
             "samples": int(samples.shape[1]),

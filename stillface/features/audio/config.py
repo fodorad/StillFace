@@ -25,9 +25,11 @@ class SourceConfig:
     Attributes:
         cameras: Camera clips tried in order; the first with a decodable audio stream wins.
             The baby-cam phone lies next to the mother's head and hears both partners.
+            Early sessions with two window camcorders try the baby-facing ``window_2``
+            before ``window_1``.
     """
 
-    cameras: tuple[str, ...] = ("baby", "window", "door")
+    cameras: tuple[str, ...] = ("baby", "window", "window_2", "window_1", "door")
 
 
 @dataclass(frozen=True)

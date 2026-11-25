@@ -64,11 +64,13 @@ environment variables or the `--raw-dir` / `--processed-dir` options.
 ## Dataset statistics
 
 Computed from `metadata_database.xlsx` and the processed phase clips (`Sessions/<id>/processed/`),
-which are the only video inputs of the analysis. All processed clips are 1920x1080 at 60 fps.
+which are the only video inputs of the analysis. All processed clips are 1920x1080 at 60 fps, except
+the five early window-only sessions (606117, 697115, 747417, 555623, 656417), whose clips keep the
+camcorders' 50 fps.
 
-- **Sessions:** 78 recorded, 70 marked for analysis (`Analysis = y`).
-- **Setup versions (analysed):** v4: 57, v3: 5, v2: 8.
-- **Excluded from analysis:** 646022 (v4), 566015 (v4), 635928 (v2), 555623 (v2), 656417 (v2), 747417 (v1), 606117 (v1), 697115 (v1).
+- **Sessions:** 78 recorded, 75 marked for analysis (`Analysis = y`).
+- **Setup versions (analysed):** v4: 57, v3: 5, v2: 10, v1: 3.
+- **Excluded from analysis:** 646022 (v4), 566015 (v4), 635928 (v2).
 
 **Camera availability** (analysed sessions; a camera counts if it has at least one processed phase clip):
 
@@ -77,18 +79,23 @@ which are the only video inputs of the analysis. All processed clips are 1920x10
 | mother + baby + window + door | 49 | all other analysed sessions |
 | mother + baby + window | 14 | 124731, 210118, 595525, 606021, 615027, 616018, 626527, 635916, 636211, 674821, 686912, 696807, 888726, 920320 |
 | mother + baby | 3 | 114754, 656531, 717115 |
+| window_1 + window_2 | 3 | 606117, 697115, 747417 (two window camcorders: window_1 mostly the mother, window_2 mostly the baby) |
 | baby + window | 2 | 585803, 595514 |
+| window | 2 | 555623, 656417 |
 | baby + window + door | 1 | 717729 |
 | mother + baby + door | 1 | 726030 |
 
-**Incomplete phase sets** (camera present but fewer than 4 phase clips): 706922 window (3/4), 596613 window (3/4), 596613 door (3/4), 596025 baby (3/4), 646012 door (2/4), 505629 baby (1/4), 585803 baby (3/4), 114754 mother (3/4), 114754 baby (3/4).
+**Incomplete phase sets** (camera present but fewer than 4 phase clips): 706922 window (3/4), 596613 window (3/4), 596613 door (3/4), 596025 baby (3/4), 646012 door (2/4), 505629 baby (1/4), 585803 baby (3/4), 114754 mother (3/4), 114754 baby (3/4), 656417 window (3/4), 606117 window_1 (3/4),
+606117 window_2 (3/4).
 
-**Native camcorder frame rate** (from the original camcorder files, where available; processed clips are all 60 fps):
+**Native camcorder frame rate** (from the original camcorder files, where available; processed clips are 60 fps, the early
+window-only sessions 50 fps):
 
 | Camera | 50 fps progressive | 25 fps interlaced |
 |---|---|---|
-| window | 50 | 15: 525222, 555820, 575716, 594801, 595813, 596613, 616205, 646302, 657006, 666921, 686527, 696707, 697426, 717729, 757314 |
+| window | 52 | 15: 525222, 555820, 575716, 594801, 595813, 596613, 616205, 646302, 657006, 666921, 686527, 696707, 697426, 717729, 757314 |
 | door | 33 | 18: 484603, 535124, 586228, 596426, 605317, 616022, 616211, 625527, 625710, 636023, 646012, 656024, 656520, 666712, 674703, 677022, 736920, 819104 |
+| window_1 / window_2 | 4: 606117 window_1, 697115 window_2, 747417 both | 2: 606117 window_2, 697115 window_1 |
 
 The phone cameras (mother, baby) record at about 60 fps with a variable frame rate.
 
@@ -280,8 +287,8 @@ head-pose direction or with human labels.
 
 ### 4. Audio
 
-One microphone per session (the baby-cam phone next to the mother's head, a side camcorder
-as fallback) is prepared as a 16 kHz mono WAV per phase. Every model runs in its own
+One microphone per session (the baby-cam phone next to the mother's head; a side camcorder
+as fallback, in early two-camcorder sessions the baby-facing window_2 first) is prepared as a 16 kHz mono WAV per phase. Every model runs in its own
 environment behind one adapter interface and keeps its raw output with a provenance record
 (weights revision, settings, input hash):
 
