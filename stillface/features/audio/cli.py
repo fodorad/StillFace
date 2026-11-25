@@ -13,6 +13,7 @@ from stillface.features.audio.affect import run_affect
 from stillface.features.audio.asr import builder_for, run_asr_flags
 from stillface.features.audio.config import DEFAULT_CONFIG_PATH, load_audio_config
 from stillface.features.audio.decisions import decision_rows, to_html, to_markdown
+from stillface.features.audio.export import export_phase, session_qc, write_dataset_tables
 from stillface.features.audio.fusion import run_fusion
 from stillface.features.audio.gating import run_gating
 from stillface.features.audio.infer import run_model
@@ -59,7 +60,11 @@ def add_audio_parser(groups: argparse._SubParsersAction) -> None:
     asr.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
     affect = audio.add_parser("affect", help="Mother and baby arousal / valence lanes")
     affect.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
-    for step in (inventory, prepare, infer, roles, fuse, gate, asr, affect):
+    export = audio.add_parser("export", help="Annie event JSON and lane CSV per phase")
+    export.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
+    qc = audio.add_parser("qc", help="QC record per session, QC summary and listening list")
+    qc.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
+    for step in (inventory, prepare, infer, roles, fuse, gate, asr, affect, export, qc):
         step.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="Audio config")
 
 
@@ -144,4 +149,11 @@ def run_audio(args: argparse.Namespace, paths: DatasetPaths) -> int:
     elif args.command == "affect":
         for session in args.session_id or scope_sessions(paths):
             run_affect(paths, session, config)
+    elif args.command == "export":
+        for session in args.session_id or scope_sessions(paths):
+            for phase in PHASES:
+                export_phase(paths, session, phase)
+    elif args.command == "qc":
+        records = [session_qc(paths, s, config) for s in args.session_id or scope_sessions(paths)]
+        write_dataset_tables(paths, records)
     return 0
