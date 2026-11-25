@@ -1,0 +1,96 @@
+stillface.features.audio.textgrid
+=================================
+
+.. py:module:: stillface.features.audio.textgrid
+
+.. autoapi-nested-parse::
+
+   Minimal Praat TextGrid reading and writing (interval tiers only).
+
+   Montreal Forced Aligner writes one TextGrid per utterance with ``words`` and ``phones``
+   interval tiers. This module parses the long (``ooTextFile``) format MFA writes and writes
+   the merged phase-level TextGrid that Praat and Annie-side tools can open. Standard library
+   only, so model workers can use it.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.textgrid.EMPTY_LABELS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.textgrid.Interval
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.textgrid.parse_textgrid
+   stillface.features.audio.textgrid.shift
+   stillface.features.audio.textgrid.write_textgrid
+
+
+Module Contents
+---------------
+
+.. py:data:: EMPTY_LABELS
+   :type:  frozenset[str]
+
+   Interval labels that mark silence rather than a word or phone.
+
+.. py:class:: Interval
+
+   One labelled interval.
+
+   .. attribute:: start_s
+
+      Start time.
+
+   .. attribute:: end_s
+
+      End time.
+
+   .. attribute:: label
+
+      Text of the interval.
+
+
+.. py:function:: parse_textgrid(text: str) -> dict[str, list[Interval]]
+
+   Parse the interval tiers of a long-format TextGrid.
+
+   :param text: TextGrid file content.
+
+   :returns: Tier name mapped to its intervals (silences included), in file order.
+
+
+.. py:function:: shift(intervals: list[Interval], offset_s: float) -> list[Interval]
+
+   Move intervals by an offset (utterance-local to phase-local time).
+
+   :param intervals: Intervals.
+   :param offset_s: Seconds added.
+
+   :returns: Shifted intervals.
+
+
+.. py:function:: write_textgrid(tiers: dict[str, list[Interval]], duration_s: float) -> str
+
+   Write interval tiers as a long-format TextGrid, filling gaps with empty intervals.
+
+   :param tiers: Tier name mapped to non-overlapping intervals.
+   :param duration_s: Total duration.
+
+   :returns: TextGrid content.
+
+

@@ -208,7 +208,8 @@ Module Contents
 
       For ``segments`` models, where the segments come from:
       ``vtc:<labels>`` (VTC segments with these classes, e.g. ``vtc:FEM,MAL``) or
-      ``roles:<roles>`` (role segments, e.g. ``roles:mother,baby``).
+      ``roles:<roles>`` (role segments, e.g. ``roles:mother,baby``) or ``asr:<track>``
+      (one segment per transcribed utterance of a gated track, for the aligner).
 
 
    .. py:property:: digest

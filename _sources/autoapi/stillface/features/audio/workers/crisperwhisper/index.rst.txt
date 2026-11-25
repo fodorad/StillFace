@@ -1,0 +1,101 @@
+stillface.features.audio.workers.crisperwhisper
+===============================================
+
+.. py:module:: stillface.features.audio.workers.crisperwhisper
+
+.. autoapi-nested-parse::
+
+   CrisperWhisper 2 worker: verbatim and intended transcripts (environment ``cw2``).
+
+   CrisperWhisper 2.0 large (nyra labs) is a Whisper model trained for verbatim transcription:
+   the *verbatim* mode keeps fillers, repetitions, false starts and vocal events, the
+   *intended* mode gives the clean version the speaker meant. Both come with word timestamps
+   and confidences. It runs on the mother-only (time-gated) track, in Hungarian by default.
+   The transcripts stay local: they may contain names.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.crisperwhisper.MODES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.crisperwhisper.CrisperWhisperWorker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.workers.crisperwhisper.word_scores
+   stillface.features.audio.workers.crisperwhisper.postprocess
+
+
+Module Contents
+---------------
+
+.. py:data:: MODES
+   :type:  tuple[str, ...]
+   :value: ('verbatim', 'intended')
+
+
+   Transcription modes run for every request.
+
+.. py:function:: word_scores(words: list[tuple[float, float, str, float]], duration_s: float) -> stillface.features.audio.models.SegmentScores
+
+   Words as scored segments, clipped to the clip.
+
+   :param words: ``(start, end, word, probability)`` tuples.
+   :param duration_s: Clip duration.
+
+   :returns: One segment per word (label = the word), value ``probability``.
+
+
+.. py:function:: postprocess(texts: dict[str, str], words: dict[str, list[tuple[float, float, str, float]]], duration_s: float) -> stillface.features.audio.models.InferenceResult
+
+   Result groups and the transcript artefact of one request.
+
+   :param texts: Mode mapped to its full text.
+   :param words: Mode mapped to its words.
+   :param duration_s: Clip duration.
+
+   :returns: Result with ``<mode>_words`` segment groups and a ``transcript.json`` artefact
+             (filled in by the caller with the request key).
+
+
+.. py:class:: CrisperWhisperWorker
+
+   Transcribes gated tracks in both modes.
+
+
+   .. py:method:: load(options: dict[str, Any]) -> dict[str, Any]
+
+      Load CrisperWhisper (transformers backend).
+
+
+
+   .. py:method:: forward(wav: str) -> tuple[dict[str, str], dict[str, list[tuple[float, float, str, float]]]]
+
+      Both transcripts of a WAV.
+
+
+
+   .. py:method:: infer(request: stillface.features.audio.models.InferenceRequest) -> stillface.features.audio.models.InferenceResult
+
+      Transcribe one gated track.
+
+      :param request: Whole-track request.
+
+      :returns: Word groups and the transcript artefact.
+
+
+

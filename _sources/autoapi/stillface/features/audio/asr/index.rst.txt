@@ -1,0 +1,160 @@
+stillface.features.audio.asr
+============================
+
+.. py:module:: stillface.features.audio.asr
+
+.. autoapi-nested-parse::
+
+   ASR stage: what the mother said, when, and which words to distrust.
+
+   CrisperWhisper 2 runs on the mother-only (time-gated) track. Whisper models may "hear"
+   words in silence or in the baby's vocalisations, so every word whose midpoint falls outside
+   the padded mother segments is flagged ``outside_mother``. The verbatim words of each mother
+   segment form one utterance for the Montreal Forced Aligner, which gives word and phone
+   timing (speech rate, vowel measures).
+
+   This module also chooses the request builder of every model from its config
+   (:func:`builder_for`), so the CLI and the full chain share one wiring.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.asr.logger
+   stillface.features.audio.asr.ASR_MODEL
+   stillface.features.audio.asr.ALIGNER_MODEL
+   stillface.features.audio.asr.TRACK
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.asr.gated_request
+   stillface.features.audio.asr.gated_intervals
+   stillface.features.audio.asr.inside
+   stillface.features.audio.asr.utterances
+   stillface.features.audio.asr.utterance_request
+   stillface.features.audio.asr.builder_for
+   stillface.features.audio.asr.flag_words
+   stillface.features.audio.asr.run_asr_flags
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: ASR_MODEL
+   :type:  str
+   :value: 'crisperwhisper'
+
+
+   Model name of the ASR in the config.
+
+.. py:data:: ALIGNER_MODEL
+   :type:  str
+   :value: 'mfa'
+
+
+   Model name of the forced aligner in the config.
+
+.. py:data:: TRACK
+   :type:  str
+   :value: 'mother'
+
+
+   Gated track the ASR reads.
+
+.. py:function:: gated_request(track: str) -> stillface.features.audio.infer.RequestBuilder
+
+   Builder of whole-track requests on a gated track.
+
+   :param track: Gated track name (``mother`` or ``baby``).
+
+   :returns: Builder with keys ``<session>/<phase>/<track>``; None if the track is missing.
+
+
+.. py:function:: gated_intervals(paths: stillface.config.DatasetPaths, session: str, phase: str, track: str = TRACK) -> list[tuple[float, float]]
+
+   Padded intervals kept in a gated track.
+
+   :param paths: Dataset locations.
+   :param session: Session identifier.
+   :param phase: Experiment phase.
+   :param track: Gated track.
+
+   :returns: ``(start, end)`` intervals, empty if the track was not gated.
+
+
+.. py:function:: inside(time_s: float, intervals: collections.abc.Sequence[tuple[float, float]]) -> bool
+
+   Whether a time lies in any interval.
+
+   :param time_s: Time.
+   :param intervals: ``(start, end)`` pairs.
+
+   :returns: True if ``start <= time_s < end`` for one of them.
+
+
+.. py:function:: utterances(words: collections.abc.Sequence[stillface.features.audio.models.Segment], intervals: collections.abc.Sequence[tuple[float, float]]) -> list[stillface.features.audio.models.Segment]
+
+   Group words into one utterance per kept interval.
+
+   :param words: Word segments (label = word), phase time.
+   :param intervals: Padded mother intervals.
+
+   :returns: One segment per interval with words, its label the words joined by spaces.
+
+
+.. py:function:: utterance_request(asr_model: str = ASR_MODEL) -> stillface.features.audio.infer.RequestBuilder
+
+   Builder of aligner requests: the mother track with one segment per utterance.
+
+   :param asr_model: Model whose verbatim words form the utterances.
+
+   :returns: Builder; None if there is no transcript or no utterance.
+
+
+.. py:function:: builder_for(model: stillface.features.audio.config.ModelConfig, config: stillface.features.audio.config.AudioConfig) -> stillface.features.audio.infer.RequestBuilder
+
+   Request builder of a configured model.
+
+   ``wav`` models read the prepared phase WAV, or the gated track named by the ``track``
+   option; ``segments`` models get their segments from ``segment_source`` (``vtc:``,
+   ``roles:`` or ``asr:<track>`` for the aligner's utterances).
+
+   :param model: Model settings.
+   :param config: Audio configuration.
+
+   :returns: The builder.
+
+
+.. py:function:: flag_words(words: collections.abc.Sequence[stillface.features.audio.models.Segment], probabilities: numpy.ndarray, intervals: collections.abc.Sequence[tuple[float, float]]) -> list[dict]
+
+   Words with the ``outside_mother`` flag.
+
+   :param words: Word segments.
+   :param probabilities: Word probabilities, shape ``(len(words), 1)``.
+   :param intervals: Padded mother intervals.
+
+   :returns: start, end, word, probability, outside_mother.
+   :rtype: One record per word
+
+
+.. py:function:: run_asr_flags(paths: stillface.config.DatasetPaths, session: str, config: stillface.features.audio.config.AudioConfig, phases: collections.abc.Sequence[str] = PHASES) -> dict[str, float]
+
+   Write ``asr/<phase>.json`` with flagged words, texts and the aligner's OOV list.
+
+   :param paths: Dataset locations.
+   :param session: Session identifier.
+   :param config: Audio configuration.
+   :param phases: Phases to process.
+
+   :returns: Phase mapped to the share of verbatim words flagged ``outside_mother``.
+
+
