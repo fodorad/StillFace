@@ -102,6 +102,12 @@ exclude_lines = [
   "pragma: no cover",
   "raise NotImplementedError",
   "if TYPE_CHECKING:",
+  # Audio model workers: the load / forward boundaries and the entry point need the model
+  # environments and weights; they run in `make audio-smoke`, not in CI.
+  "def load\\(self",
+  "def forward\\(self",
+  "def torch_device\\(",
+  "if __name__ == .__main__.:",
 ]
 
 [tool.coverage.html]
@@ -117,6 +123,7 @@ include = [
   "stillface/features/gaze/exordium_heads.py",
   "stillface/features/gaze/gdino_heads.py",
   "stillface/features/audio/prosody.py",
+  "stillface/features/audio/workers/*.py",
 ]
 
 [tool.ty.overrides.rules]

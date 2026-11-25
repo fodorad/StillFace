@@ -35,3 +35,19 @@ infant_f0_max = "1000"
 
 [models.egemaps]
 # openSMILE eGeMAPS v02 functionals per role segment.
+input = "segments"
+
+[models.silero]
+# Silero VAD, weights bundled with the pinned package (envs/audio/vad).
+env = "vad"
+module = "stillface.features.audio.workers.silero"
+weights_revision = "silero-vad==6.3"
+device = "cpu"
+
+[models.ast]
+# AST AudioSet, 2 s windows, 0.25 s hop (probe settings).
+env = "hf"
+module = "stillface.features.audio.workers.ast_audioset"
+weights_revision = "f826b80d28226b62986cc218e5cec390b1096902"
+window_s = 2.0
+hop_s = 0.25
