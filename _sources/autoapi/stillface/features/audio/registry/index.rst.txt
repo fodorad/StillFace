@@ -47,7 +47,7 @@ Module Contents
 .. py:data:: IN_PROCESS
    :type:  dict[str, InProcessFactory]
 
-   In-process models (no ``env``), registered by their modules.
+   In-process models (no ``env``) by name.
 
 .. py:function:: envs_root(environ: collections.abc.Mapping[str, str] = os.environ) -> pathlib.Path
 

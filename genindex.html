@@ -219,6 +219,7 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/media/index.html">stillface.features.audio.media</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/models/index.html">stillface.features.audio.models</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/prepare/index.html">stillface.features.audio.prepare</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/prosody/index.html">stillface.features.audio.prosody</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/provenance/index.html">stillface.features.audio.provenance</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/registry/index.html">stillface.features.audio.registry</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/subprocess_adapter/index.html">stillface.features.audio.subprocess_adapter</a></li>
@@ -502,6 +503,8 @@
         </ul></li>
         <li><a href="autoapi/stillface/features/gaze/gdino_heads/index.html#stillface.features.gaze.gdino_heads.DEFAULT_MODEL">DEFAULT_MODEL (in module stillface.features.gaze.gdino_heads)</a>
 </li>
+        <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.DEFAULTS">DEFAULTS (in module stillface.features.audio.prosody)</a>
+</li>
         <li><a href="autoapi/stillface/features/gaze/tracking/index.html#stillface.features.gaze.tracking.densify">densify() (in module stillface.features.gaze.tracking)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/gdino_heads/index.html#stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker.detect">detect() (stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker method)</a>
@@ -544,6 +547,8 @@
   <h2>E</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.EgemapsAdapter">EgemapsAdapter (class in stillface.features.audio.prosody)</a>
+</li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack.embedding">embedding (stillface.features.gaze.heads.HeadTrack attribute)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.SegmentScores.embeddings">embeddings (stillface.features.audio.models.SegmentScores attribute)</a>
@@ -732,15 +737,17 @@
 </li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadBox">HeadBox (class in stillface.features.gaze.heads)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/gaze/prepare/index.html#stillface.features.gaze.prepare.ClipHeads.heads">heads (stillface.features.gaze.prepare.ClipHeads attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack">HeadTrack (class in stillface.features.gaze.heads)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTracker">HeadTracker (class in stillface.features.gaze.heads)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/estimator/index.html#stillface.features.gaze.estimator.GazeEstimate.heatmap">heatmap (stillface.features.gaze.estimator.GazeEstimate attribute)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.HNR_UNVOICED">HNR_UNVOICED (in module stillface.features.audio.prosody)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.ModelConfig.hop_s">hop_s (stillface.features.audio.config.ModelConfig attribute)</a>
 </li>
@@ -997,7 +1004,13 @@
         <li><a href="autoapi/stillface/data_preparation/metadata/index.html#stillface.data_preparation.metadata.missing_recordings">missing_recordings() (in module stillface.data_preparation.metadata)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/infer/index.html#stillface.features.audio.infer.StageReport.model">model (stillface.features.audio.infer.StageReport attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.EgemapsAdapter.model">(stillface.features.audio.prosody.EgemapsAdapter attribute)</a>
 </li>
+          <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.ProsodyAdapter.model">(stillface.features.audio.prosody.ProsodyAdapter attribute)</a>
+</li>
+        </ul></li>
         <li><a href="autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.GazeConfig.model_variant">model_variant (stillface.features.gaze.config.GazeConfig attribute)</a>
 
         <ul>
@@ -1055,6 +1068,8 @@
           <li><a href="autoapi/stillface/features/audio/models/index.html#module-stillface.features.audio.models">stillface.features.audio.models</a>
 </li>
           <li><a href="autoapi/stillface/features/audio/prepare/index.html#module-stillface.features.audio.prepare">stillface.features.audio.prepare</a>
+</li>
+          <li><a href="autoapi/stillface/features/audio/prosody/index.html#module-stillface.features.audio.prosody">stillface.features.audio.prosody</a>
 </li>
           <li><a href="autoapi/stillface/features/audio/provenance/index.html#module-stillface.features.audio.provenance">stillface.features.audio.provenance</a>
 </li>
@@ -1130,6 +1145,10 @@
 </li>
           <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.ModelAdapter.name">(stillface.features.audio.models.ModelAdapter attribute)</a>
 </li>
+          <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.EgemapsAdapter.name">(stillface.features.audio.prosody.EgemapsAdapter attribute)</a>
+</li>
+          <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.ProsodyAdapter.name">(stillface.features.audio.prosody.ProsodyAdapter attribute)</a>
+</li>
           <li><a href="autoapi/stillface/features/audio/subprocess_adapter/index.html#stillface.features.audio.subprocess_adapter.SubprocessAdapter.name">(stillface.features.audio.subprocess_adapter.SubprocessAdapter attribute)</a>
 </li>
         </ul></li>
@@ -1139,10 +1158,10 @@
           <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.SegmentScores.names">(stillface.features.audio.models.SegmentScores attribute)</a>
 </li>
         </ul></li>
-        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.NK">NK (in module stillface.features.gaze.classes)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.NK">NK (in module stillface.features.gaze.classes)</a>
+</li>
         <li><a href="autoapi/stillface/data_preparation/sync/index.html#stillface.data_preparation.sync.normalize">normalize() (in module stillface.data_preparation.sync)</a>
 </li>
         <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.normalized_dir">normalized_dir() (stillface.config.DatasetPaths method)</a>
@@ -1241,10 +1260,10 @@
 </li>
         <li><a href="autoapi/stillface/data_preparation/metadata/index.html#stillface.data_preparation.metadata.phase_windows">phase_windows() (in module stillface.data_preparation.metadata)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/constants/index.html#stillface.constants.PHASES">PHASES (in module stillface.constants)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/data_preparation/metadata/index.html#stillface.data_preparation.metadata.PhaseWindows">PhaseWindows (class in stillface.data_preparation.metadata)</a>
 </li>
         <li><a href="autoapi/stillface/data_preparation/sync/index.html#stillface.data_preparation.sync.pick_reference">pick_reference() (in module stillface.data_preparation.sync)</a>
@@ -1270,6 +1289,10 @@
         <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.processed_dir">processed_dir (stillface.config.DatasetPaths attribute)</a>
 </li>
         <li><a href="autoapi/stillface/config/index.html#stillface.config.PROCESSED_ENV_VAR">PROCESSED_ENV_VAR (in module stillface.config)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.PROSODY_VERSION">PROSODY_VERSION (in module stillface.features.audio.prosody)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.ProsodyAdapter">ProsodyAdapter (class in stillface.features.audio.prosody)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/subprocess_adapter/index.html#stillface.features.audio.subprocess_adapter.SubprocessAdapter.python">python (stillface.features.audio.subprocess_adapter.SubprocessAdapter attribute)</a>
 </li>
@@ -1345,10 +1368,10 @@
 </li>
         <li><a href="autoapi/stillface/features/audio/media/index.html#stillface.features.audio.media.RESAMPLER">RESAMPLER (in module stillface.features.audio.media)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/audio/workers/base/index.html#stillface.features.audio.workers.base.result_path">result_path() (in module stillface.features.audio.workers.base)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/audio/inventory/index.html#stillface.features.audio.inventory.InventoryRow.rms_dbfs">rms_dbfs (stillface.features.audio.inventory.InventoryRow attribute)</a>
 
         <ul>
@@ -1386,6 +1409,10 @@
         <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.ModelAdapter.run">run() (stillface.features.audio.models.ModelAdapter method)</a>
 
         <ul>
+          <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.EgemapsAdapter.run">(stillface.features.audio.prosody.EgemapsAdapter method)</a>
+</li>
+          <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.ProsodyAdapter.run">(stillface.features.audio.prosody.ProsodyAdapter method)</a>
+</li>
           <li><a href="autoapi/stillface/features/audio/subprocess_adapter/index.html#stillface.features.audio.subprocess_adapter.SubprocessAdapter.run">(stillface.features.audio.subprocess_adapter.SubprocessAdapter method)</a>
 </li>
         </ul></li>
@@ -1611,8 +1638,6 @@
           <li><a href="autoapi/stillface/features/index.html#module-stillface.features">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     stillface.features.audio
 
@@ -1620,6 +1645,8 @@
           <li><a href="autoapi/stillface/features/audio/index.html#module-stillface.features.audio">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     stillface.features.audio.cli
 
@@ -1674,6 +1701,13 @@
 
         <ul>
           <li><a href="autoapi/stillface/features/audio/prepare/index.html#module-stillface.features.audio.prepare">module</a>
+</li>
+        </ul></li>
+        <li>
+    stillface.features.audio.prosody
+
+        <ul>
+          <li><a href="autoapi/stillface/features/audio/prosody/index.html#module-stillface.features.audio.prosody">module</a>
 </li>
         </ul></li>
         <li>
@@ -1999,6 +2033,10 @@
         <ul>
           <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.ModelAdapter.weights_revision">(stillface.features.audio.models.ModelAdapter attribute)</a>
 </li>
+          <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.EgemapsAdapter.weights_revision">(stillface.features.audio.prosody.EgemapsAdapter attribute)</a>
+</li>
+          <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.ProsodyAdapter.weights_revision">(stillface.features.audio.prosody.ProsodyAdapter attribute)</a>
+</li>
           <li><a href="autoapi/stillface/features/audio/subprocess_adapter/index.html#stillface.features.audio.subprocess_adapter.SubprocessAdapter.weights_revision">(stillface.features.audio.subprocess_adapter.SubprocessAdapter attribute)</a>
 </li>
         </ul></li>
@@ -2020,6 +2058,10 @@
 
         <ul>
           <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.ModelAdapter.worker_version">(stillface.features.audio.models.ModelAdapter attribute)</a>
+</li>
+          <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.EgemapsAdapter.worker_version">(stillface.features.audio.prosody.EgemapsAdapter attribute)</a>
+</li>
+          <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.ProsodyAdapter.worker_version">(stillface.features.audio.prosody.ProsodyAdapter attribute)</a>
 </li>
           <li><a href="autoapi/stillface/features/audio/subprocess_adapter/index.html#stillface.features.audio.subprocess_adapter.SubprocessAdapter.worker_version">(stillface.features.audio.subprocess_adapter.SubprocessAdapter attribute)</a>
 </li>

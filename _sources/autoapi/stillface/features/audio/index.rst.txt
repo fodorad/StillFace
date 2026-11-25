@@ -23,6 +23,7 @@ Submodules
    /autoapi/stillface/features/audio/media/index
    /autoapi/stillface/features/audio/models/index
    /autoapi/stillface/features/audio/prepare/index
+   /autoapi/stillface/features/audio/prosody/index
    /autoapi/stillface/features/audio/provenance/index
    /autoapi/stillface/features/audio/registry/index
    /autoapi/stillface/features/audio/subprocess_adapter/index

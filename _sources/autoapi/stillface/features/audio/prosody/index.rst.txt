@@ -1,0 +1,127 @@
+stillface.features.audio.prosody
+================================
+
+.. py:module:: stillface.features.audio.prosody
+
+.. autoapi-nested-parse::
+
+   Prosodic low-level descriptors, computed in-process.
+
+   Two in-process models implement the adapter protocol, so the stages treat them like any
+   other model:
+
+   - ``prosody`` (first pass, whole phase): Parselmouth (Praat) F0 in an adult range and in an
+     infant range, intensity and harmonics-to-noise ratio, every 10 ms. The fusion stage picks
+     the F0 range by the role of each segment.
+   - ``egemaps`` (second pass, per role segment): the 88 openSMILE eGeMAPS v02 functionals
+     (Eyben et al. 2016), the standard compact descriptor set of computational paralinguistics.
+
+   These are numbers, not labels: they describe *how* someone vocalises (pitch height and
+   range, loudness, voice quality) and feed the IDS-strength index, cry acoustics, arousal and
+   prosodic synchrony. Both libraries come with the optional ``audio`` extra.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.prosody.PROSODY_VERSION
+   stillface.features.audio.prosody.DEFAULTS
+   stillface.features.audio.prosody.HNR_UNVOICED
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.prosody.ProsodyAdapter
+   stillface.features.audio.prosody.EgemapsAdapter
+
+
+Module Contents
+---------------
+
+.. py:data:: PROSODY_VERSION
+   :type:  str
+   :value: '1'
+
+
+   Version of the prosody adapters' output layout.
+
+.. py:data:: DEFAULTS
+   :type:  dict[str, float]
+
+   Default prosody options; the config's ``models.prosody.options`` override them.
+
+.. py:data:: HNR_UNVOICED
+   :type:  float
+   :value: -199.0
+
+
+   Praat marks unvoiced HNR frames with -200 dB; values at or below this are NaN.
+
+.. py:class:: ProsodyAdapter
+
+   Frame-level F0, intensity and HNR with Parselmouth.
+
+   .. attribute:: name
+
+      Model name.
+
+   .. attribute:: model
+
+      Model settings; ``options`` may override :data:`DEFAULTS`.
+
+   .. attribute:: worker_version
+
+      Output layout version.
+
+   .. attribute:: weights_revision
+
+      Installed library version (no weights).
+
+
+   .. py:method:: run(requests: list[stillface.features.audio.models.InferenceRequest]) -> list[stillface.features.audio.models.InferenceResult | stillface.features.audio.models.InferenceError]
+
+      Measure every request; a failing request becomes an error.
+
+      :param requests: Whole-phase requests.
+
+      :returns: One result or error per request.
+
+
+
+.. py:class:: EgemapsAdapter
+
+   eGeMAPS v02 functionals per segment with openSMILE.
+
+   .. attribute:: name
+
+      Model name.
+
+   .. attribute:: model
+
+      Model settings.
+
+   .. attribute:: worker_version
+
+      Output layout version.
+
+   .. attribute:: weights_revision
+
+      Installed library version (no weights).
+
+
+   .. py:method:: run(requests: list[stillface.features.audio.models.InferenceRequest]) -> list[stillface.features.audio.models.InferenceResult | stillface.features.audio.models.InferenceError]
+
+      Compute the functionals of every segment of every request.
+
+      :param requests: Requests with segments.
+
+      :returns: One result or error per request; a request without segments is an error.
+
+
+
