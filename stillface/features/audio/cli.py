@@ -9,15 +9,16 @@ from pathlib import Path
 from stillface.config import DatasetPaths
 from stillface.constants import PHASES
 from stillface.data_preparation.metadata import load_metadata
+from stillface.features.audio.asr import builder_for, run_asr_flags
 from stillface.features.audio.config import DEFAULT_CONFIG_PATH, load_audio_config
 from stillface.features.audio.decisions import decision_rows, to_html, to_markdown
 from stillface.features.audio.fusion import run_fusion
 from stillface.features.audio.gating import run_gating
-from stillface.features.audio.infer import full_wav_request, run_model
+from stillface.features.audio.infer import run_model
 from stillface.features.audio.inventory import build_inventory, read_inventory, write_inventory
 from stillface.features.audio.prepare import prepare_all
 from stillface.features.audio.registry import build_adapter
-from stillface.features.audio.roles import assign_roles, segment_builder, write_listening
+from stillface.features.audio.roles import assign_roles, write_listening
 from stillface.features.io import write_atomic
 
 logger = logging.getLogger(__name__)
@@ -53,7 +54,9 @@ def add_audio_parser(groups: argparse._SubParsersAction) -> None:
     fuse.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
     gate = audio.add_parser("gate", help="Mother-only and baby-only tracks, overlap list")
     gate.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
-    for step in (inventory, prepare, infer, roles, fuse, gate):
+    asr = audio.add_parser("asr", help="Flag ASR words outside the mother's segments")
+    asr.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
+    for step in (inventory, prepare, infer, roles, fuse, gate, asr):
         step.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="Audio config")
 
 
@@ -109,9 +112,7 @@ def run_audio(args: argparse.Namespace, paths: DatasetPaths) -> int:
         adapter = build_adapter(args.model, config, args.envs)
         model = config.models[args.model]
         sessions = args.session_id or scope_sessions(paths)
-        builder = full_wav_request
-        if model.input == "segments":
-            builder = segment_builder(model.segment_source, config.roles.vtc_model)
+        builder = builder_for(model, config)
         result = run_model(
             paths, adapter, model, sessions, args.phase, builder, overwrite=args.overwrite
         )
@@ -134,4 +135,7 @@ def run_audio(args: argparse.Namespace, paths: DatasetPaths) -> int:
     elif args.command == "gate":
         for session in args.session_id or scope_sessions(paths):
             run_gating(paths, session, config)
+    elif args.command == "asr":
+        for session in args.session_id or scope_sessions(paths):
+            run_asr_flags(paths, session, config)
     return 0

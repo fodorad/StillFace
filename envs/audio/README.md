@@ -19,6 +19,8 @@ repository on `PYTHONPATH`; they import nothing from the package's own dependenc
 | `hf` | AST AudioSet, audEERING arousal / dominance / valence |
 | `vtc` | VTC 2.2 voice types, addressee (KCDS / ADS / Other) |
 | `e2v` | emotion2vec+ large (FunASR) |
+| `cw2` | CrisperWhisper 2.0 large (verbatim and intended ASR) |
+| `mfa` | Montreal Forced Aligner, Hungarian CV (pixi, conda-forge; `pixi.lock` written on first install) |
 | `littlebeats` | LittleBeats wav2vec2 speaker and vocalisation heads (Python 3.10, fairseq; disabled until verified) |
 
 Gated Hugging Face models read the token from the `HF_TOKEN` environment variable.
