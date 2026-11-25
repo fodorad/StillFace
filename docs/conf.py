@@ -71,4 +71,5 @@ html_theme = "furo"
 html_static_path = ["assets"]
 html_logo = "assets/logo.svg"
 html_baseurl = "https://fodorad.github.io/StillFace/"
-exclude_patterns = ["_build"]
+# Local, git-ignored working folders are never part of the published docs.
+exclude_patterns = ["_build", "plans", "reports"]
