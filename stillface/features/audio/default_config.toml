@@ -33,6 +33,8 @@ tau_low = 0.4
 
 [fusion]
 disagreement_listen_share = 0.2
+# AudioSet classes up to this tier (1 targets, 2 context; ast_classes.csv) get a lane.
+ast_lane_max_tier = 2
 
 # Thresholds: value and where it comes from (vendor default, probe, or config placeholder).
 [fusion.thresholds.silero]

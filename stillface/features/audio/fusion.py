@@ -25,6 +25,7 @@ import numpy as np
 
 from stillface.config import DatasetPaths
 from stillface.constants import PHASES
+from stillface.features.audio.audioset import AudioSetClass, load_classes, priority_labels
 from stillface.features.audio.config import AudioConfig, TypeRule
 from stillface.features.audio.infer import load_raw, wav_duration
 from stillface.features.audio.lanes import (
@@ -48,6 +49,9 @@ from stillface.features.audio.roles import ListeningItem, role_events_path
 from stillface.features.io import write_atomic
 
 logger = logging.getLogger(__name__)
+
+AUDIOSET_CLASSES: tuple[AudioSetClass, ...] = load_classes()
+"""AudioSet class table (tiers decide which classes get a lane)."""
 
 MODELS: dict[str, str] = {
     "silero": "silero",
@@ -332,7 +336,7 @@ def fuse_phase(inputs: PhaseInputs, config: AudioConfig) -> FusionResult:
             )
             opinions[key] = b.threshold_band(lane, key, rule)
 
-    # AST lanes of every class a rule uses, then the gong mask.
+    # AST lanes of every class a rule uses and every priority class, then the gong mask.
     ast = raw.get("ast")
     ast_frames = ast.frames.get("audioset") if ast is not None else None
     ast_lanes: dict[str, Lane] = {}
@@ -340,6 +344,8 @@ def fuse_phase(inputs: PhaseInputs, config: AudioConfig) -> FusionResult:
         used = [*fc.gong.classes, *fc.context.classes]
         for rule in [*fc.baby_types.values(), *fc.mother_types.values()]:
             used += list(rule.ast)
+        priority = priority_labels(fc.ast_lane_max_tier, AUDIOSET_CLASSES)
+        used += [name for name in priority if name in ast_frames.names]
         for name in dict.fromkeys(used):
             spec = _prob_spec("ast", name, "context")
             ast_lanes[name] = b.lane(spec, ast_frames.times, column(ast_frames, [name]))

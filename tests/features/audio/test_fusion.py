@@ -169,6 +169,24 @@ class TestFusePhase(unittest.TestCase):
         self.assertIn("ads_deviation", kinds)
         self.assertEqual(result.summary["context_shares"]["Music"] > 0.8, True)
 
+    def test_every_priority_class_gets_a_lane_up_to_the_configured_tier(self):
+        inputs = make_inputs()
+        audioset = inputs.raw["ast"].frames["audioset"]
+        extra = ("Cough", "Dog")  # tier 2 and tier 0
+        times = audioset.times
+        values = np.hstack([audioset.values, np.full((len(times), 2), 0.3)])
+        frames_ = FrameScores(times, (*audioset.names, *extra), values)
+        raw = {**inputs.raw, "ast": InferenceResult("1/play", {"audioset": frames_})}
+        inputs = replace(inputs, raw=raw)
+        names = [lane.spec.name for lane in fuse_phase(inputs, CONFIG).table.lanes]
+        self.assertIn("ast.Cough.context", names)
+        self.assertNotIn("ast.Dog.context", names)
+        self.assertIn("ast.Gong.context", names)
+        targets_only = replace(CONFIG, fusion=replace(CONFIG.fusion, ast_lane_max_tier=1))
+        names = [lane.spec.name for lane in fuse_phase(inputs, targets_only).table.lanes]
+        self.assertNotIn("ast.Cough.context", names)
+        self.assertIn("ast.Gong.context", names)  # still needed by the gong rule
+
     def test_types_addressee_and_prosody(self):
         result = fuse_phase(make_inputs(), CONFIG)
         baby = [e for e in result.events if e.role == "baby"]
