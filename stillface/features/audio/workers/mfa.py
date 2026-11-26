@@ -119,6 +119,22 @@ def phase_alignment(
     return kept, oov
 
 
+WIDE_BEAM: tuple[str, ...] = ("--beam", "100", "--retry_beam", "400")
+"""MFA's advice when no utterance aligns at the default beam (10 / 40)."""
+
+
+def retry_arguments(message: str) -> list[str] | None:
+    """Extra ``mfa align`` arguments for a retry after a failed alignment.
+
+    Args:
+        message: The failure message.
+
+    Returns:
+        A wider beam after ``NoAlignmentsError``; None for other failures.
+    """
+    return list(WIDE_BEAM) if "NoAlignmentsError" in message else None
+
+
 def activated_env(bin_dir: Path, base: Mapping[str, str]) -> dict[str, str]:
     """Environment variables of an activated conda / pixi environment.
 
@@ -202,21 +218,25 @@ class MfaWorker:
             corpus.mkdir()
             (corpus / "phase.wav").symlink_to(Path(request.wav).resolve())
             (corpus / "phase.TextGrid").write_text(input_textgrid(utterances, request.duration_s))
-            run_command(
-                [
-                    self.mfa,
-                    "align",
-                    str(corpus),
-                    self.dictionary,
-                    self.acoustic,
-                    str(out),
-                    "--clean",
-                    "--quiet",
-                    "--output_format",
-                    "json",
-                ],
-                self.env,
-            )
+            command = [
+                self.mfa,
+                "align",
+                str(corpus),
+                self.dictionary,
+                self.acoustic,
+                str(out),
+                "--clean",
+                "--quiet",
+                "--output_format",
+                "json",
+            ]
+            try:
+                run_command(command, self.env)
+            except RuntimeError as error:
+                extra = retry_arguments(str(error))
+                if extra is None:
+                    raise
+                run_command([*command, *extra], self.env)
             result = out / "phase.json"
             return parse_alignment_json(result.read_text()) if result.exists() else {}
 
