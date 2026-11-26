@@ -399,6 +399,21 @@
 
 
 
+<div class="viewcode-block" id="normalise_word">
+<a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/mfa/index.html#stillface.features.audio.workers.mfa.normalise_word">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalise_word</span><span class="p">(</span><span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A transcript word as MFA's dictionary spells it: lower case, no edge punctuation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        word: Transcript token, e.g. ``"Baba!"``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        E.g. ``"baba"``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">word</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">".,!?;:</span><span class="se">\"</span><span class="s2">'()[]«»„”…-–"</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+
+
+
 <div class="viewcode-block" id="phase_alignment">
 <a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/mfa/index.html#stillface.features.audio.workers.mfa.phase_alignment">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">phase_alignment</span><span class="p">(</span>
@@ -427,7 +442,7 @@
         <span class="n">expected</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">label</span> <span class="ow">in</span> <span class="n">UNKNOWN</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">aligned</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">aligned</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">expected</span><span class="p">):</span>
             <span class="n">known</span> <span class="o">=</span> <span class="p">{</span><span class="n">w</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">aligned</span> <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">UNKNOWN</span><span class="p">}</span>
-            <span class="n">oov</span> <span class="o">+=</span> <span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">expected</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known</span><span class="p">]</span>
+            <span class="n">oov</span> <span class="o">+=</span> <span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">expected</span> <span class="k">if</span> <span class="n">normalise_word</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">kept</span><span class="p">,</span> <span class="n">oov</span></div>
 
 

@@ -367,16 +367,19 @@ utterance files made MFA 3.4 pair alignments with the wrong files. Words MFA cou
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.parse_alignment_json" title="stillface.features.audio.workers.mfa.parse_alignment_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_alignment_json</span></code></a>(→ dict[str, ...)</p></td>
 <td><p>Tiers of an MFA JSON alignment.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.phase_alignment" title="stillface.features.audio.workers.mfa.phase_alignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_alignment</span></code></a>(→ tuple[dict[str, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.normalise_word" title="stillface.features.audio.workers.mfa.normalise_word"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalise_word</span></code></a>(→ str)</p></td>
+<td><p>A transcript word as MFA's dictionary spells it: lower case, no edge punctuation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.phase_alignment" title="stillface.features.audio.workers.mfa.phase_alignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_alignment</span></code></a>(→ tuple[dict[str, ...)</p></td>
 <td><p>Kept word and phone tiers and the out-of-vocabulary words of a phase.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.activated_env" title="stillface.features.audio.workers.mfa.activated_env"><code class="xref py py-obj docutils literal notranslate"><span class="pre">activated_env</span></code></a>(→ dict[str, str])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.activated_env" title="stillface.features.audio.workers.mfa.activated_env"><code class="xref py py-obj docutils literal notranslate"><span class="pre">activated_env</span></code></a>(→ dict[str, str])</p></td>
 <td><p>Environment variables of an activated conda / pixi environment.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.run_command" title="stillface.features.audio.workers.mfa.run_command"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_command</span></code></a>(→ str)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.run_command" title="stillface.features.audio.workers.mfa.run_command"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_command</span></code></a>(→ str)</p></td>
 <td><p>Run a command and return its standard output.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.to_scores" title="stillface.features.audio.workers.mfa.to_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_scores</span></code></a>(→ dict[str, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.to_scores" title="stillface.features.audio.workers.mfa.to_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_scores</span></code></a>(→ dict[str, ...)</p></td>
 <td><p>Tiers as segment groups (label = word or phone, value = duration).</p></td>
 </tr>
 </tbody>
@@ -425,6 +428,20 @@ utterance files made MFA 3.4 pair alignments with the wrong files. Words MFA cou
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Tier name mapped to its intervals, in file order.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.workers.mfa.normalise_word">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.mfa.</span></span><span class="sig-name descname"><span class="pre">normalise_word</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">word</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/mfa.html#normalise_word"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.mfa.normalise_word" title="Link to this definition">¶</a></dt>
+<dd><p>A transcript word as MFA’s dictionary spells it: lower case, no edge punctuation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>word</strong> – Transcript token, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;Baba!&quot;</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>E.g. <code class="docutils literal notranslate"><span class="pre">&quot;baba&quot;</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -600,6 +617,7 @@ must lead the <code class="docutils literal notranslate"><span class="pre">PATH<
 <li><a class="reference internal" href="#stillface.features.audio.workers.mfa.TIER"><code class="docutils literal notranslate"><span class="pre">TIER</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.mfa.input_textgrid"><code class="docutils literal notranslate"><span class="pre">input_textgrid()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.mfa.parse_alignment_json"><code class="docutils literal notranslate"><span class="pre">parse_alignment_json()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.mfa.normalise_word"><code class="docutils literal notranslate"><span class="pre">normalise_word()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.mfa.phase_alignment"><code class="docutils literal notranslate"><span class="pre">phase_alignment()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.mfa.activated_env"><code class="docutils literal notranslate"><span class="pre">activated_env()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.mfa.run_command"><code class="docutils literal notranslate"><span class="pre">run_command()</span></code></a></li>

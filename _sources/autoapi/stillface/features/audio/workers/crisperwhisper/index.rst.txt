@@ -36,6 +36,7 @@ Functions
 
 .. autoapisummary::
 
+   stillface.features.audio.workers.crisperwhisper.selected_modes
    stillface.features.audio.workers.crisperwhisper.word_scores
    stillface.features.audio.workers.crisperwhisper.postprocess
 
@@ -49,6 +50,17 @@ Module Contents
 
 
    Transcription modes run for every request.
+
+.. py:function:: selected_modes(options: dict[str, Any]) -> tuple[str, ...]
+
+   Transcription modes to run.
+
+   :param options: Worker options; ``modes`` is a comma-separated subset of :data:`MODES`.
+
+   :returns: The modes in :data:`MODES` order; both when not set.
+
+   :raises ValueError: For an unknown mode.
+
 
 .. py:function:: word_scores(words: list[tuple[float, float, str, float]], duration_s: float) -> stillface.features.audio.models.SegmentScores
 

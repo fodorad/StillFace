@@ -152,11 +152,14 @@ Module Contents
 
    .. attribute:: tau_high
 
-      Cosine similarity at or above which a female segment is the mother.
+      Cosine similarity at or above which a female segment is the mother
+      (calibrated: Otsu split of the dominant-voice similarities of the 1-2 s pyannote
+      community-1 segments, 0.364).
 
    .. attribute:: tau_low
 
-      Cosine similarity at or below which it is another woman.
+      Cosine similarity at or below which it is another woman (below the main
+      mass of the dominant voice).
 
 
 .. py:data:: RUN_CONTROL

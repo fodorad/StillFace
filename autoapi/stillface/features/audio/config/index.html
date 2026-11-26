@@ -541,13 +541,16 @@ before <code class="docutils literal notranslate"><span class="pre">window_1</sp
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stillface.features.audio.config.RolesConfig.tau_high">
 <span class="sig-name descname"><span class="pre">tau_high</span></span><a class="headerlink" href="#stillface.features.audio.config.RolesConfig.tau_high" title="Link to this definition">¶</a></dt>
-<dd><p>Cosine similarity at or above which a female segment is the mother.</p>
+<dd><p>Cosine similarity at or above which a female segment is the mother
+(calibrated: Otsu split of the dominant-voice similarities of the 1-2 s pyannote
+community-1 segments, 0.364).</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stillface.features.audio.config.RolesConfig.tau_low">
 <span class="sig-name descname"><span class="pre">tau_low</span></span><a class="headerlink" href="#stillface.features.audio.config.RolesConfig.tau_low" title="Link to this definition">¶</a></dt>
-<dd><p>Cosine similarity at or below which it is another woman.</p>
+<dd><p>Cosine similarity at or below which it is another woman (below the main
+mass of the dominant voice).</p>
 </dd></dl>
 
 </dd></dl>

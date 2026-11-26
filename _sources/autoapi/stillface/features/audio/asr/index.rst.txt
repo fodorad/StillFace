@@ -71,13 +71,16 @@ Module Contents
 
    Gated track the ASR reads.
 
-.. py:function:: gated_request(track: str) -> stillface.features.audio.infer.RequestBuilder
+.. py:function:: gated_request(track: str, min_speech_s: float = 0.0) -> stillface.features.audio.infer.RequestBuilder
 
    Builder of whole-track requests on a gated track.
 
    :param track: Gated track name (``mother`` or ``baby``).
+   :param min_speech_s: Fewest seconds of kept (padded) speech for a request; a track with
+                        less (e.g. the mother during the still face) has nothing to transcribe.
 
-   :returns: Builder with keys ``<session>/<phase>/<track>``; None if the track is missing.
+   :returns: Builder with keys ``<session>/<phase>/<track>``; None if the track is missing or
+             has less speech than ``min_speech_s``.
 
 
 .. py:function:: gated_intervals(paths: stillface.config.DatasetPaths, session: str, phase: str, track: str = TRACK) -> list[tuple[float, float]]

@@ -413,8 +413,11 @@
 <span class="sd">        fallback_phase: Phase used when the enrolment phase has too little speech.</span>
 <span class="sd">        enrol_total_s: Longest female segments are used up to this total.</span>
 <span class="sd">        enrol_min_s: Less enrolment speech than this leaves the session unresolved.</span>
-<span class="sd">        tau_high: Cosine similarity at or above which a female segment is the mother.</span>
-<span class="sd">        tau_low: Cosine similarity at or below which it is another woman.</span>
+<span class="sd">        tau_high: Cosine similarity at or above which a female segment is the mother</span>
+<span class="sd">            (calibrated: Otsu split of the dominant-voice similarities of the 1-2 s pyannote</span>
+<span class="sd">            community-1 segments, 0.364).</span>
+<span class="sd">        tau_low: Cosine similarity at or below which it is another woman (below the main</span>
+<span class="sd">            mass of the dominant voice).</span>
 <span class="sd">    """</span>
 
     <span class="n">vtc_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"vtc"</span>
@@ -424,8 +427,8 @@
     <span class="n">fallback_phase</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"reunion"</span>
     <span class="n">enrol_total_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span>
     <span class="n">enrol_min_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">8.0</span>
-    <span class="n">tau_high</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.6</span>
-    <span class="n">tau_low</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span></div>
+    <span class="n">tau_high</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.35</span>
+    <span class="n">tau_low</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span></div>
 
 
 

@@ -414,14 +414,19 @@ timing (speech rate, vowel measures).</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="stillface.features.audio.asr.gated_request">
-<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.asr.</span></span><span class="sig-name descname"><span class="pre">gated_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../infer/index.html#stillface.features.audio.infer.RequestBuilder" title="stillface.features.audio.infer.RequestBuilder"><span class="pre">stillface.features.audio.infer.RequestBuilder</span></a></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/asr.html#gated_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.asr.gated_request" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.asr.</span></span><span class="sig-name descname"><span class="pre">gated_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_speech_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../infer/index.html#stillface.features.audio.infer.RequestBuilder" title="stillface.features.audio.infer.RequestBuilder"><span class="pre">stillface.features.audio.infer.RequestBuilder</span></a></span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/asr.html#gated_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.asr.gated_request" title="Link to this definition">¶</a></dt>
 <dd><p>Builder of whole-track requests on a gated track.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>track</strong> – Gated track name (<code class="docutils literal notranslate"><span class="pre">mother</span></code> or <code class="docutils literal notranslate"><span class="pre">baby</span></code>).</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>track</strong> – Gated track name (<code class="docutils literal notranslate"><span class="pre">mother</span></code> or <code class="docutils literal notranslate"><span class="pre">baby</span></code>).</p></li>
+<li><p><strong>min_speech_s</strong> – Fewest seconds of kept (padded) speech for a request; a track with
+less (e.g. the mother during the still face) has nothing to transcribe.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Builder with keys <code class="docutils literal notranslate"><span class="pre">&lt;session&gt;/&lt;phase&gt;/&lt;track&gt;</span></code>; None if the track is missing.</p>
+<dd class="field-even"><p>Builder with keys <code class="docutils literal notranslate"><span class="pre">&lt;session&gt;/&lt;phase&gt;/&lt;track&gt;</span></code>; None if the track is missing or
+has less speech than <code class="docutils literal notranslate"><span class="pre">min_speech_s</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>

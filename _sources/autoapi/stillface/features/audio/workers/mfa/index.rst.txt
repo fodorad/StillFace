@@ -40,6 +40,7 @@ Functions
 
    stillface.features.audio.workers.mfa.input_textgrid
    stillface.features.audio.workers.mfa.parse_alignment_json
+   stillface.features.audio.workers.mfa.normalise_word
    stillface.features.audio.workers.mfa.phase_alignment
    stillface.features.audio.workers.mfa.activated_env
    stillface.features.audio.workers.mfa.run_command
@@ -80,6 +81,15 @@ Module Contents
    :param text: ``--output_format json`` file content.
 
    :returns: Tier name mapped to its intervals, in file order.
+
+
+.. py:function:: normalise_word(word: str) -> str
+
+   A transcript word as MFA's dictionary spells it: lower case, no edge punctuation.
+
+   :param word: Transcript token, e.g. ``"Baba!"``.
+
+   :returns: E.g. ``"baba"``.
 
 
 .. py:function:: phase_alignment(utterances: collections.abc.Sequence[stillface.features.audio.models.Segment], tiers: dict[str, list[stillface.features.audio.textgrid.Interval]], duration_s: float) -> tuple[dict[str, list[stillface.features.audio.textgrid.Interval]], list[str]]

@@ -356,20 +356,27 @@
 
 <div class="viewcode-block" id="gated_request">
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/asr/index.html#stillface.features.audio.asr.gated_request">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">gated_request</span><span class="p">(</span><span class="n">track</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RequestBuilder</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">gated_request</span><span class="p">(</span><span class="n">track</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">min_speech_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RequestBuilder</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Builder of whole-track requests on a gated track.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        track: Gated track name (``mother`` or ``baby``).</span>
+<span class="sd">        min_speech_s: Fewest seconds of kept (padded) speech for a request; a track with</span>
+<span class="sd">            less (e.g. the mother during the still face) has nothing to transcribe.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Builder with keys ``&lt;session&gt;/&lt;phase&gt;/&lt;track&gt;``; None if the track is missing.</span>
+<span class="sd">        Builder with keys ``&lt;session&gt;/&lt;phase&gt;/&lt;track&gt;``; None if the track is missing or</span>
+<span class="sd">        has less speech than ``min_speech_s``.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="n">DatasetPaths</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InferenceRequest</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">wav</span> <span class="o">=</span> <span class="n">wav_path</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">track</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">wav</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">min_speech_s</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">kept</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">gated_intervals</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">track</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">kept</span> <span class="o">&lt;</span> <span class="n">min_speech_s</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">InferenceRequest</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">session</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">track</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">wav</span><span class="p">,</span> <span class="n">wav_duration</span><span class="p">(</span><span class="n">wav</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">build</span></div>
@@ -502,7 +509,8 @@
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">input</span> <span class="o">==</span> <span class="s2">"wav"</span><span class="p">:</span>
         <span class="n">track</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"track"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">gated_request</span><span class="p">(</span><span class="n">track</span><span class="p">)</span> <span class="k">if</span> <span class="n">track</span> <span class="k">else</span> <span class="n">full_wav_request</span>
+        <span class="n">minimum</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"min_speech_s"</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gated_request</span><span class="p">(</span><span class="n">track</span><span class="p">,</span> <span class="n">minimum</span><span class="p">)</span> <span class="k">if</span> <span class="n">track</span> <span class="k">else</span> <span class="n">full_wav_request</span>
     <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">segment_source</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"asr:"</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">utterance_request</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">segment_builder</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">segment_source</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">roles</span><span class="o">.</span><span class="n">vtc_model</span><span class="p">)</span></div>
