@@ -3,6 +3,7 @@
 import argparse
 import json
 import logging
+import os
 from dataclasses import asdict
 from pathlib import Path
 
@@ -11,6 +12,7 @@ from stillface.constants import PHASES
 from stillface.data_preparation.metadata import load_metadata
 from stillface.features.audio.affect import run_affect
 from stillface.features.audio.asr import builder_for, run_asr_flags
+from stillface.features.audio.chain import run_chain
 from stillface.features.audio.config import DEFAULT_CONFIG_PATH, load_audio_config
 from stillface.features.audio.decisions import decision_rows, to_html, to_markdown
 from stillface.features.audio.export import export_phase, session_qc, write_dataset_tables
@@ -19,7 +21,7 @@ from stillface.features.audio.gating import run_gating
 from stillface.features.audio.infer import run_model
 from stillface.features.audio.inventory import build_inventory, read_inventory, write_inventory
 from stillface.features.audio.prepare import prepare_all
-from stillface.features.audio.registry import build_adapter
+from stillface.features.audio.registry import ENVS_VAR, build_adapter, envs_root
 from stillface.features.audio.roles import assign_roles, write_listening
 from stillface.features.io import write_atomic
 
@@ -64,7 +66,14 @@ def add_audio_parser(groups: argparse._SubParsersAction) -> None:
     export.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
     qc = audio.add_parser("qc", help="QC record per session, QC summary and listening list")
     qc.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
-    for step in (inventory, prepare, infer, roles, fuse, gate, asr, affect, export, qc):
+    run = audio.add_parser("run", help="The whole chain, resumable")
+    run.add_argument("--session-id", nargs="+", help="Sessions; all in scope if omitted")
+    run.add_argument("--sessions-file", type=Path, help="Text file with one session id per line")
+    run.add_argument("--overwrite", action="store_true", help="Recompute model outputs")
+    run.add_argument(
+        "--envs", type=Path, help="Model environments (default: $STILLFACE_AUDIO_ENVS)"
+    )
+    for step in (inventory, prepare, infer, roles, fuse, gate, asr, affect, export, qc, run):
         step.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="Audio config")
 
 
@@ -156,4 +165,15 @@ def run_audio(args: argparse.Namespace, paths: DatasetPaths) -> int:
     elif args.command == "qc":
         records = [session_qc(paths, s, config) for s in args.session_id or scope_sessions(paths)]
         write_dataset_tables(paths, records)
+    elif args.command == "run":
+        sessions = list(args.session_id or [])
+        if args.sessions_file:
+            sessions += [
+                s.strip() for s in args.sessions_file.read_text().splitlines() if s.strip()
+            ]
+        envs = args.envs or (envs_root() if ENVS_VAR in os.environ else None)
+        report = run_chain(paths, config, sessions or None, envs=envs, overwrite=args.overwrite)
+        for name, status in report.models.items():
+            logger.info("%-20s %s", name, status)
+        return 1 if any(s.startswith(("failed", "partial")) for s in report.models.values()) else 0
     return 0

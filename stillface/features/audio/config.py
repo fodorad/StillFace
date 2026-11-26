@@ -208,6 +208,17 @@ class ContextConfig:
     listen_share: float = 0.2
 
 
+DEFAULT_THRESHOLDS: dict[str, Threshold] = {
+    "silero": Threshold(0.5, "vendor"),
+    "pyannote": Threshold(0.5, "vendor"),
+    "ast_type": Threshold(0.2, "probe"),
+    "littlebeats": Threshold(0.5, "config"),
+    "gong": Threshold(0.2, "probe"),
+    "context": Threshold(0.2, "probe"),
+}
+"""Fusion thresholds used when the config file names none (same as the shipped file)."""
+
+
 @dataclass(frozen=True)
 class FusionConfig:
     """Rule-based fusion of the model outputs.
@@ -224,7 +235,7 @@ class FusionConfig:
             listening list.
     """
 
-    thresholds: dict[str, Threshold] = field(default_factory=dict)
+    thresholds: dict[str, Threshold] = field(default_factory=lambda: dict(DEFAULT_THRESHOLDS))
     gong: GongConfig = field(default_factory=GongConfig)
     context: ContextConfig = field(default_factory=ContextConfig)
     baby_types: dict[str, TypeRule] = field(default_factory=dict)
@@ -243,9 +254,11 @@ class FusionConfig:
         Raises:
             KeyError: If it is not configured.
         """
-        if name not in self.thresholds:
-            raise KeyError(f"Threshold {name!r} is not configured")
-        return self.thresholds[name]
+        if name in self.thresholds:
+            return self.thresholds[name]
+        if name in DEFAULT_THRESHOLDS:
+            return DEFAULT_THRESHOLDS[name]
+        raise KeyError(f"Threshold {name!r} is not configured")
 
 
 @dataclass(frozen=True)
