@@ -1,0 +1,131 @@
+stillface.features.audio.contract
+=================================
+
+.. py:module:: stillface.features.audio.contract
+
+.. autoapi-nested-parse::
+
+   Output contract of every audio model: what each one returns, and a check for it.
+
+   One entry per configured model names its result groups (frame or segment scores), the
+   score names, the value range of finite values, the nominal frame rate and what the values
+   mean. :func:`check_result` tests a real result against it; the smoke test and the opt-in
+   integration tests use it, and :func:`contract_rows` renders the table in the docs.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.contract.TIME_TOLERANCE_S
+   stillface.features.audio.contract.PROB
+   stillface.features.audio.contract.CONTRACTS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.contract.GroupContract
+   stillface.features.audio.contract.ModelContract
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.contract.check_result
+   stillface.features.audio.contract.contract_rows
+
+
+Module Contents
+---------------
+
+.. py:data:: TIME_TOLERANCE_S
+   :type:  float
+   :value: 0.05
+
+
+   How far a frame time or segment edge may lie beyond the input's end.
+
+.. py:class:: GroupContract
+
+   One result group of a model.
+
+   .. attribute:: kind
+
+      ``frames`` (time series) or ``segments`` (scored intervals).
+
+   .. attribute:: group
+
+      Group key in the result.
+
+   .. attribute:: names
+
+      Exact score names in order; None when only the count is fixed.
+
+   .. attribute:: value_range
+
+      Inclusive bounds of the finite values; None when unbounded.
+
+   .. attribute:: meaning
+
+      What the values are.
+
+   .. attribute:: n_names
+
+      Number of score names when ``names`` is None.
+
+   .. attribute:: rate_hz
+
+      Nominal frame rate (frames) for the docs; None for segments.
+
+
+.. py:class:: ModelContract
+
+   Everything one model returns.
+
+   .. attribute:: model
+
+      Model name in the config.
+
+   .. attribute:: groups
+
+      Result groups.
+
+   .. attribute:: artefacts
+
+      Text artefacts the result must carry.
+
+
+.. py:data:: PROB
+   :value: (0.0, 1.0)
+
+
+.. py:data:: CONTRACTS
+   :type:  dict[str, ModelContract]
+
+   Output contract of every model in the default config.
+
+.. py:function:: check_result(contract: ModelContract, result: stillface.features.audio.models.InferenceResult, duration_s: float) -> list[str]
+
+   Problems of a result against a model's contract.
+
+   :param contract: The model's contract.
+   :param result: A real result.
+   :param duration_s: Duration of the input clip.
+
+   :returns: One message per problem; empty when the result keeps the contract.
+
+
+.. py:function:: contract_rows() -> list[str]
+
+   Markdown table rows of every contract group (the docs table is checked against them).
+
+   :returns: ``| model | kind/group | names | range | rate | meaning |`` rows.
+
+

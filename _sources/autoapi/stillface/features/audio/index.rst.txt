@@ -21,6 +21,7 @@ Submodules
    /autoapi/stillface/features/audio/chain/index
    /autoapi/stillface/features/audio/cli/index
    /autoapi/stillface/features/audio/config/index
+   /autoapi/stillface/features/audio/contract/index
    /autoapi/stillface/features/audio/decisions/index
    /autoapi/stillface/features/audio/export/index
    /autoapi/stillface/features/audio/fusion/index

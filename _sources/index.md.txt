@@ -391,5 +391,6 @@ Released under the [MIT License](https://github.com/fodorad/StillFace/blob/main/
 :hidden:
 
 audio_classes
+audio_outputs
 autoapi/index
 ```

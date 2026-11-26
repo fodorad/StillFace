@@ -197,6 +197,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../audio_classes.html">AudioSet classes (AST)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../audio_outputs.html">Audio model outputs</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../autoapi/index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../autoapi/stillface/index.html">stillface</a><input aria-label="Toggle navigation of stillface" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../../autoapi/stillface/cli/index.html">stillface.cli</a></li>
@@ -219,6 +220,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/chain/index.html">stillface.features.audio.chain</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/cli/index.html">stillface.features.audio.cli</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/config/index.html">stillface.features.audio.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/contract/index.html">stillface.features.audio.contract</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/decisions/index.html">stillface.features.audio.decisions</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/export/index.html">stillface.features.audio.export</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/fusion/index.html">stillface.features.audio.fusion</a></li>
@@ -330,6 +332,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_CONFIG_PATH</span><span class="p">,</span> <span class="n">AudioConfig</span><span class="p">,</span> <span class="n">load_audio_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.contract</span><span class="w"> </span><span class="kn">import</span> <span class="n">CONTRACTS</span><span class="p">,</span> <span class="n">check_result</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_wav</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceError</span><span class="p">,</span> <span class="n">InferenceRequest</span><span class="p">,</span> <span class="n">Segment</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_adapter</span><span class="p">,</span> <span class="n">env_python</span><span class="p">,</span> <span class="n">envs_root</span>
@@ -384,7 +387,8 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Model name mapped to ``ok: &lt;kind&gt;/&lt;group&gt;, ...``, ``disabled``, ``not installed`` or</span>
-<span class="sd">        ``error: &lt;message&gt;``.</span>
+<span class="sd">        ``error: &lt;message&gt;`` (including ``error: contract: ...`` when the result breaks the</span>
+<span class="sd">        model's output contract).</span>
 <span class="sd">    """</span>
     <span class="n">status</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">models</span> <span class="ow">or</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">models</span><span class="p">):</span>
@@ -406,6 +410,10 @@
             <span class="n">status</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"error: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">frames</span> <span class="ow">or</span> <span class="n">result</span><span class="o">.</span><span class="n">segments</span> <span class="ow">or</span> <span class="n">result</span><span class="o">.</span><span class="n">artefacts</span><span class="p">):</span>
             <span class="n">status</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"error: empty result"</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">CONTRACTS</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="n">problems</span> <span class="o">:=</span> <span class="n">check_result</span><span class="p">(</span><span class="n">CONTRACTS</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">result</span><span class="p">,</span> <span class="n">SMOKE_SECONDS</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">status</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"error: contract: "</span> <span class="o">+</span> <span class="s2">"; "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">problems</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"frames/</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">frames</span><span class="p">]</span>
             <span class="n">groups</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"segments/</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">segments</span><span class="p">]</span>

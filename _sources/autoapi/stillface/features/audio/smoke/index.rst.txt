@@ -72,7 +72,8 @@ Module Contents
    :param models: Model names; every configured model if None.
 
    :returns: Model name mapped to ``ok: <kind>/<group>, ...``, ``disabled``, ``not installed`` or
-             ``error: <message>``.
+             ``error: <message>`` (including ``error: contract: ...`` when the result breaks the
+             model's output contract).
 
 
 .. py:function:: main(argv: collections.abc.Sequence[str] | None = None) -> int

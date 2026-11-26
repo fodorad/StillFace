@@ -196,6 +196,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="audio_classes.html">AudioSet classes (AST)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio_outputs.html">Audio model outputs</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="autoapi/index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/stillface/index.html">stillface</a><input aria-label="Toggle navigation of stillface" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/stillface/cli/index.html">stillface.cli</a></li>
@@ -218,6 +219,7 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/chain/index.html">stillface.features.audio.chain</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/cli/index.html">stillface.features.audio.cli</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/config/index.html">stillface.features.audio.config</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/contract/index.html">stillface.features.audio.contract</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/decisions/index.html">stillface.features.audio.decisions</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/export/index.html">stillface.features.audio.export</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/stillface/features/audio/fusion/index.html">stillface.features.audio.fusion</a></li>
@@ -353,12 +355,16 @@
 </li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadBox.area">area (stillface.features.gaze.heads.HeadBox property)</a>
 </li>
-        <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.InferenceResult.artefacts">artefacts (stillface.features.audio.models.InferenceResult attribute)</a>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.ModelContract.artefacts">artefacts (stillface.features.audio.contract.ModelContract attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.InferenceResult.artefacts">(stillface.features.audio.models.InferenceResult attribute)</a>
 </li>
-        <li><a href="autoapi/stillface/features/audio/asr/index.html#stillface.features.audio.asr.ASR_MODEL">ASR_MODEL (in module stillface.features.audio.asr)</a>
-</li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/features/audio/asr/index.html#stillface.features.audio.asr.ASR_MODEL">ASR_MODEL (in module stillface.features.audio.asr)</a>
+</li>
         <li><a href="autoapi/stillface/features/audio/roles/index.html#stillface.features.audio.roles.assign_roles">assign_roles() (in module stillface.features.audio.roles)</a>
 
         <ul>
@@ -499,6 +505,8 @@
           <li><a href="autoapi/stillface/features/audio/media/index.html#stillface.features.audio.media.AudioStreamInfo.channels">(stillface.features.audio.media.AudioStreamInfo attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.check_result">check_result() (in module stillface.features.audio.contract)</a>
+</li>
         <li><a href="autoapi/stillface/features/audio/workers/silero/index.html#stillface.features.audio.workers.silero.CHUNK">CHUNK (in module stillface.features.audio.workers.silero)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/workers/emotion2vec/index.html#stillface.features.audio.workers.emotion2vec.class_name">class_name() (in module stillface.features.audio.workers.emotion2vec)</a>
@@ -576,6 +584,10 @@
         <li><a href="autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.FusionConfig.context">context (stillface.features.audio.config.FusionConfig attribute)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.ContextConfig">ContextConfig (class in stillface.features.audio.config)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.contract_rows">contract_rows() (in module stillface.features.audio.contract)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.CONTRACTS">CONTRACTS (in module stillface.features.audio.contract)</a>
 </li>
         <li><a href="autoapi/stillface/data_preparation/video/index.html#stillface.data_preparation.video.convert_to_fps">convert_to_fps() (in module stillface.data_preparation.video)</a>
 </li>
@@ -915,14 +927,14 @@
           <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.gaze_x">(stillface.features.timeline.TimelineRow attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.GazeDecision.gaze_y">gaze_y (stillface.features.gaze.classes.GazeDecision attribute)</a>
 
         <ul>
           <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow.gaze_y">(stillface.features.timeline.TimelineRow attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.GazeConfig">GazeConfig (class in stillface.features.gaze.config)</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/classes/index.html#stillface.features.gaze.classes.GazeDecision">GazeDecision (class in stillface.features.gaze.classes)</a>
@@ -948,6 +960,14 @@
         <li><a href="autoapi/stillface/features/gaze/gdino_heads/index.html#stillface.features.gaze.gdino_heads.GroundingDinoHeadTracker">GroundingDinoHeadTracker (class in stillface.features.gaze.gdino_heads)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/audioset/index.html#stillface.features.audio.audioset.AudioSetClass.group">group (stillface.features.audio.audioset.AudioSetClass attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.GroupContract.group">(stillface.features.audio.contract.GroupContract attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.GroupContract">GroupContract (class in stillface.features.audio.contract)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.ModelContract.groups">groups (stillface.features.audio.contract.ModelContract attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -1105,8 +1125,6 @@
           <li><a href="autoapi/stillface/features/audio/prepare/index.html#stillface.features.audio.prepare.PrepareReport.kept">(stillface.features.audio.prepare.PrepareReport attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.InferenceError.key">key (stillface.features.audio.models.InferenceError attribute)</a>
 
         <ul>
@@ -1115,6 +1133,10 @@
           <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.InferenceResult.key">(stillface.features.audio.models.InferenceResult attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.GroupContract.kind">kind (stillface.features.audio.contract.GroupContract attribute)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -1325,6 +1347,8 @@
 </li>
         <li><a href="autoapi/stillface/features/audio/lanes/index.html#stillface.features.audio.lanes.Aggregation.MEAN">MEAN (stillface.features.audio.lanes.Aggregation attribute)</a>
 </li>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.GroupContract.meaning">meaning (stillface.features.audio.contract.GroupContract attribute)</a>
+</li>
         <li><a href="autoapi/stillface/features/audio/media/index.html#stillface.features.audio.media.MediaError">MediaError</a>
 </li>
         <li><a href="autoapi/stillface/features/gaze/heads/index.html#stillface.features.gaze.heads.HeadTrack.median_area">median_area() (stillface.features.gaze.heads.HeadTrack method)</a>
@@ -1365,9 +1389,11 @@
 </li>
         <li><a href="autoapi/stillface/data_preparation/metadata/index.html#stillface.data_preparation.metadata.missing_recordings">missing_recordings() (in module stillface.data_preparation.metadata)</a>
 </li>
-        <li><a href="autoapi/stillface/features/audio/infer/index.html#stillface.features.audio.infer.StageReport.model">model (stillface.features.audio.infer.StageReport attribute)</a>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.ModelContract.model">model (stillface.features.audio.contract.ModelContract attribute)</a>
 
         <ul>
+          <li><a href="autoapi/stillface/features/audio/infer/index.html#stillface.features.audio.infer.StageReport.model">(stillface.features.audio.infer.StageReport attribute)</a>
+</li>
           <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.EgemapsAdapter.model">(stillface.features.audio.prosody.EgemapsAdapter attribute)</a>
 </li>
           <li><a href="autoapi/stillface/features/audio/prosody/index.html#stillface.features.audio.prosody.ProsodyAdapter.model">(stillface.features.audio.prosody.ProsodyAdapter attribute)</a>
@@ -1394,6 +1420,8 @@
         <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.ModelAdapter">ModelAdapter (class in stillface.features.audio.models)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.ModelConfig">ModelConfig (class in stillface.features.audio.config)</a>
+</li>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.ModelContract">ModelContract (class in stillface.features.audio.contract)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/fusion/index.html#stillface.features.audio.fusion.MODELS">MODELS (in module stillface.features.audio.fusion)</a>
 </li>
@@ -1446,6 +1474,8 @@
           <li><a href="autoapi/stillface/features/audio/cli/index.html#module-stillface.features.audio.cli">stillface.features.audio.cli</a>
 </li>
           <li><a href="autoapi/stillface/features/audio/config/index.html#module-stillface.features.audio.config">stillface.features.audio.config</a>
+</li>
+          <li><a href="autoapi/stillface/features/audio/contract/index.html#module-stillface.features.audio.contract">stillface.features.audio.contract</a>
 </li>
           <li><a href="autoapi/stillface/features/audio/decisions/index.html#module-stillface.features.audio.decisions">stillface.features.audio.decisions</a>
 </li>
@@ -1566,6 +1596,8 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/audio/workers/ast_audioset/index.html#stillface.features.audio.workers.ast_audioset.N_CLASSES">N_CLASSES (in module stillface.features.audio.workers.ast_audioset)</a>
 </li>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.GroupContract.n_names">n_names (stillface.features.audio.contract.GroupContract attribute)</a>
+</li>
         <li><a href="autoapi/stillface/features/audio/lanes/index.html#stillface.features.audio.lanes.BandSpec.name">name (stillface.features.audio.lanes.BandSpec attribute)</a>
 
         <ul>
@@ -1582,9 +1614,11 @@
         </ul></li>
         <li><a href="autoapi/stillface/features/audio/workers/addressee/index.html#stillface.features.audio.workers.addressee.NAMES">NAMES (in module stillface.features.audio.workers.addressee)</a>
 </li>
-        <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.FrameScores.names">names (stillface.features.audio.models.FrameScores attribute)</a>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.GroupContract.names">names (stillface.features.audio.contract.GroupContract attribute)</a>
 
         <ul>
+          <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.FrameScores.names">(stillface.features.audio.models.FrameScores attribute)</a>
+</li>
           <li><a href="autoapi/stillface/features/audio/models/index.html#stillface.features.audio.models.SegmentScores.names">(stillface.features.audio.models.SegmentScores attribute)</a>
 </li>
         </ul></li>
@@ -1768,6 +1802,8 @@
 </li>
         <li><a href="autoapi/stillface/features/audio/audioset/index.html#stillface.features.audio.audioset.priority_labels">priority_labels() (in module stillface.features.audio.audioset)</a>
 </li>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.PROB">PROB (in module stillface.features.audio.contract)</a>
+</li>
         <li><a href="autoapi/stillface/features/audio/media/index.html#stillface.features.audio.media.probe_audio">probe_audio() (in module stillface.features.audio.media)</a>
 </li>
         <li><a href="autoapi/stillface/config/index.html#stillface.config.DatasetPaths.processed_dir">processed_dir (stillface.config.DatasetPaths attribute)</a>
@@ -1810,9 +1846,11 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/stillface/features/audio/fusion/index.html#stillface.features.audio.fusion.raster">raster() (in module stillface.features.audio.fusion)</a>
 </li>
-        <li><a href="autoapi/stillface/features/audio/lanes/index.html#stillface.features.audio.lanes.LaneTable.rate_hz">rate_hz (stillface.features.audio.lanes.LaneTable attribute)</a>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.GroupContract.rate_hz">rate_hz (stillface.features.audio.contract.GroupContract attribute)</a>
 
         <ul>
+          <li><a href="autoapi/stillface/features/audio/lanes/index.html#stillface.features.audio.lanes.LaneTable.rate_hz">(stillface.features.audio.lanes.LaneTable attribute)</a>
+</li>
           <li><a href="autoapi/stillface/features/audio/lanes/index.html#stillface.features.audio.lanes.Legend.rate_hz">(stillface.features.audio.lanes.Legend attribute)</a>
 </li>
         </ul></li>
@@ -2286,6 +2324,13 @@
 </li>
         </ul></li>
         <li>
+    stillface.features.audio.contract
+
+        <ul>
+          <li><a href="autoapi/stillface/features/audio/contract/index.html#module-stillface.features.audio.contract">module</a>
+</li>
+        </ul></li>
+        <li>
     stillface.features.audio.decisions
 
         <ul>
@@ -2697,6 +2742,8 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.TIME_TOLERANCE_S">TIME_TOLERANCE_S (in module stillface.features.audio.contract)</a>
+</li>
         <li><a href="autoapi/stillface/features/timeline/index.html#stillface.features.timeline.TimelineRow">TimelineRow (class in stillface.features.timeline)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.ModelConfig.timeout_s">timeout_s (stillface.features.audio.config.ModelConfig attribute)</a>
@@ -2779,8 +2826,12 @@
 </li>
         <li><a href="autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.Threshold.value">value (stillface.features.audio.config.Threshold attribute)</a>
 </li>
-        <li><a href="autoapi/stillface/features/audio/lanes/index.html#stillface.features.audio.lanes.LaneSpec.value_range">value_range (stillface.features.audio.lanes.LaneSpec attribute)</a>
+        <li><a href="autoapi/stillface/features/audio/contract/index.html#stillface.features.audio.contract.GroupContract.value_range">value_range (stillface.features.audio.contract.GroupContract attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/stillface/features/audio/lanes/index.html#stillface.features.audio.lanes.LaneSpec.value_range">(stillface.features.audio.lanes.LaneSpec attribute)</a>
 </li>
+        </ul></li>
         <li><a href="autoapi/stillface/features/audio/lanes/index.html#stillface.features.audio.lanes.Band.values">values (stillface.features.audio.lanes.Band attribute)</a>
 
         <ul>
@@ -2799,10 +2850,10 @@
           <li><a href="autoapi/stillface/features/gaze/config/index.html#stillface.features.gaze.config.GazeConfig.version">(stillface.features.gaze.config.GazeConfig attribute)</a>
 </li>
         </ul></li>
-        <li><a href="autoapi/stillface/data_preparation/video/index.html#stillface.data_preparation.video.video_duration">video_duration() (in module stillface.data_preparation.video)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/stillface/data_preparation/video/index.html#stillface.data_preparation.video.video_duration">video_duration() (in module stillface.data_preparation.video)</a>
+</li>
         <li><a href="autoapi/stillface/features/audio/media/index.html#stillface.features.audio.media.AudioStreamInfo.video_duration_s">video_duration_s (stillface.features.audio.media.AudioStreamInfo attribute)</a>
 </li>
         <li><a href="autoapi/stillface/features/audio/inventory/index.html#stillface.features.audio.inventory.InventoryRow.video_fps">video_fps (stillface.features.audio.inventory.InventoryRow attribute)</a>
