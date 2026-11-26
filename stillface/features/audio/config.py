@@ -235,6 +235,9 @@ class FusionConfig:
             default when none reaches the threshold.
         disagreement_listen_share: VAD disagreement share of a phase that sends it to the
             listening list.
+        ast_lane_max_tier: AudioSet classes up to this priority tier (see
+            :mod:`stillface.features.audio.audioset`) get their own probability lane; classes
+            a rule needs always get one.
     """
 
     thresholds: dict[str, Threshold] = field(default_factory=lambda: dict(DEFAULT_THRESHOLDS))
@@ -243,6 +246,7 @@ class FusionConfig:
     baby_types: dict[str, TypeRule] = field(default_factory=dict)
     mother_types: dict[str, TypeRule] = field(default_factory=dict)
     disagreement_listen_share: float = 0.2
+    ast_lane_max_tier: int = 2
 
     def threshold(self, name: str) -> Threshold:
         """A named threshold.

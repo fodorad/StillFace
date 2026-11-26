@@ -296,7 +296,7 @@ environment behind one adapter interface and keeps its raw output with a provena
 |---|---|
 | Who vocalises | VTC 2.2 voice types (BabyHuBERT), pyannote speaker embeddings for mother vs other women |
 | Is anyone speaking | VTC union, Silero VAD, pyannote segmentation (with a disagreement band and an explicit silence band) |
-| What kind of sound | AST AudioSet (527 classes), LittleBeats infant cry / fuss / babble (disabled until verified) |
+| What kind of sound | AST AudioSet ([527 classes, priority tiers](https://fodorad.github.io/StillFace/audio_classes.html)), LittleBeats infant cry / fuss / babble (disabled until verified) |
 | To whom an adult speaks | addressee classifier (infant-directed vs adult-directed speech) |
 | Affect | audEERING arousal / valence and emotion2vec+ for the mother; derived valence / arousal for the baby |
 | How it sounds | Parselmouth F0, intensity, HNR; openSMILE eGeMAPS per segment |
