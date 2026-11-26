@@ -77,6 +77,18 @@ def parse_alignment_json(text: str) -> dict[str, list[Interval]]:
     }
 
 
+def normalise_word(word: str) -> str:
+    """A transcript word as MFA's dictionary spells it: lower case, no edge punctuation.
+
+    Args:
+        word: Transcript token, e.g. ``"Baba!"``.
+
+    Returns:
+        E.g. ``"baba"``.
+    """
+    return word.strip().strip(".,!?;:\"'()[]«»„”…-–").lower()
+
+
 def phase_alignment(
     utterances: Sequence[Segment], tiers: dict[str, list[Interval]], duration_s: float
 ) -> tuple[dict[str, list[Interval]], list[str]]:
@@ -103,7 +115,7 @@ def phase_alignment(
         expected = u.label.split()
         if any(w.label in UNKNOWN for w in aligned) or len(aligned) < len(expected):
             known = {w.label for w in aligned if w.label not in UNKNOWN}
-            oov += [w for w in expected if w not in known]
+            oov += [w for w in expected if normalise_word(w) not in known]
     return kept, oov
 
 

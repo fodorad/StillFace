@@ -25,6 +25,25 @@ MODES: tuple[str, ...] = ("verbatim", "intended")
 """Transcription modes run for every request."""
 
 
+def selected_modes(options: dict[str, Any]) -> tuple[str, ...]:
+    """Transcription modes to run.
+
+    Args:
+        options: Worker options; ``modes`` is a comma-separated subset of :data:`MODES`.
+
+    Returns:
+        The modes in :data:`MODES` order; both when not set.
+
+    Raises:
+        ValueError: For an unknown mode.
+    """
+    asked = [m.strip() for m in str(options.get("modes", "")).split(",") if m.strip()]
+    unknown = [m for m in asked if m not in MODES]
+    if unknown:
+        raise ValueError(f"Unknown CrisperWhisper modes {unknown}, expected {MODES}")
+    return tuple(m for m in MODES if m in asked) if asked else MODES
+
+
 def word_scores(words: list[tuple[float, float, str, float]], duration_s: float) -> SegmentScores:
     """Words as scored segments, clipped to the clip.
 
@@ -89,6 +108,7 @@ class CrisperWhisperWorker:
         from crisperwhisper import CrisperWhisperModel
 
         self.language = options.get("language", "hu")
+        self.modes = selected_modes(options)
         self.device = torch_device(options.get("device", "cpu"))
         # The package's "auto" means CUDA or CPU; the device must be passed for MPS.
         size = options.get("size") or "large"
@@ -97,6 +117,7 @@ class CrisperWhisperWorker:
             "device": self.device,
             "crisperwhisper": version("crisperwhisper"),
             "language": self.language,
+            "modes": ",".join(self.modes),
         }
 
     def forward(
@@ -104,7 +125,7 @@ class CrisperWhisperWorker:
     ) -> tuple[dict[str, str], dict[str, list[tuple[float, float, str, float]]]]:
         """Both transcripts of a WAV."""
         texts, words = {}, {}
-        for mode in MODES:
+        for mode in self.modes:
             result = self.model.transcribe(
                 wav, language=self.language, mode=mode, word_confidence=True
             )

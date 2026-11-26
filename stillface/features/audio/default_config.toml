@@ -28,8 +28,8 @@ enrol_phase = "play"
 fallback_phase = "reunion"
 enrol_total_s = 30.0
 enrol_min_s = 8.0
-tau_high = 0.6
-tau_low = 0.4
+tau_high = 0.35  # calibrated: Otsu split of dominant-voice similarities (0.364), 2026-11-26
+tau_low = 0.2  # calibrated: below the main mass, above the other-voice cluster
 
 [fusion]
 disagreement_listen_share = 0.2
@@ -114,6 +114,7 @@ sample_rate = 16000
 # $STILLFACE_AUDIO_ENVS, the worker module and the exact weights revision.
 
 [models.prosody]
+batch_requests = 100
 # Parselmouth (Praat) F0 in two ranges, intensity and HNR every 10 ms.
 [models.prosody.options]
 time_step = "0.01"
@@ -123,11 +124,13 @@ infant_f0_min = "150"
 infant_f0_max = "1000"
 
 [models.egemaps]
+batch_requests = 100
 # openSMILE eGeMAPS v02 functionals per role segment.
 input = "segments"
-segment_source = "roles:mother,baby"
+segment_source = "roles:mother,baby,other"
 
 [models.silero]
+batch_requests = 100
 # Silero VAD, weights bundled with the pinned package (envs/audio/vad).
 env = "vad"
 module = "stillface.features.audio.workers.silero"
@@ -135,24 +138,31 @@ weights_revision = "silero-vad==6.3"
 device = "cpu"
 
 [models.ast]
+batch_requests = 100
 # AST AudioSet, 2 s windows, 0.25 s hop (probe settings).
 env = "hf"
 module = "stillface.features.audio.workers.ast_audioset"
 weights_revision = "f826b80d28226b62986cc218e5cec390b1096902"
 window_s = 2.0
-hop_s = 0.25
+hop_s = 0.5  # 0.25 in the probe; 0.5 halves the run (75 % window overlap)
 
 [models.vtc]
+batch_requests = 100
 # VTC 2.2 voice types (KCHI, OCH, MAL, FEM) every 20 ms; weights_revision is the coml/VTC-2
 # commit at the time of pinning (the vtc package resolves model "2.2").
 env = "vtc"
 module = "stillface.features.audio.workers.vtc"
 weights_revision = "91167f6103c1f211bb9861f32d57e92ed01618b9"
+# CPU: on MPS the variable phase lengths recompile its graphs (about 3x slower).
+device = "cpu"
 [models.vtc.options]
 vtc_version = "2.2"
 thresholds = "f1"
 
 [models.addressee]
+# CPU: shares no GPU with AST (two MPS jobs slowed each other ~6x).
+device = "cpu"
+batch_requests = 100
 # KCDS / ADS / Other per adult VTC segment (coml/addressee), 10 s context, <= 30 s parts.
 env = "vtc"
 module = "stillface.features.audio.workers.addressee"
@@ -161,12 +171,16 @@ input = "segments"
 segment_source = "vtc:FEM,MAL"
 
 [models.pyannote_vad]
+# CPU: shares no GPU with AST (two MPS jobs slowed each other ~6x).
+device = "cpu"
+batch_requests = 100
 # pyannote community-1 segmentation: speech probability (third VAD opinion). Gated: HF_TOKEN.
 env = "vad"
 module = "stillface.features.audio.workers.pyannote_worker"
 weights_revision = "3533c8cf8e369892e6b79ff1bf80f7b0286a54ee"
 
 [models.pyannote_embedding]
+batch_requests = 100
 # pyannote community-1 speaker embeddings per female segment (mother enrolment). Gated.
 env = "vad"
 module = "stillface.features.audio.workers.pyannote_worker"
@@ -175,8 +189,9 @@ input = "segments"
 segment_source = "vtc:FEM"
 
 [models.littlebeats]
+batch_requests = 100
 # LittleBeats wav2vec2 (LL_4300 fine-tuned): speaker / infant / adult vocalisation heads on
-# 2 s windows. Disabled until its environment builds (fairseq) and its outputs are checked.
+# 2 s windows. Enabled: its environment builds and its outputs keep their contract.
 env = "littlebeats"
 module = "stillface.features.audio.workers.littlebeats"
 weights_revision = "b3250219066482f571ef3868413b0b0f1ad92502"
@@ -184,9 +199,10 @@ weights_revision = "b3250219066482f571ef3868413b0b0f1ad92502"
 device = "cpu"
 window_s = 2.0
 hop_s = 1.0
-enabled = false
+enabled = true
 
 [models.audeering]
+batch_requests = 100
 # audEERING MSP-dim: arousal / dominance / valence per 3 s window (0.5 s hop) inside
 # mother segments (baby segments: experimental).
 env = "hf"
@@ -195,9 +211,10 @@ weights_revision = "6eba34a2485ea31cb03600241787c3a5edab8626"
 window_s = 3.0
 hop_s = 0.5
 input = "segments"
-segment_source = "roles:mother,baby"
+segment_source = "roles:mother,baby,other"
 
 [models.emotion2vec]
+batch_requests = 100
 # emotion2vec+ large: 9 emotion categories per 3 s window (0.5 s hop), cross-check.
 env = "e2v"
 module = "stillface.features.audio.workers.emotion2vec"
@@ -205,21 +222,26 @@ weights_revision = "6c303ba987b86b93193de93e34bb2b077a6bedc4"
 window_s = 3.0
 hop_s = 0.5
 input = "segments"
-segment_source = "roles:mother"
+segment_source = "roles:mother,other"
 
 [models.crisperwhisper]
+batch_requests = 100
 # CrisperWhisper 2.0 large on the mother-only track: verbatim and intended transcripts.
 env = "cw2"
 module = "stillface.features.audio.workers.crisperwhisper"
 weights_revision = "f4334f6e8193f2691212d49b20fa12d370e13896"
 [models.crisperwhisper.options]
 track = "mother"
+min_speech_s = "1.0"
+modes = "verbatim"  # the intended (cleaned) mode doubles the run time; set "verbatim,intended" for both
 language = "hu"
 
 [models.mfa]
+batch_requests = 100
 # Montreal Forced Aligner, Hungarian CV dictionary and acoustic model (XPF phones).
 env = "mfa"
 module = "stillface.features.audio.workers.mfa"
+worker_version = "2"  # OOV list compares normalised words
 weights_revision = "hungarian_cv-2.0.0"
 device = "cpu"
 input = "segments"

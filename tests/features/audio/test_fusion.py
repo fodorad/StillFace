@@ -34,7 +34,13 @@ from stillface.features.audio.roles import role_events_path
 
 _DEFAULT = load_audio_config()
 CONFIG = replace(
-    _DEFAULT, fusion=replace(_DEFAULT.fusion, gong=replace(_DEFAULT.fusion.gong, edge_s=2.0))
+    _DEFAULT,
+    fusion=replace(_DEFAULT.fusion, gong=replace(_DEFAULT.fusion.gong, edge_s=2.0)),
+    # One disabled model, to test that disabled models are neither read nor required.
+    models={
+        **_DEFAULT.models,
+        "littlebeats": replace(_DEFAULT.models["littlebeats"], enabled=False),
+    },
 )
 DURATION = 10.0
 

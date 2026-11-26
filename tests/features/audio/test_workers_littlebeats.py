@@ -5,7 +5,12 @@ from pathlib import Path
 import numpy as np
 
 from stillface.cli import main
-from stillface.features.audio.config import AudioConfig, ModelConfig, load_audio_config
+from stillface.features.audio.config import (
+    DEFAULT_CONFIG_PATH,
+    AudioConfig,
+    ModelConfig,
+    load_audio_config,
+)
 from stillface.features.audio.models import InferenceRequest
 from stillface.features.audio.smoke import smoke, synthetic_clip
 from stillface.features.audio.workers import littlebeats as lb
@@ -57,10 +62,25 @@ class TestInferAndDisabled(unittest.TestCase):
                 {"lb": "disabled"},
             )
 
-    def test_default_config_keeps_littlebeats_disabled_and_cli_refuses(self):
-        self.assertFalse(load_audio_config().models["littlebeats"].enabled)
+    def test_cli_refuses_a_disabled_model(self):
+        self.assertTrue(load_audio_config().models["littlebeats"].enabled)
         with tempfile.TemporaryDirectory() as tmp:
-            code = main(["--raw-dir", tmp, "--processed-dir", tmp, "audio", "infer", "littlebeats"])
+            config = Path(tmp) / "c.toml"
+            text = DEFAULT_CONFIG_PATH.read_text().replace("enabled = true", "enabled = false")
+            config.write_text(text)
+            code = main(
+                [
+                    "--raw-dir",
+                    tmp,
+                    "--processed-dir",
+                    tmp,
+                    "audio",
+                    "infer",
+                    "littlebeats",
+                    "--config",
+                    str(config),
+                ]
+            )
         self.assertEqual(code, 1)
 
 
