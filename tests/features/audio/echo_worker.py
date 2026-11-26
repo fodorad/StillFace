@@ -1,7 +1,7 @@
 """Tiny worker for the subprocess adapter tests (runs with the current interpreter).
 
 Request options: ``fail`` (raise for this request), ``crash`` (exit 3 after the first
-request), ``sleep`` (seconds to sleep in load).
+request), ``sleep`` (seconds to sleep in load), ``read`` (fail unless the WAV exists).
 """
 
 import sys
@@ -24,6 +24,8 @@ class EchoWorker:
             raise ValueError("asked to fail")
         if request.options.get("crash"):
             sys.exit(3)
+        if request.options.get("read") and not request.wav.is_file():
+            raise FileNotFoundError(str(request.wav))
         times = np.arange(3) * 0.5
         frames = {"scores": FrameScores(times, ("a", "b"), np.ones((3, 2)) * request.duration_s)}
         segments = {}

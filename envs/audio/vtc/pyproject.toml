@@ -6,6 +6,8 @@ requires-python = ">=3.13,<3.14"
 dependencies = [
   "addressee",
   "numpy",
+  # VTC reads RTTM with polars `columns` + `new_columns`; polars 2 rejects that pairing.
+  "polars>=1.22,<2",
   "vtc",
 ]
 

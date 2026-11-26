@@ -1,4 +1,5 @@
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -78,32 +79,56 @@ class TestCrisperWhisper(unittest.TestCase):
 
 
 class TestMfa(unittest.TestCase):
-    def test_merge_and_oov(self):
-        grid = {
-            "words": [
-                Interval(0.0, 0.1, ""),
-                Interval(0.1, 0.4, "szia"),
-                Interval(0.4, 0.6, "<unk>"),
-            ],
-            "phones": [Interval(0.1, 0.2, "s"), Interval(0.2, 0.4, "i"), Interval(0.4, 0.6, "spn")],
-        }
-        tiers, oov = mfa.merge_alignments(
-            [(Segment(1.0, 2.0, "mother", "szia cuncimókus"), grid)], 10.0
+    UTTERANCES = (
+        Segment(1.0, 2.0, "mother", "szia cuncimókus"),
+        Segment(1.8, 3.0, "mother", "baba"),  # overlaps the first (padded intervals)
+    )
+
+    def test_input_textgrid_has_one_non_overlapping_utterance_tier(self):
+        grid = parse_textgrid(mfa.input_textgrid(self.UTTERANCES, 10.0))
+        spoken = [i for i in grid["mother"] if i.label]
+        self.assertEqual([i.label for i in spoken], ["szia cuncimókus", "baba"])
+        self.assertEqual((spoken[0].end_s, spoken[1].start_s), (2.0, 2.0))
+
+    def test_alignment_json_is_parsed_in_phase_time(self):
+        text = json.dumps(
+            {
+                "start": 0,
+                "end": 10.0,
+                "tiers": {
+                    "words": {"type": "interval", "entries": [[1.1, 1.4, "szia"]]},
+                    "phones": {"type": "interval", "entries": [[1.1, 1.2, "s"], [1.2, 1.4, "i"]]},
+                },
+            }
         )
-        self.assertEqual([i.label for i in tiers["words"]], ["szia", "<unk>"])
-        self.assertAlmostEqual(tiers["phones"][0].start_s, 1.1)
+        tiers = mfa.parse_alignment_json(text)
+        self.assertEqual(tiers["words"], [Interval(1.1, 1.4, "szia")])
+        self.assertEqual(len(tiers["phones"]), 2)
+
+    def test_phase_alignment_and_oov(self):
+        tiers = {
+            "words": [
+                Interval(0.5, 0.9, ""),
+                Interval(1.1, 1.4, "szia"),
+                Interval(1.4, 1.7, "<unk>"),
+                Interval(2.0, 2.5, "baba"),
+            ],
+            "phones": [Interval(1.1, 1.2, "s"), Interval(1.4, 1.7, "spn")],
+        }
+        kept, oov = mfa.phase_alignment(self.UTTERANCES, tiers, 10.0)
+        self.assertEqual([i.label for i in kept["words"]], ["szia", "<unk>", "baba"])
         self.assertEqual(oov, ["cuncimókus"])
-        _, short = mfa.merge_alignments(
-            [(Segment(0, 1, "mother", "a b"), {"words": [Interval(0, 1, "a")]})], 5.0
+        _, short = mfa.phase_alignment(
+            (Segment(0, 1, "mother", "a b"),), {"words": [Interval(0, 1, "a")]}, 5.0
         )
         self.assertEqual(short, ["b"])
-        scores = mfa.to_scores(tiers)
-        self.assertEqual(scores["phones"].values.shape, (3, 1))
+        scores = mfa.to_scores(kept)
+        self.assertEqual(scores["phones"].values.shape, (2, 1))
 
     def test_infer_with_fake_forward(self):
         class Fake(mfa.MfaWorker):
             def forward(self, request):
-                return [(s, {"words": [Interval(0.0, 0.3, s.label)]}) for s in request.segments]
+                return {"words": [Interval(1.0, 1.3, s.label) for s in request.segments]}
 
         from stillface.features.audio.models import InferenceRequest
 
@@ -113,6 +138,24 @@ class TestMfa(unittest.TestCase):
         result = Fake().infer(request)
         self.assertIn('text = "szia"', result.artefacts["TextGrid"])
         self.assertEqual(result.meta["oov"], [])
+
+
+class TestMfaEnvironment(unittest.TestCase):
+    def test_environment_bin_leads_the_path(self):
+        env = mfa.activated_env(Path("/envs/mfa/bin"), {"PATH": "/usr/bin:/bin", "HOME": "/h"})
+        self.assertEqual(env["PATH"].split(":")[0], "/envs/mfa/bin")
+        self.assertIn("/usr/bin", env["PATH"])
+        self.assertEqual(env["HOME"], "/h")
+        self.assertEqual(mfa.activated_env(Path("/b"), {})["PATH"], "/b")
+
+    def test_failed_command_reports_its_stderr(self):
+        python = sys.executable
+        with self.assertRaisesRegex(RuntimeError, "Could not find 'fstcompile'"):
+            mfa.run_command(
+                [python, "-c", "import sys; sys.exit(\"Could not find 'fstcompile'\")"], {}
+            )
+        out = mfa.run_command([python, "-c", "print('3.4.5')"], {})
+        self.assertEqual(out.strip(), "3.4.5")
 
 
 class TestAsrStage(unittest.TestCase):
@@ -133,6 +176,14 @@ class TestAsrStage(unittest.TestCase):
         self.assertFalse(inside(1.7, [(0.2, 1.7)]))
         found = utterances(WORDS, [(0.2, 1.7), (5, 6)])
         self.assertEqual(found, [Segment(0.2, 1.7, "mother", "szia baba")])
+        # Event tags such as [laughter] cannot be aligned; a tag-only utterance is dropped.
+        tagged = [
+            Segment(0.3, 0.6, "mother", "[laughter]"),
+            Segment(2.1, 2.4, "mother", "[laughter]"),
+            Segment(2.5, 2.9, "mother", "Szia."),
+        ]
+        found = utterances(tagged, [(0.2, 1.0), (2.0, 3.0)])
+        self.assertEqual(found, [Segment(2.0, 3.0, "mother", "Szia.")])
         flags = flag_words(WORDS, np.array([[0.9], [0.8], [0.4]]), [(0.2, 1.7)])
         self.assertEqual([f["outside_mother"] for f in flags], [False, False, True])
 

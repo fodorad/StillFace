@@ -98,6 +98,10 @@ class RolesConfig:
     tau_low: float = 0.4
 
 
+RUN_CONTROL: frozenset[str] = frozenset({"batch_requests"})
+"""Model settings that steer the run but never change its outputs (left out of digests)."""
+
+
 @dataclass(frozen=True)
 class ModelConfig:
     """How one model is run.
@@ -120,6 +124,9 @@ class ModelConfig:
             ``vtc:<labels>`` (VTC segments with these classes, e.g. ``vtc:FEM,MAL``) or
             ``roles:<roles>`` (role segments, e.g. ``roles:mother,baby``) or ``asr:<track>``
             (one segment per transcribed utterance of a gated track, for the aligner).
+        batch_requests: Most requests sent to one worker run; each batch is saved before
+            the next starts, so a crash or timeout loses at most one batch. Run control
+            only: it is left out of :attr:`digest`.
     """
 
     env: str = ""
@@ -134,6 +141,7 @@ class ModelConfig:
     input: str = "wav"
     enabled: bool = True
     segment_source: str = ""
+    batch_requests: int = 16
 
     def __post_init__(self) -> None:
         """Validate the input kind and the segment source."""
@@ -149,7 +157,8 @@ class ModelConfig:
     @property
     def digest(self) -> str:
         """Short SHA-256 of these settings; a change recomputes only this model's outputs."""
-        text = json.dumps(asdict(self), sort_keys=True)
+        settings = {k: v for k, v in asdict(self).items() if k not in RUN_CONTROL}
+        text = json.dumps(settings, sort_keys=True)
         return hashlib.sha256(text.encode()).hexdigest()[:16]
 
 

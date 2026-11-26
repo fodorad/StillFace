@@ -15,6 +15,17 @@ class TestPostprocess(unittest.TestCase):
         self.assertAlmostEqual(scores.times[1], 0.017 + 0.031)
         self.assertEqual(pw.speech_scores(0.0, 0.1, 0.1, np.zeros((0, 3))).values.shape, (0, 1))
 
+    def test_speaker_maximum_before_aggregation_keeps_one_channel(self):
+        rng = np.random.default_rng(0)
+        chunks = rng.random((53, 589, 3))  # (chunks, frames per chunk, local speakers)
+        merged = pw.max_over_speakers(chunks)
+        self.assertEqual(merged.shape, (53, 589, 1))
+        np.testing.assert_array_equal(merged[..., 0], chunks.max(axis=-1))
+
+    def test_unaggregated_chunks_are_rejected(self):
+        with self.assertRaisesRegex(ValueError, "chunk"):
+            pw.speech_scores(0.0, 0.017, 0.017, np.zeros((53, 589, 3)))
+
     def test_embeddings_normalised_with_nan_rows(self):
         segments = (Segment(0, 2), Segment(3, 3.2), Segment(4, 6))
         scores = pw.embedding_scores(segments, [np.array([3.0, 4.0]), None, np.zeros(2)])

@@ -41,6 +41,9 @@ class TestProsody(unittest.TestCase):
             self.assertTrue(np.isnan(silence.frames[group].values).all())
         self.assertEqual(tone.frames["hnr"].names, ("hnr_db",))
         self.assertTrue(np.isnan(silence.frames["hnr"].values).all())
+        # Praat's -300 dB floor of digital silence is no measurement.
+        self.assertTrue(np.isnan(silence.frames["intensity"].values).all())
+        self.assertGreater(np.nanmin(tone.frames["intensity"].values), -100)
         self.assertIn("praat-parselmouth-", adapter.weights_revision)
 
     def test_intensity_follows_the_level_step(self):
