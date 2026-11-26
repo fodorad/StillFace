@@ -8,6 +8,7 @@ The transcripts stay local: they may contain names.
 """
 
 import json
+import re
 import sys
 from typing import Any
 
@@ -23,6 +24,31 @@ from stillface.features.audio.workers.base import serve, torch_device
 
 MODES: tuple[str, ...] = ("verbatim", "intended")
 """Transcription modes run for every request."""
+
+
+MIN_RETRY_TOKENS: int = 32
+"""Smallest token budget worth a retry after a too-long continuation prompt."""
+
+
+def retry_token_budget(message: str) -> int | None:
+    """New ``max_new_tokens`` after Whisper rejected a too-long decoder prompt.
+
+    In long-form "continuation" decoding the previous chunk's text is the prompt of the next;
+    in dense speech prompt + ``max_new_tokens`` can exceed the decoder's positions.
+
+    Args:
+        message: The ValueError message from transformers' generate.
+
+    Returns:
+        ``max_target_positions - prompt length - 1``; None for another error or when fewer
+        than :data:`MIN_RETRY_TOKENS` tokens would remain.
+    """
+    prompt = re.search(r"previous tokens, is (\d+)", message)
+    limit = re.search(r"max_target_positions` of the Whisper model: (\d+)", message)
+    if not prompt or not limit:
+        return None
+    budget = int(limit.group(1)) - int(prompt.group(1)) - 1
+    return budget if budget >= MIN_RETRY_TOKENS else None
 
 
 def selected_modes(options: dict[str, Any]) -> tuple[str, ...]:
@@ -126,9 +152,21 @@ class CrisperWhisperWorker:
         """Both transcripts of a WAV."""
         texts, words = {}, {}
         for mode in self.modes:
-            result = self.model.transcribe(
-                wav, language=self.language, mode=mode, word_confidence=True
-            )
+            try:
+                result = self.model.transcribe(
+                    wav, language=self.language, mode=mode, word_confidence=True
+                )
+            except ValueError as error:
+                budget = retry_token_budget(str(error))
+                if budget is None:
+                    raise
+                result = self.model.transcribe(
+                    wav,
+                    language=self.language,
+                    mode=mode,
+                    word_confidence=True,
+                    max_new_tokens=budget,
+                )
             texts[mode] = result.text or ""
             words[mode] = [(w.start, w.end, w.word, w.probability) for w in result.words or []]
         return texts, words

@@ -64,6 +64,17 @@ class TestCrisperWhisper(unittest.TestCase):
         empty = cw.postprocess({}, {}, 1.0)
         self.assertEqual(empty.segments["intended_words"].values.shape, (0, 1))
 
+    def test_token_budget_after_a_too_long_continuation_prompt(self):
+        message = (
+            "The length of `decoder_input_ids`, including special start tokens, prompt tokens, "
+            "and previous tokens, is 271,  and `max_new_tokens` is 256. Thus, the combined "
+            "length ... exceeds the `max_target_positions` of the Whisper model: 448."
+        )
+        self.assertEqual(cw.retry_token_budget(message), 176)
+        self.assertIsNone(cw.retry_token_budget("CUDA out of memory"))
+        nearly_full = message.replace("is 271,", "is 420,")
+        self.assertIsNone(cw.retry_token_budget(nearly_full))
+
     def test_transcription_modes_are_selectable(self):
         self.assertEqual(cw.selected_modes({}), ("verbatim", "intended"))
         self.assertEqual(cw.selected_modes({"modes": "verbatim"}), ("verbatim",))
@@ -157,6 +168,13 @@ class TestMfa(unittest.TestCase):
         result = Fake().infer(request)
         self.assertIn('text = "szia"', result.artefacts["TextGrid"])
         self.assertEqual(result.meta["oov"], [])
+
+
+class TestMfaRetry(unittest.TestCase):
+    def test_no_alignments_is_retried_with_a_wider_beam(self):
+        message = "mfa align failed: montreal_forced_aligner.exceptions.NoAlignmentsError: x"
+        self.assertEqual(mfa.retry_arguments(message), ["--beam", "100", "--retry_beam", "400"])
+        self.assertIsNone(mfa.retry_arguments("mfa align failed: OSError"))
 
 
 class TestMfaEnvironment(unittest.TestCase):
