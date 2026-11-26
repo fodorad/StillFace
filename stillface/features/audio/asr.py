@@ -38,20 +38,27 @@ TRACK: str = "mother"
 """Gated track the ASR reads."""
 
 
-def gated_request(track: str) -> RequestBuilder:
+def gated_request(track: str, min_speech_s: float = 0.0) -> RequestBuilder:
     """Builder of whole-track requests on a gated track.
 
     Args:
         track: Gated track name (``mother`` or ``baby``).
+        min_speech_s: Fewest seconds of kept (padded) speech for a request; a track with
+            less (e.g. the mother during the still face) has nothing to transcribe.
 
     Returns:
-        Builder with keys ``<session>/<phase>/<track>``; None if the track is missing.
+        Builder with keys ``<session>/<phase>/<track>``; None if the track is missing or
+        has less speech than ``min_speech_s``.
     """
 
     def build(paths: DatasetPaths, session: str, phase: str) -> InferenceRequest | None:
         wav = wav_path(paths, session, phase, track)
         if not wav.exists():
             return None
+        if min_speech_s > 0:
+            kept = sum(b - a for a, b in gated_intervals(paths, session, phase, track))
+            if kept < min_speech_s:
+                return None
         return InferenceRequest(f"{session}/{phase}/{track}", wav, wav_duration(wav))
 
     return build
@@ -166,7 +173,8 @@ def builder_for(model: ModelConfig, config: AudioConfig) -> RequestBuilder:
     """
     if model.input == "wav":
         track = model.options.get("track", "")
-        return gated_request(track) if track else full_wav_request
+        minimum = float(model.options.get("min_speech_s", "0") or 0)
+        return gated_request(track, minimum) if track else full_wav_request
     if model.segment_source.startswith("asr:"):
         return utterance_request()
     return segment_builder(model.segment_source, config.roles.vtc_model)

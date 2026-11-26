@@ -27,7 +27,10 @@ from stillface.features.audio.roles import (
     write_listening,
 )
 
-MOTHER, OTHER, UNSURE = np.array([1.0, 0.0]), np.array([0.0, 1.0]), np.array([0.5, 0.866])
+_MID = (RolesConfig().tau_low + RolesConfig().tau_high) / 2
+"""A similarity between the two thresholds: neither clearly the mother nor another woman."""
+MOTHER, OTHER = np.array([1.0, 0.0]), np.array([0.0, 1.0])
+UNSURE = np.array([_MID, np.sqrt(1 - _MID**2)])
 
 
 def store(paths, model, key, segments, group, embeddings=None):
@@ -48,7 +51,7 @@ class TestHelpers(unittest.TestCase):
         rc = RolesConfig()
         self.assertEqual(classify_female(0.9, True, rc)[:3], ("mother", "FEM", "ROLE-FEM-MOTHER"))
         self.assertEqual(classify_female(0.1, True, rc)[2], "ROLE-FEM-OTHER")
-        self.assertEqual(classify_female(0.5, True, rc)[2], "ROLE-FEM-UNCERTAIN")
+        self.assertEqual(classify_female(_MID, True, rc)[2], "ROLE-FEM-UNCERTAIN")
         self.assertEqual(classify_female(None, True, rc)[2], "ROLE-FEM-UNCERTAIN")
         self.assertEqual(classify_female(0.9, False, rc)[2], "ROLE-FEM-UNRESOLVED")
         self.assertTrue(set(RULES) >= {"ROLE-BABY", "ROLE-MAL"})

@@ -64,6 +64,12 @@ class TestCrisperWhisper(unittest.TestCase):
         empty = cw.postprocess({}, {}, 1.0)
         self.assertEqual(empty.segments["intended_words"].values.shape, (0, 1))
 
+    def test_transcription_modes_are_selectable(self):
+        self.assertEqual(cw.selected_modes({}), ("verbatim", "intended"))
+        self.assertEqual(cw.selected_modes({"modes": "verbatim"}), ("verbatim",))
+        with self.assertRaisesRegex(ValueError, "clean"):
+            cw.selected_modes({"modes": "verbatim,clean"})
+
     def test_infer_with_fake_forward(self):
         class Fake(cw.CrisperWhisperWorker):
             def forward(self, wav):
@@ -118,6 +124,19 @@ class TestMfa(unittest.TestCase):
         kept, oov = mfa.phase_alignment(self.UTTERANCES, tiers, 10.0)
         self.assertEqual([i.label for i in kept["words"]], ["szia", "<unk>", "baba"])
         self.assertEqual(oov, ["cuncimókus"])
+        # MFA aligns normalised words: case and punctuation of the transcript do not make OOV
+        _, oov = mfa.phase_alignment(
+            (Segment(0, 2, "mother", "Szia, Baba! cuncimókus."),),
+            {
+                "words": [
+                    Interval(0.1, 0.5, "szia"),
+                    Interval(0.6, 1.0, "baba"),
+                    Interval(1.0, 1.5, "<unk>"),
+                ]
+            },
+            5.0,
+        )
+        self.assertEqual(oov, ["cuncimókus."])
         _, short = mfa.phase_alignment(
             (Segment(0, 1, "mother", "a b"),), {"words": [Interval(0, 1, "a")]}, 5.0
         )
@@ -191,6 +210,9 @@ class TestAsrStage(unittest.TestCase):
         config = load_audio_config()
         self.assertEqual(gated_request("mother")(self.paths, "1", "play").key, "1/play/mother")
         self.assertIsNone(gated_request("baby")(self.paths, "1", "play"))
+        # 1.5 s of mother speech: kept at 1 s, skipped (nothing to transcribe) at 2 s
+        self.assertIsNotNone(gated_request("mother", 1.0)(self.paths, "1", "play"))
+        self.assertIsNone(gated_request("mother", 2.0)(self.paths, "1", "play"))
         self.assertIsNotNone(
             builder_for(config.models["crisperwhisper"], config)(self.paths, "1", "play")
         )

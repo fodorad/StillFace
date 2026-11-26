@@ -83,8 +83,11 @@ class RolesConfig:
         fallback_phase: Phase used when the enrolment phase has too little speech.
         enrol_total_s: Longest female segments are used up to this total.
         enrol_min_s: Less enrolment speech than this leaves the session unresolved.
-        tau_high: Cosine similarity at or above which a female segment is the mother.
-        tau_low: Cosine similarity at or below which it is another woman.
+        tau_high: Cosine similarity at or above which a female segment is the mother
+            (calibrated: Otsu split of the dominant-voice similarities of the 1-2 s pyannote
+            community-1 segments, 0.364).
+        tau_low: Cosine similarity at or below which it is another woman (below the main
+            mass of the dominant voice).
     """
 
     vtc_model: str = "vtc"
@@ -94,8 +97,8 @@ class RolesConfig:
     fallback_phase: str = "reunion"
     enrol_total_s: float = 30.0
     enrol_min_s: float = 8.0
-    tau_high: float = 0.6
-    tau_low: float = 0.4
+    tau_high: float = 0.35
+    tau_low: float = 0.2
 
 
 RUN_CONTROL: frozenset[str] = frozenset({"batch_requests"})
