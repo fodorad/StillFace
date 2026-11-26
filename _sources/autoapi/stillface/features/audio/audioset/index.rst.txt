@@ -1,0 +1,141 @@
+stillface.features.audio.audioset
+=================================
+
+.. py:module:: stillface.features.audio.audioset
+
+.. autoapi-nested-parse::
+
+   AudioSet classes of the AST model, with priority tiers for the still-face paradigm.
+
+   AST scores all 527 AudioSet classes in every window; nothing is filtered before or during
+   inference. The tiers only say which classes the analysis looks at first:
+
+   - tier 1, target vocalisations: baby cry / fuss / laugh / babble, the mother's singing,
+     humming and laughter, speech by sex and age;
+   - tier 2, context: the phase-change gong, bodily sounds, touch and play sounds, and the
+     background sounds that can mask the dyad;
+   - tier 0: everything else.
+
+   The table is a CSV shipped with the package (``index, label, tier, group, reason``), in the
+   model's output order, so it can be filtered in any spreadsheet as well.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.audioset.AST_CLASSES_PATH
+   stillface.features.audio.audioset.TIERS
+   stillface.features.audio.audioset.COLUMNS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.audioset.AudioSetClass
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.audioset.load_classes
+   stillface.features.audio.audioset.priority_labels
+   stillface.features.audio.audioset.config_ast_labels
+   stillface.features.audio.audioset.validate_labels
+
+
+Module Contents
+---------------
+
+.. py:data:: AST_CLASSES_PATH
+   :type:  pathlib.Path
+
+   AudioSet class table shipped with the package.
+
+.. py:data:: TIERS
+   :type:  tuple[int, ...]
+   :value: (0, 1, 2)
+
+
+   1 target vocalisation, 2 context, 0 not prioritised.
+
+   :type: Priority tiers
+
+.. py:data:: COLUMNS
+   :type:  tuple[str, ...]
+   :value: ('index', 'label', 'tier', 'group', 'reason')
+
+
+   Columns of the class table, in file order.
+
+.. py:class:: AudioSetClass
+
+   One AudioSet class.
+
+   .. attribute:: index
+
+      Output index in the AST model.
+
+   .. attribute:: label
+
+      AudioSet label, exactly as the model names it.
+
+   .. attribute:: tier
+
+      Priority tier, one of :data:`TIERS`.
+
+   .. attribute:: group
+
+      Analysis group of a prioritised class (e.g. ``baby_vocal``), empty for tier 0.
+
+   .. attribute:: reason
+
+      Why the class is prioritised, empty for tier 0.
+
+
+.. py:function:: load_classes(path: pathlib.Path = AST_CLASSES_PATH) -> tuple[AudioSetClass, ...]
+
+   Read the class table.
+
+   :param path: CSV with :data:`COLUMNS`.
+
+   :returns: The classes in file order.
+
+   :raises ValueError: If the columns differ or a tier is unknown.
+
+
+.. py:function:: priority_labels(max_tier: int, classes: collections.abc.Sequence[AudioSetClass]) -> tuple[str, ...]
+
+   Labels of the prioritised classes up to a tier.
+
+   :param max_tier: Highest tier included (1 = targets only, 2 = targets and context).
+   :param classes: Class table.
+
+   :returns: Labels with ``1 <= tier <= max_tier``, in model order.
+
+
+.. py:function:: config_ast_labels(config: stillface.features.audio.config.AudioConfig) -> set[str]
+
+   Every AudioSet label the fusion rules of a config name.
+
+   :param config: Audio configuration.
+
+   :returns: Labels of the gong and context classes and of the baby and mother type rules.
+
+
+.. py:function:: validate_labels(labels: collections.abc.Iterable[str], classes: collections.abc.Sequence[AudioSetClass]) -> None
+
+   Check that labels exist in AudioSet (a typo would silently never fire).
+
+   :param labels: Labels to check.
+   :param classes: Class table.
+
+   :raises ValueError: Naming every unknown label.
+
+

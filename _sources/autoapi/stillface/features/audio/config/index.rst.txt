@@ -318,6 +318,12 @@ Module Contents
       VAD disagreement share of a phase that sends it to the
       listening list.
 
+   .. attribute:: ast_lane_max_tier
+
+      AudioSet classes up to this priority tier (see
+      :mod:`stillface.features.audio.audioset`) get their own probability lane; classes
+      a rule needs always get one.
+
 
    .. py:method:: threshold(name: str) -> Threshold
 

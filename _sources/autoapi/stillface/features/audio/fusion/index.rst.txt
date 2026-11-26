@@ -29,6 +29,7 @@ Attributes
 .. autoapisummary::
 
    stillface.features.audio.fusion.logger
+   stillface.features.audio.fusion.AUDIOSET_CLASSES
    stillface.features.audio.fusion.MODELS
    stillface.features.audio.fusion.VTC_ROLES
    stillface.features.audio.fusion.EXTRA_TYPES
@@ -65,6 +66,13 @@ Module Contents
 ---------------
 
 .. py:data:: logger
+
+.. py:data:: AUDIOSET_CLASSES
+   :type:  tuple[stillface.features.audio.audioset.AudioSetClass, ...]
+   :value: ()
+
+
+   AudioSet class table (tiers decide which classes get a lane).
 
 .. py:data:: MODELS
    :type:  dict[str, str]

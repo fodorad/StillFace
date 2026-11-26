@@ -17,6 +17,7 @@ Submodules
 
    /autoapi/stillface/features/audio/affect/index
    /autoapi/stillface/features/audio/asr/index
+   /autoapi/stillface/features/audio/audioset/index
    /autoapi/stillface/features/audio/chain/index
    /autoapi/stillface/features/audio/cli/index
    /autoapi/stillface/features/audio/config/index
