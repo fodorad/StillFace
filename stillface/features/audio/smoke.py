@@ -16,6 +16,7 @@ from pathlib import Path
 import numpy as np
 
 from stillface.features.audio.config import DEFAULT_CONFIG_PATH, AudioConfig, load_audio_config
+from stillface.features.audio.contract import CONTRACTS, check_result
 from stillface.features.audio.media import write_wav
 from stillface.features.audio.models import InferenceError, InferenceRequest, Segment
 from stillface.features.audio.registry import build_adapter, env_python, envs_root
@@ -65,7 +66,8 @@ def smoke(
 
     Returns:
         Model name mapped to ``ok: <kind>/<group>, ...``, ``disabled``, ``not installed`` or
-        ``error: <message>``.
+        ``error: <message>`` (including ``error: contract: ...`` when the result breaks the
+        model's output contract).
     """
     status = {}
     for name in models or sorted(config.models):
@@ -87,6 +89,10 @@ def smoke(
             status[name] = f"error: {result.message}"
         elif not (result.frames or result.segments or result.artefacts):
             status[name] = "error: empty result"
+        elif name in CONTRACTS and (
+            problems := check_result(CONTRACTS[name], result, SMOKE_SECONDS)
+        ):
+            status[name] = "error: contract: " + "; ".join(problems)
         else:
             groups = [f"frames/{k}" for k in result.frames]
             groups += [f"segments/{k}" for k in result.segments]

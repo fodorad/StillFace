@@ -103,18 +103,22 @@ class TestSmoke(unittest.TestCase):
                     "broken": ModelConfig(),
                     "explode": ModelConfig(),
                     "absent": ModelConfig(env="nowhere", module="m", weights_revision="r"),
+                    "silero": ModelConfig(),
                 }
             )
             IN_PROCESS["seg"] = lambda name, model: FakeAdapter(name=name)
+            # A real model name whose result breaks that model's contract.
+            IN_PROCESS["silero"] = lambda name, model: FakeAdapter(name=name)
             status = smoke(config, self.dir, self.wav)
         finally:
-            for key in ("fake", "broken", "explode", "seg"):
+            for key in ("fake", "broken", "explode", "seg", "silero"):
                 IN_PROCESS.pop(key)
         self.assertEqual(status["fake"], "ok: frames/scores")
         self.assertEqual(status["seg"], "ok: frames/scores, segments/scores")
         self.assertEqual(status["broken"], "error: fake failure")
         self.assertEqual(status["explode"], "error: cannot build")
         self.assertEqual(status["absent"], "not installed")
+        self.assertEqual(status["silero"], "error: contract: missing frames/speech")
 
     def test_main_with_prosody_only(self):
         config = self.dir / "c.toml"
