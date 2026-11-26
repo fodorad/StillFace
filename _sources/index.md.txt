@@ -18,6 +18,7 @@ behavioral features such as touch, affect and gaze between mother and baby.
 | Data preparation | Camera synchronization (audio cross-correlation, via [avst](https://pypi.org/project/avst/)) | available |
 | Data preparation | Phase cutting, stacked overview videos, session thumbnails | available |
 | Data preparation | Metadata checks (missing recordings) | available |
+| Feature extraction | Audio: voice types, mother / baby roles, vocalisation types, addressee, affect, prosody, transcripts | pipeline in place, not yet run on the database |
 | Feature extraction | Touch, affect, gaze | planned |
 | Visualization | Overlays and export to [Annie](https://github.com/fodorad/Annie) | planned |
 
@@ -263,6 +264,31 @@ the heatmap on the partner's head):
 in 626021 (fixed by the partner head-size check); gaze toward a partner who is out of frame. Not yet compared with the
 head-pose direction or with human labels.
 
+### 4. Audio
+
+One microphone per session (the baby-cam phone next to the mother's head, a side camcorder
+as fallback) is prepared as a 16 kHz mono WAV per phase. Every model runs in its own
+environment behind one adapter interface and keeps its raw output with a provenance record
+(weights revision, settings, input hash):
+
+| Question | Models |
+|---|---|
+| Who vocalises | VTC 2.2 voice types (BabyHuBERT), pyannote speaker embeddings for mother vs other women |
+| Is anyone speaking | VTC union, Silero VAD, pyannote segmentation (with a disagreement band and an explicit silence band) |
+| What kind of sound | AST AudioSet (527 classes), LittleBeats infant cry / fuss / babble (disabled until verified) |
+| To whom an adult speaks | addressee classifier (infant-directed vs adult-directed speech) |
+| Affect | audEERING arousal / valence and emotion2vec+ for the mother; derived valence / arousal for the baby |
+| How it sounds | Parselmouth F0, intensity, HNR; openSMILE eGeMAPS per segment |
+| What the mother says | CrisperWhisper 2 (verbatim and intended) on the time-gated mother track, Montreal Forced Aligner |
+
+A rule-based fusion puts every score on a common 10 Hz grid: a continuous lane for the raw
+value and a band for each thresholded decision, each band carrying its threshold, the
+threshold's origin and a rule id. The decision tables are generated from the configuration,
+so every downstream number can be traced to the rule that produced it. Outputs per session
+and phase: lanes, events, Annie event JSON, a QC record, and a dataset-level listening list
+of the items to check by ear (uncertain female voices, other adults, adult-directed speech,
+gong and music, model disagreement).
+
 ### Compute and outputs
 
 On a Mac mini M4 (seconds per camera frame): Grounding DINO persons 2.8, hands 1.1; RTMW-x 0.25; Gaze-LLE 0.36-0.65;
@@ -291,7 +317,13 @@ stillface prepare sync --session-id 575613            # a single session
 stillface prepare cut --visualize                     # cut phases and render overviews
 stillface prepare thumbnails                          # session thumbnails
 stillface features heads --session-id 605317          # mother and baby head boxes, overlays
+stillface audio inventory                             # audio source and level checks per session phase
+stillface audio run                                   # the whole audio chain, resumable
 ```
+
+The audio models live in separate environments (`envs/audio/`): set `STILLFACE_AUDIO_ENVS`
+to a folder outside the repository, then `make audio-envs` creates them and `make audio-smoke`
+runs each installed model once on a synthetic clip.
 
 Sessions are selected from `metadata_database.xlsx`: automatic processing is skipped for rows
 with `Auto = n`, and synchronization for rows with a manually entered mother-baby offset.
@@ -321,7 +353,10 @@ stillface/
 ├── config.py            dataset locations
 ├── constants.py         cameras, phases, target frame rate
 ├── cli.py               command line interface
-└── data_preparation/    sync, cut, visualize, thumbnails, metadata
+├── data_preparation/    sync, cut, visualize, thumbnails, metadata
+└── features/
+    ├── gaze/            head tracks, roles, gaze targets
+    └── audio/           inventory, models and workers, roles, fusion, affect, ASR, export
 ```
 
 Feature extraction submodules are added next to `data_preparation`, one subpackage per
