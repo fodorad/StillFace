@@ -1,0 +1,123 @@
+stillface.features.audio.chain
+==============================
+
+.. py:module:: stillface.features.audio.chain
+
+.. autoapi-nested-parse::
+
+   The whole audio chain, in dependency order, resumable.
+
+   Stages, each writing to disk before the next reads:
+
+   1. inventory, preparation;
+   2. first-pass models on the phase WAVs (VTC, Silero, pyannote speech, AST, LittleBeats,
+      prosody);
+   3. second-pass models on VTC segments (speaker embeddings, addressee), then the roles;
+   4. models on role segments (eGeMAPS, audEERING, emotion2vec+);
+   5. fusion, gating, ASR on the gated mother track, forced alignment of its utterances, ASR
+      flags;
+   6. affect lanes, Annie export, QC.
+
+   Inference stages keep up-to-date outputs, so a re-run only computes what is missing or stale;
+   the rule-based stages after it are cheap and always rerun, so a changed threshold reaches
+   every downstream table without touching the model outputs. Disabled and unavailable models
+   are skipped and recorded.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.chain.logger
+   stillface.features.audio.chain.AdapterFactory
+   stillface.features.audio.chain.INVENTORY_FILE
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   stillface.features.audio.chain.ChainReport
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.chain.model_group
+   stillface.features.audio.chain.default_factory
+   stillface.features.audio.chain.run_chain
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: AdapterFactory
+
+   Builds the adapter of a model name (replaceable for tests).
+
+.. py:data:: INVENTORY_FILE
+   :type:  str
+   :value: 'inventory.csv'
+
+
+   Inventory table name in the dataset-level audio folder.
+
+.. py:function:: model_group(model: stillface.features.audio.config.ModelConfig) -> int
+
+   Chain position of a model.
+
+   :param model: Model settings.
+
+   :returns: 1 whole-phase models, 2 VTC-segment models, 3 role-segment models, 4 gated-track
+             (ASR) models, 5 utterance (aligner) models.
+
+
+.. py:class:: ChainReport
+
+   What a chain run did.
+
+   .. attribute:: sessions
+
+      Sessions processed.
+
+   .. attribute:: models
+
+      Model name mapped to ``ran``, ``disabled``, ``not installed``, ``failed: ...``
+      or ``partial: <n> failed``.
+
+   .. attribute:: stages
+
+      Stages completed, in order.
+
+
+.. py:function:: default_factory(root: pathlib.Path | None) -> AdapterFactory
+
+   Adapter factory from the registry.
+
+   :param root: Folder of the model environments; from ``$STILLFACE_AUDIO_ENVS`` if None.
+
+   :returns: The factory.
+
+
+.. py:function:: run_chain(paths: stillface.config.DatasetPaths, config: stillface.features.audio.config.AudioConfig, sessions: collections.abc.Sequence[str] | None = None, factory: AdapterFactory | None = None, envs: pathlib.Path | None = None, overwrite: bool = False, phases: collections.abc.Sequence[str] = PHASES) -> ChainReport
+
+   Run every stage of the audio chain.
+
+   :param paths: Dataset locations.
+   :param config: Audio configuration.
+   :param sessions: Sessions to process; the in-scope sessions of the inventory if None.
+   :param factory: Adapter factory; the registry with ``envs`` if None.
+   :param envs: Folder of the model environments (used to detect missing environments).
+   :param overwrite: Recompute up-to-date model outputs.
+   :param phases: Phases to process.
+
+   :returns: The report.
+
+

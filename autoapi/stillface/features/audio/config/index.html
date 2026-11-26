@@ -215,9 +215,11 @@
 <li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">stillface.features.audio</a><input aria-label="Toggle navigation of stillface.features.audio" checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5"><a class="reference internal" href="../affect/index.html">stillface.features.audio.affect</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../asr/index.html">stillface.features.audio.asr</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../chain/index.html">stillface.features.audio.chain</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../cli/index.html">stillface.features.audio.cli</a></li>
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.audio.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../decisions/index.html">stillface.features.audio.decisions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../export/index.html">stillface.features.audio.export</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../fusion/index.html">stillface.features.audio.fusion</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../gating/index.html">stillface.features.audio.gating</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../infer/index.html">stillface.features.audio.infer</a></li>
@@ -329,6 +331,9 @@ is copied into each run record and its hash into every provenance sidecar.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.DEFAULT_CONFIG_PATH" title="stillface.features.audio.config.DEFAULT_CONFIG_PATH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_CONFIG_PATH</span></code></a></p></td>
 <td><p>Config file shipped with the package.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.DEFAULT_THRESHOLDS" title="stillface.features.audio.config.DEFAULT_THRESHOLDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_THRESHOLDS</span></code></a></p></td>
+<td><p>Fusion thresholds used when the config file names none (same as the shipped file).</p></td>
 </tr>
 </tbody>
 </table>
@@ -708,6 +713,12 @@ the listening list.</p>
 
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.features.audio.config.DEFAULT_THRESHOLDS">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_THRESHOLDS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#stillface.features.audio.config.Threshold" title="stillface.features.audio.config.Threshold"><span class="pre">Threshold</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#stillface.features.audio.config.DEFAULT_THRESHOLDS" title="Link to this definition">¶</a></dt>
+<dd><p>Fusion thresholds used when the config file names none (same as the shipped file).</p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="stillface.features.audio.config.FusionConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">FusionConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#FusionConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.FusionConfig" title="Link to this definition">¶</a></dt>
@@ -1028,6 +1039,7 @@ the derived baby arousal: <code class="docutils literal notranslate"><span class
 <li><a class="reference internal" href="#stillface.features.audio.config.ContextConfig.listen_share"><code class="docutils literal notranslate"><span class="pre">ContextConfig.listen_share</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#stillface.features.audio.config.DEFAULT_THRESHOLDS"><code class="docutils literal notranslate"><span class="pre">DEFAULT_THRESHOLDS</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.FusionConfig"><code class="docutils literal notranslate"><span class="pre">FusionConfig</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.config.FusionConfig.thresholds"><code class="docutils literal notranslate"><span class="pre">FusionConfig.thresholds</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.FusionConfig.gong"><code class="docutils literal notranslate"><span class="pre">FusionConfig.gong</span></code></a></li>
