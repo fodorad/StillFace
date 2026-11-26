@@ -5,7 +5,7 @@ import logging
 import os
 import subprocess
 import tempfile
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -73,7 +73,10 @@ class SubprocessAdapter:
                     {
                         "out_dir": str(out_dir),
                         "options": self.options,
-                        "requests": [request_to_dict(r) for r in requests],
+                        # Absolute paths: the worker starts in its own folder.
+                        "requests": [
+                            request_to_dict(replace(r, wav=Path(r.wav).resolve())) for r in requests
+                        ],
                     }
                 )
             )
@@ -86,6 +89,9 @@ class SubprocessAdapter:
                     text=True,
                     timeout=self.timeout_s,
                     env=env,
+                    # python -m puts the working directory first on sys.path: start in the
+                    # private folder so only the PYTHONPATH code is importable.
+                    cwd=tmp,
                 )
                 if done.returncode != 0:
                     tail = done.stderr.strip().splitlines()[-5:]

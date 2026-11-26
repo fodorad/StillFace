@@ -30,7 +30,7 @@ from stillface.features.audio.models import (
 )
 from stillface.features.run_record import installed_version
 
-PROSODY_VERSION: str = "1"
+PROSODY_VERSION: str = "2"
 """Version of the prosody adapters' output layout."""
 
 DEFAULTS: dict[str, float] = {
@@ -44,6 +44,9 @@ DEFAULTS: dict[str, float] = {
 
 HNR_UNVOICED: float = -199.0
 """Praat marks unvoiced HNR frames with -200 dB; values at or below this are NaN."""
+
+INTENSITY_SILENT: float = -299.0
+"""Praat gives digital silence -300 dB; values at or below this are NaN (no measurement)."""
 
 
 def _option(options: dict[str, str], key: str) -> float:
@@ -105,7 +108,9 @@ class ProsodyAdapter:
             f0[f0 <= 0] = np.nan
             frames[f"f0_{group}"] = FrameScores(pitch.xs(), ("f0_hz",), f0)
         intensity = sound.to_intensity(time_step=step)
-        frames["intensity"] = FrameScores(intensity.xs(), ("intensity_db",), intensity.values[0])
+        level = intensity.values[0].astype(float)
+        level[level <= INTENSITY_SILENT] = np.nan
+        frames["intensity"] = FrameScores(intensity.xs(), ("intensity_db",), level)
         hnr = sound.to_harmonicity_cc(time_step=step)
         values = hnr.values[0].astype(float)
         values[values <= HNR_UNVOICED] = np.nan

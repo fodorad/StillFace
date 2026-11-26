@@ -88,8 +88,24 @@ def inside(time_s: float, intervals: Sequence[tuple[float, float]]) -> bool:
     return any(a <= time_s < b for a, b in intervals)
 
 
+def is_event_tag(word: str) -> bool:
+    """Whether a transcript token is a non-lexical event tag such as ``[laughter]``.
+
+    Args:
+        word: Token.
+
+    Returns:
+        True for ``[...]`` tokens.
+    """
+    token = word.strip()
+    return token.startswith("[") and token.endswith("]")
+
+
 def utterances(words: Sequence[Segment], intervals: Sequence[tuple[float, float]]) -> list[Segment]:
-    """Group words into one utterance per kept interval.
+    """Group words into one utterance per kept interval, for the aligner.
+
+    Event tags (``[laughter]``) stay in the transcript but are left out here: they have no
+    pronunciation, and an utterance with nothing else to align breaks MFA's export.
 
     Args:
         words: Word segments (label = word), phase time.
@@ -100,7 +116,11 @@ def utterances(words: Sequence[Segment], intervals: Sequence[tuple[float, float]
     """
     out = []
     for a, b in intervals:
-        text = [w.label for w in words if a <= (w.start_s + w.end_s) / 2 < b and w.label]
+        text = [
+            w.label
+            for w in words
+            if a <= (w.start_s + w.end_s) / 2 < b and w.label and not is_event_tag(w.label)
+        ]
         if text:
             out.append(Segment(a, b, TRACK, " ".join(text)))
     return out

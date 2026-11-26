@@ -47,6 +47,28 @@ class TestInfer(unittest.TestCase):
         self.assertIsNone(full_wav_request(self.paths, "1", "reunion"))
         self.assertAlmostEqual(wav_duration(wav_path(self.paths, "1", "play")), 1.0)
 
+    def test_batch_size_does_not_change_the_settings_digest(self):
+        self.assertEqual(ModelConfig(batch_requests=1).digest, ModelConfig().digest)
+        self.assertNotEqual(ModelConfig(window_s=1.0).digest, ModelConfig().digest)
+
+    def test_batches_are_bounded_and_each_is_saved_before_the_next(self):
+        class Fragile(FakeAdapter):
+            def run(self, requests):
+                if len(self.calls) == 1:  # the second batch dies
+                    raise RuntimeError("worker died")
+                return super().run(requests)
+
+        fake = Fragile(name="vad")
+        model = ModelConfig(batch_requests=1)
+        with self.assertRaises(RuntimeError):
+            run_model(self.paths, fake, model, ["1", "2"], ["play"])
+        self.assertEqual(fake.calls, [["1/play"]])
+        # the first batch was written before the failure, so a rerun only does the rest
+        fake = FakeAdapter(name="vad")
+        report = run_model(self.paths, fake, model, ["1", "2"], ["play"])
+        self.assertEqual((report.kept, report.written), (["1/play"], ["2/play"]))
+        self.assertEqual(fake.calls, [["2/play"]])
+
     def test_batch_outputs_failures_and_staleness(self):
         fake = FakeAdapter(name="vad", fail={"2/play"})
         model = ModelConfig()

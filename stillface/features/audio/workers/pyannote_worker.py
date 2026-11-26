@@ -34,19 +34,43 @@ MIN_EMBEDDING_S: float = 0.5
 """Shorter segments get a NaN embedding."""
 
 
+def max_over_speakers(scores: np.ndarray) -> np.ndarray:
+    """Speech activity of each chunk frame: the maximum over the local speakers.
+
+    The segmentation model is permutation-invariant (its speaker channels mean nothing
+    across chunks), so pyannote only aggregates overlapping chunks after this hook has
+    reduced them to one speaker-free channel, as its own voice activity pipeline does.
+
+    Args:
+        scores: Chunk outputs, shape ``(chunks, frames, speakers)``.
+
+    Returns:
+        Shape ``(chunks, frames, 1)``.
+    """
+    return np.max(scores, axis=-1, keepdims=True)
+
+
 def speech_scores(start: float, step: float, duration: float, activity: np.ndarray) -> FrameScores:
-    """Speech probability from per-frame local speaker activities.
+    """Speech probability from aggregated per-frame activities.
 
     Args:
         start: Start of the first frame.
         step: Frame step.
         duration: Frame duration.
-        activity: Speaker activities, shape ``(n, speakers)``.
+        activity: Aggregated activities, shape ``(n,)`` or ``(n, channels)``.
 
     Returns:
         ``speech`` = maximum activity, at the frame centres, clipped to ``[0, 1]``.
+
+    Raises:
+        ValueError: If the activities are still per chunk (3-D, not aggregated).
     """
     activity = np.asarray(activity, dtype=float)
+    if activity.ndim == 3:
+        raise ValueError(
+            f"Activities of shape {activity.shape} are per chunk; aggregate them first "
+            "(segmentation Inference with pre_aggregation_hook=max_over_speakers)"
+        )
     if activity.ndim == 1:
         activity = activity[:, None]
     if activity.size:
@@ -108,7 +132,9 @@ class PyannoteWorker:
         embedding = Model.from_pretrained(
             repo, subfolder="embedding", revision=revision, token=token
         )
-        self.segmentation = Inference(segmentation, device=device)
+        self.segmentation = Inference(
+            segmentation, device=device, pre_aggregation_hook=max_over_speakers
+        )
         self.embedding = Inference(embedding, window="whole", device=device)
         return {"device": self.device, "repo": repo, "revision": revision}
 

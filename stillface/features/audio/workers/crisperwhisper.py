@@ -89,9 +89,10 @@ class CrisperWhisperWorker:
         from crisperwhisper import CrisperWhisperModel
 
         self.language = options.get("language", "hu")
-        size = options.get("size") or None
-        self.model = CrisperWhisperModel(size) if size else CrisperWhisperModel()
         self.device = torch_device(options.get("device", "cpu"))
+        # The package's "auto" means CUDA or CPU; the device must be passed for MPS.
+        size = options.get("size") or "large"
+        self.model = CrisperWhisperModel(size, device=self.device)
         return {
             "device": self.device,
             "crisperwhisper": version("crisperwhisper"),

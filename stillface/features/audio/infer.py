@@ -174,7 +174,7 @@ def run_model(
     builder: RequestBuilder = full_wav_request,
     overwrite: bool = False,
 ) -> StageReport:
-    """Run a model on every pending session phase in one batch.
+    """Run a model on every pending session phase, in saved batches.
 
     Args:
         paths: Dataset locations.
@@ -202,11 +202,13 @@ def run_model(
                 report.kept.append(request.key)
             else:
                 pending.append((request, out, expected))
-    if pending:
+    size = max(1, model.batch_requests)
+    for first in range(0, len(pending), size):
+        batch = pending[first : first + size]
         started = time.time()
-        results = adapter.run([request for request, _, _ in pending])
+        results = adapter.run([request for request, _, _ in batch])
         finished = time.time()
-        for (request, out, expected), result in zip(pending, results, strict=True):
+        for (request, out, expected), result in zip(batch, results, strict=True):
             if isinstance(result, InferenceError):
                 logger.error("%s failed on %s: %s", adapter.name, request.key, result.message)
                 report.failed[request.key] = result.message
@@ -230,6 +232,13 @@ def run_model(
                 },
             )
             report.written.append(request.key)
+        logger.info(
+            "%s: batch %d-%d of %d done",
+            adapter.name,
+            first + 1,
+            first + len(batch),
+            len(pending),
+        )
     logger.info(
         "%s: wrote %d, kept %d, skipped %d, failed %d",
         adapter.name,

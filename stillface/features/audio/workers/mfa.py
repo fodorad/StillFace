@@ -1,21 +1,24 @@
 """Montreal Forced Aligner worker: word and phone timing of the mother (environment ``mfa``).
 
-For each mother utterance (segment label = its verbatim text) the clip and its transcript
-are aligned with the Hungarian MFA dictionary and acoustic model (``hungarian_cv`` 2.0, XPF
-phones). The per-utterance TextGrids are shifted to phase time and merged into one phase
-TextGrid with ``words`` and ``phones`` tiers. Words MFA could not align (``spn`` phones or
-``<unk>``) are reported as out-of-vocabulary, never dropped.
+The whole phase is aligned as one file: the WAV and an input TextGrid with one interval per
+mother utterance (label = its verbatim text), with the Hungarian MFA dictionary and acoustic
+model (``hungarian_cv`` 2.0, XPF phones). MFA returns ``words`` and ``phones`` tiers in phase
+time (JSON output). One file per phase is MFA's long-recording mode; a corpus of many short
+utterance files made MFA 3.4 pair alignments with the wrong files. Words MFA could not align
+(``spn`` phones or ``<unk>``) are reported as out-of-vocabulary, never dropped.
 """
 
+import json
+import os
 import subprocess
 import sys
 import tempfile
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 
-from stillface.features.audio.media import read_wav, write_wav
 from stillface.features.audio.models import (
     InferenceRequest,
     InferenceResult,
@@ -25,8 +28,6 @@ from stillface.features.audio.models import (
 from stillface.features.audio.textgrid import (
     EMPTY_LABELS,
     Interval,
-    parse_textgrid,
-    shift,
     write_textgrid,
 )
 from stillface.features.audio.workers.base import serve
@@ -35,31 +36,114 @@ UNKNOWN: frozenset[str] = frozenset({"<unk>", "spn"})
 """Labels MFA gives to words or phones it could not align."""
 
 
-def merge_alignments(
-    utterances: list[tuple[Segment, dict[str, list[Interval]]]], duration_s: float
-) -> tuple[dict[str, list[Interval]], list[str]]:
-    """Phase-level tiers and out-of-vocabulary words from per-utterance alignments.
+TIER: str = "mother"
+"""Speaker tier of the input TextGrid."""
+
+
+def input_textgrid(utterances: Sequence[Segment], duration_s: float) -> str:
+    """MFA input TextGrid of a phase: one interval per utterance, labelled with its text.
+
+    Padded mother intervals may overlap; an utterance then starts where the previous ends.
 
     Args:
-        utterances: Each mother segment with its utterance-local TextGrid tiers.
+        utterances: Mother utterances in phase time (label = text).
         duration_s: Phase duration.
 
     Returns:
-        ``({"words": ..., "phones": ...}, oov)`` with silences removed and times in phase
-        time; ``oov`` lists the transcript words MFA could not align, in order.
+        TextGrid content with the :data:`TIER` tier.
     """
-    tiers: dict[str, list[Interval]] = {"words": [], "phones": []}
+    intervals: list[Interval] = []
+    for u in sorted(utterances, key=lambda x: x.start_s):
+        start = max(u.start_s, intervals[-1].end_s if intervals else 0.0)
+        end = min(u.end_s, duration_s)
+        if end > start:
+            intervals.append(Interval(start, end, u.label))
+    return write_textgrid({TIER: intervals}, duration_s)
+
+
+def parse_alignment_json(text: str) -> dict[str, list[Interval]]:
+    """Tiers of an MFA JSON alignment.
+
+    Args:
+        text: ``--output_format json`` file content.
+
+    Returns:
+        Tier name mapped to its intervals, in file order.
+    """
+    data = json.loads(text)
+    return {
+        name: [Interval(float(a), float(b), str(label)) for a, b, label in tier["entries"]]
+        for name, tier in data.get("tiers", {}).items()
+    }
+
+
+def phase_alignment(
+    utterances: Sequence[Segment], tiers: dict[str, list[Interval]], duration_s: float
+) -> tuple[dict[str, list[Interval]], list[str]]:
+    """Kept word and phone tiers and the out-of-vocabulary words of a phase.
+
+    Args:
+        utterances: The aligned utterances (label = text).
+        tiers: MFA's tiers in phase time.
+        duration_s: Phase duration.
+
+    Returns:
+        ``({"words": ..., "phones": ...}, oov)`` without silences; ``oov`` lists, per
+        utterance in order, the transcript words MFA could not align.
+    """
+    kept = {
+        name: [
+            i for i in tiers.get(name, []) if i.label not in EMPTY_LABELS and i.start_s < duration_s
+        ]
+        for name in ("words", "phones")
+    }
     oov: list[str] = []
-    for segment, grid in utterances:
-        expected = segment.label.split()
-        aligned = [i for i in grid.get("words", []) if i.label not in EMPTY_LABELS]
-        for name in tiers:
-            kept = [i for i in grid.get(name, []) if i.label not in EMPTY_LABELS]
-            tiers[name] += [i for i in shift(kept, segment.start_s) if i.start_s < duration_s]
-        if any(i.label in UNKNOWN for i in aligned) or len(aligned) < len(expected):
-            known = {i.label for i in aligned if i.label not in UNKNOWN}
+    for u in utterances:
+        aligned = [w for w in kept["words"] if u.start_s <= (w.start_s + w.end_s) / 2 < u.end_s]
+        expected = u.label.split()
+        if any(w.label in UNKNOWN for w in aligned) or len(aligned) < len(expected):
+            known = {w.label for w in aligned if w.label not in UNKNOWN}
             oov += [w for w in expected if w not in known]
-    return tiers, oov
+    return kept, oov
+
+
+def activated_env(bin_dir: Path, base: Mapping[str, str]) -> dict[str, str]:
+    """Environment variables of an activated conda / pixi environment.
+
+    MFA calls its third-party tools (OpenFst, Kaldi) by name, so the environment's ``bin``
+    must lead the ``PATH`` even when the worker runs without activation.
+
+    Args:
+        bin_dir: The environment's ``bin`` folder.
+        base: Inherited environment.
+
+    Returns:
+        A copy of ``base`` with ``bin_dir`` first on the ``PATH``.
+    """
+    path = base.get("PATH", "")
+    return {**base, "PATH": f"{bin_dir}{os.pathsep}{path}" if path else str(bin_dir)}
+
+
+def run_command(args: Sequence[str], env: Mapping[str, str]) -> str:
+    """Run a command and return its standard output.
+
+    Args:
+        args: Command and arguments.
+        env: Extra environment variables on top of the current ones.
+
+    Returns:
+        Standard output.
+
+    Raises:
+        RuntimeError: With the end of the standard error when the command fails.
+    """
+    result = subprocess.run(list(args), capture_output=True, text=True, env={**os.environ, **env})
+    if result.returncode != 0:
+        tail = (result.stderr or result.stdout).strip()[-1500:]
+        raise RuntimeError(
+            f"{Path(args[0]).name} {args[1] if len(args) > 1 else ''} failed: {tail}"
+        )
+    return result.stdout
 
 
 def to_scores(tiers: dict[str, list[Interval]]) -> dict[str, SegmentScores]:
@@ -86,52 +170,43 @@ class MfaWorker:
         """Check the MFA command and download the Hungarian models if needed."""
         self.dictionary = options.get("dictionary", "hungarian_cv")
         self.acoustic = options.get("acoustic_model", "hungarian_cv")
-        self.mfa = str(Path(sys.executable).with_name("mfa"))
+        bin_dir = Path(sys.executable).parent
+        self.mfa = str(bin_dir / "mfa")
+        self.env = activated_env(bin_dir, os.environ)
         for kind, name in (("dictionary", self.dictionary), ("acoustic", self.acoustic)):
-            subprocess.run(
-                [self.mfa, "model", "download", kind, name], check=True, capture_output=True
-            )
-        version = subprocess.run([self.mfa, "version"], check=True, capture_output=True, text=True)
-        return {"device": "cpu", "mfa": version.stdout.strip(), "dictionary": self.dictionary}
+            run_command([self.mfa, "model", "download", kind, name], self.env)
+        version = run_command([self.mfa, "version"], self.env)
+        return {"device": "cpu", "mfa": version.strip(), "dictionary": self.dictionary}
 
-    def forward(self, request: InferenceRequest) -> list[tuple[Segment, dict[str, list[Interval]]]]:
-        """Align every utterance of the request with one MFA run."""
-        samples, rate = read_wav(request.wav)
+    def forward(self, request: InferenceRequest) -> dict[str, list[Interval]]:
+        """Align every utterance of the request in one MFA run over the whole phase."""
         utterances = [s for s in request.segments or () if s.label.strip()]
+        if not utterances:
+            return {}
         with tempfile.TemporaryDirectory() as tmp:
-            corpus, out = Path(tmp) / "corpus", Path(tmp) / "out"
+            # A unique corpus name: MFA keeps a database per corpus name.
+            corpus = Path(tmp) / f"stillface_{Path(tmp).name}"
+            out = Path(tmp) / "out"
             corpus.mkdir()
-            for i, s in enumerate(utterances):
-                write_wav(
-                    corpus / f"u{i:04d}.wav",
-                    samples[round(s.start_s * rate) : round(s.end_s * rate)],
-                    rate,
-                )
-                (corpus / f"u{i:04d}.lab").write_text(s.label)
-            if utterances:
-                subprocess.run(
-                    [
-                        self.mfa,
-                        "align",
-                        str(corpus),
-                        self.dictionary,
-                        self.acoustic,
-                        str(out),
-                        "--clean",
-                        "--quiet",
-                    ],
-                    check=True,
-                    capture_output=True,
-                )
-            return [
-                (
-                    s,
-                    parse_textgrid(grid.read_text())
-                    if (grid := out / f"u{i:04d}.TextGrid").exists()
-                    else {},
-                )
-                for i, s in enumerate(utterances)
-            ]
+            (corpus / "phase.wav").symlink_to(Path(request.wav).resolve())
+            (corpus / "phase.TextGrid").write_text(input_textgrid(utterances, request.duration_s))
+            run_command(
+                [
+                    self.mfa,
+                    "align",
+                    str(corpus),
+                    self.dictionary,
+                    self.acoustic,
+                    str(out),
+                    "--clean",
+                    "--quiet",
+                    "--output_format",
+                    "json",
+                ],
+                self.env,
+            )
+            result = out / "phase.json"
+            return parse_alignment_json(result.read_text()) if result.exists() else {}
 
     def infer(self, request: InferenceRequest) -> InferenceResult:
         """Phase TextGrid, word and phone groups, OOV list.
@@ -142,7 +217,8 @@ class MfaWorker:
         Returns:
             ``words`` / ``phones`` groups, ``TextGrid`` artefact and ``oov`` in meta.
         """
-        tiers, oov = merge_alignments(self.forward(request), request.duration_s)
+        utterances = [s for s in request.segments or () if s.label.strip()]
+        tiers, oov = phase_alignment(utterances, self.forward(request), request.duration_s)
         return InferenceResult(
             request.key,
             segments=to_scores(tiers),
