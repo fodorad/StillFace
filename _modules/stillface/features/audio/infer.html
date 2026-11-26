@@ -511,7 +511,7 @@
     <span class="n">builder</span><span class="p">:</span> <span class="n">RequestBuilder</span> <span class="o">=</span> <span class="n">full_wav_request</span><span class="p">,</span>
     <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StageReport</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Run a model on every pending session phase in one batch.</span>
+<span class="w">    </span><span class="sd">"""Run a model on every pending session phase, in saved batches.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        paths: Dataset locations.</span>
@@ -539,11 +539,13 @@
                 <span class="n">report</span><span class="o">.</span><span class="n">kept</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">pending</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">request</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">expected</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">pending</span><span class="p">:</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">batch_requests</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">first</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pending</span><span class="p">),</span> <span class="n">size</span><span class="p">):</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">pending</span><span class="p">[</span><span class="n">first</span> <span class="p">:</span> <span class="n">first</span> <span class="o">+</span> <span class="n">size</span><span class="p">]</span>
         <span class="n">started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">request</span> <span class="k">for</span> <span class="n">request</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">pending</span><span class="p">])</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">request</span> <span class="k">for</span> <span class="n">request</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">])</span>
         <span class="n">finished</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">expected</span><span class="p">),</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pending</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">expected</span><span class="p">),</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">InferenceError</span><span class="p">):</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> failed on </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">adapter</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
                 <span class="n">report</span><span class="o">.</span><span class="n">failed</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">message</span>
@@ -567,6 +569,13 @@
                 <span class="p">},</span>
             <span class="p">)</span>
             <span class="n">report</span><span class="o">.</span><span class="n">written</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">"</span><span class="si">%s</span><span class="s2">: batch </span><span class="si">%d</span><span class="s2">-</span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> done"</span><span class="p">,</span>
+            <span class="n">adapter</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">first</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">first</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">pending</span><span class="p">),</span>
+        <span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="s2">"</span><span class="si">%s</span><span class="s2">: wrote </span><span class="si">%d</span><span class="s2">, kept </span><span class="si">%d</span><span class="s2">, skipped </span><span class="si">%d</span><span class="s2">, failed </span><span class="si">%d</span><span class="s2">"</span><span class="p">,</span>
         <span class="n">adapter</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>

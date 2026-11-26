@@ -348,21 +348,48 @@
 <span class="sd">"""Shorter segments get a NaN embedding."""</span>
 
 
+<div class="viewcode-block" id="max_over_speakers">
+<a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/pyannote_worker/index.html#stillface.features.audio.workers.pyannote_worker.max_over_speakers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">max_over_speakers</span><span class="p">(</span><span class="n">scores</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Speech activity of each chunk frame: the maximum over the local speakers.</span>
+
+<span class="sd">    The segmentation model is permutation-invariant (its speaker channels mean nothing</span>
+<span class="sd">    across chunks), so pyannote only aggregates overlapping chunks after this hook has</span>
+<span class="sd">    reduced them to one speaker-free channel, as its own voice activity pipeline does.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        scores: Chunk outputs, shape ``(chunks, frames, speakers)``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Shape ``(chunks, frames, 1)``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="speech_scores">
 <a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/pyannote_worker/index.html#stillface.features.audio.workers.pyannote_worker.speech_scores">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">speech_scores</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">activity</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FrameScores</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Speech probability from per-frame local speaker activities.</span>
+<span class="w">    </span><span class="sd">"""Speech probability from aggregated per-frame activities.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        start: Start of the first frame.</span>
 <span class="sd">        step: Frame step.</span>
 <span class="sd">        duration: Frame duration.</span>
-<span class="sd">        activity: Speaker activities, shape ``(n, speakers)``.</span>
+<span class="sd">        activity: Aggregated activities, shape ``(n,)`` or ``(n, channels)``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ``speech`` = maximum activity, at the frame centres, clipped to ``[0, 1]``.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the activities are still per chunk (3-D, not aggregated).</span>
 <span class="sd">    """</span>
     <span class="n">activity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">activity</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">activity</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Activities of shape </span><span class="si">{</span><span class="n">activity</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> are per chunk; aggregate them first "</span>
+            <span class="s2">"(segmentation Inference with pre_aggregation_hook=max_over_speakers)"</span>
+        <span class="p">)</span>
     <span class="k">if</span> <span class="n">activity</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">activity</span> <span class="o">=</span> <span class="n">activity</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">activity</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
@@ -432,7 +459,9 @@
         <span class="n">embedding</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
             <span class="n">repo</span><span class="p">,</span> <span class="n">subfolder</span><span class="o">=</span><span class="s2">"embedding"</span><span class="p">,</span> <span class="n">revision</span><span class="o">=</span><span class="n">revision</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">segmentation</span> <span class="o">=</span> <span class="n">Inference</span><span class="p">(</span><span class="n">segmentation</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segmentation</span> <span class="o">=</span> <span class="n">Inference</span><span class="p">(</span>
+            <span class="n">segmentation</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">pre_aggregation_hook</span><span class="o">=</span><span class="n">max_over_speakers</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">Inference</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="s2">"whole"</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">"device"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="s2">"repo"</span><span class="p">:</span> <span class="n">repo</span><span class="p">,</span> <span class="s2">"revision"</span><span class="p">:</span> <span class="n">revision</span><span class="p">}</span></div>
 

@@ -144,7 +144,7 @@ Module Contents
 
 .. py:function:: run_model(paths: stillface.config.DatasetPaths, adapter: stillface.features.audio.models.ModelAdapter, model: stillface.features.audio.config.ModelConfig, sessions: collections.abc.Iterable[str], phases: collections.abc.Sequence[str] = PHASES, builder: RequestBuilder = full_wav_request, overwrite: bool = False) -> StageReport
 
-   Run a model on every pending session phase in one batch.
+   Run a model on every pending session phase, in saved batches.
 
    :param paths: Dataset locations.
    :param adapter: Model adapter.

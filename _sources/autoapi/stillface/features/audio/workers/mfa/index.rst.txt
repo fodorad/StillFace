@@ -7,11 +7,12 @@ stillface.features.audio.workers.mfa
 
    Montreal Forced Aligner worker: word and phone timing of the mother (environment ``mfa``).
 
-   For each mother utterance (segment label = its verbatim text) the clip and its transcript
-   are aligned with the Hungarian MFA dictionary and acoustic model (``hungarian_cv`` 2.0, XPF
-   phones). The per-utterance TextGrids are shifted to phase time and merged into one phase
-   TextGrid with ``words`` and ``phones`` tiers. Words MFA could not align (``spn`` phones or
-   ``<unk>``) are reported as out-of-vocabulary, never dropped.
+   The whole phase is aligned as one file: the WAV and an input TextGrid with one interval per
+   mother utterance (label = its verbatim text), with the Hungarian MFA dictionary and acoustic
+   model (``hungarian_cv`` 2.0, XPF phones). MFA returns ``words`` and ``phones`` tiers in phase
+   time (JSON output). One file per phase is MFA's long-recording mode; a corpus of many short
+   utterance files made MFA 3.4 pair alignments with the wrong files. Words MFA could not align
+   (``spn`` phones or ``<unk>``) are reported as out-of-vocabulary, never dropped.
 
 
 
@@ -21,6 +22,7 @@ Attributes
 .. autoapisummary::
 
    stillface.features.audio.workers.mfa.UNKNOWN
+   stillface.features.audio.workers.mfa.TIER
 
 
 Classes
@@ -36,7 +38,11 @@ Functions
 
 .. autoapisummary::
 
-   stillface.features.audio.workers.mfa.merge_alignments
+   stillface.features.audio.workers.mfa.input_textgrid
+   stillface.features.audio.workers.mfa.parse_alignment_json
+   stillface.features.audio.workers.mfa.phase_alignment
+   stillface.features.audio.workers.mfa.activated_env
+   stillface.features.audio.workers.mfa.run_command
    stillface.features.audio.workers.mfa.to_scores
 
 
@@ -48,15 +54,69 @@ Module Contents
 
    Labels MFA gives to words or phones it could not align.
 
-.. py:function:: merge_alignments(utterances: list[tuple[stillface.features.audio.models.Segment, dict[str, list[stillface.features.audio.textgrid.Interval]]]], duration_s: float) -> tuple[dict[str, list[stillface.features.audio.textgrid.Interval]], list[str]]
+.. py:data:: TIER
+   :type:  str
+   :value: 'mother'
 
-   Phase-level tiers and out-of-vocabulary words from per-utterance alignments.
 
-   :param utterances: Each mother segment with its utterance-local TextGrid tiers.
+   Speaker tier of the input TextGrid.
+
+.. py:function:: input_textgrid(utterances: collections.abc.Sequence[stillface.features.audio.models.Segment], duration_s: float) -> str
+
+   MFA input TextGrid of a phase: one interval per utterance, labelled with its text.
+
+   Padded mother intervals may overlap; an utterance then starts where the previous ends.
+
+   :param utterances: Mother utterances in phase time (label = text).
    :param duration_s: Phase duration.
 
-   :returns: ``({"words": ..., "phones": ...}, oov)`` with silences removed and times in phase
-             time; ``oov`` lists the transcript words MFA could not align, in order.
+   :returns: TextGrid content with the :data:`TIER` tier.
+
+
+.. py:function:: parse_alignment_json(text: str) -> dict[str, list[stillface.features.audio.textgrid.Interval]]
+
+   Tiers of an MFA JSON alignment.
+
+   :param text: ``--output_format json`` file content.
+
+   :returns: Tier name mapped to its intervals, in file order.
+
+
+.. py:function:: phase_alignment(utterances: collections.abc.Sequence[stillface.features.audio.models.Segment], tiers: dict[str, list[stillface.features.audio.textgrid.Interval]], duration_s: float) -> tuple[dict[str, list[stillface.features.audio.textgrid.Interval]], list[str]]
+
+   Kept word and phone tiers and the out-of-vocabulary words of a phase.
+
+   :param utterances: The aligned utterances (label = text).
+   :param tiers: MFA's tiers in phase time.
+   :param duration_s: Phase duration.
+
+   :returns: ``({"words": ..., "phones": ...}, oov)`` without silences; ``oov`` lists, per
+             utterance in order, the transcript words MFA could not align.
+
+
+.. py:function:: activated_env(bin_dir: pathlib.Path, base: collections.abc.Mapping[str, str]) -> dict[str, str]
+
+   Environment variables of an activated conda / pixi environment.
+
+   MFA calls its third-party tools (OpenFst, Kaldi) by name, so the environment's ``bin``
+   must lead the ``PATH`` even when the worker runs without activation.
+
+   :param bin_dir: The environment's ``bin`` folder.
+   :param base: Inherited environment.
+
+   :returns: A copy of ``base`` with ``bin_dir`` first on the ``PATH``.
+
+
+.. py:function:: run_command(args: collections.abc.Sequence[str], env: collections.abc.Mapping[str, str]) -> str
+
+   Run a command and return its standard output.
+
+   :param args: Command and arguments.
+   :param env: Extra environment variables on top of the current ones.
+
+   :returns: Standard output.
+
+   :raises RuntimeError: With the end of the standard error when the command fails.
 
 
 .. py:function:: to_scores(tiers: dict[str, list[stillface.features.audio.textgrid.Interval]]) -> dict[str, stillface.features.audio.models.SegmentScores]
@@ -79,9 +139,9 @@ Module Contents
 
 
 
-   .. py:method:: forward(request: stillface.features.audio.models.InferenceRequest) -> list[tuple[stillface.features.audio.models.Segment, dict[str, list[stillface.features.audio.textgrid.Interval]]]]
+   .. py:method:: forward(request: stillface.features.audio.models.InferenceRequest) -> dict[str, list[stillface.features.audio.textgrid.Interval]]
 
-      Align every utterance of the request with one MFA run.
+      Align every utterance of the request in one MFA run over the whole phase.
 
 
 

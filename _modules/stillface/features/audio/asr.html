@@ -411,10 +411,29 @@
 
 
 
+<div class="viewcode-block" id="is_event_tag">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/asr/index.html#stillface.features.audio.asr.is_event_tag">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_event_tag</span><span class="p">(</span><span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Whether a transcript token is a non-lexical event tag such as ``[laughter]``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        word: Token.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True for ``[...]`` tokens.</span>
+<span class="sd">    """</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"["</span><span class="p">)</span> <span class="ow">and</span> <span class="n">token</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"]"</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="utterances">
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/asr/index.html#stillface.features.audio.asr.utterances">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">utterances</span><span class="p">(</span><span class="n">words</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Segment</span><span class="p">],</span> <span class="n">intervals</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Segment</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">"""Group words into one utterance per kept interval.</span>
+<span class="w">    </span><span class="sd">"""Group words into one utterance per kept interval, for the aligner.</span>
+
+<span class="sd">    Event tags (``[laughter]``) stay in the transcript but are left out here: they have no</span>
+<span class="sd">    pronunciation, and an utterance with nothing else to align breaks MFA's export.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        words: Word segments (label = word), phase time.</span>
@@ -425,7 +444,11 @@
 <span class="sd">    """</span>
     <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">:</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">start_s</span> <span class="o">+</span> <span class="n">w</span><span class="o">.</span><span class="n">end_s</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">&lt;</span> <span class="n">b</span> <span class="ow">and</span> <span class="n">w</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">w</span><span class="o">.</span><span class="n">label</span>
+            <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">words</span>
+            <span class="k">if</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">start_s</span> <span class="o">+</span> <span class="n">w</span><span class="o">.</span><span class="n">end_s</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">&lt;</span> <span class="n">b</span> <span class="ow">and</span> <span class="n">w</span><span class="o">.</span><span class="n">label</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_event_tag</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="p">]</span>
         <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
             <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Segment</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">TRACK</span><span class="p">,</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">out</span></div>

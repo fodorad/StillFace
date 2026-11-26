@@ -362,10 +362,13 @@ segment, used to tell the mother from other women by similarity to her enrolled 
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.pyannote_worker.speech_scores" title="stillface.features.audio.workers.pyannote_worker.speech_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">speech_scores</span></code></a>(...)</p></td>
-<td><p>Speech probability from per-frame local speaker activities.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.pyannote_worker.max_over_speakers" title="stillface.features.audio.workers.pyannote_worker.max_over_speakers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_over_speakers</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Speech activity of each chunk frame: the maximum over the local speakers.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.pyannote_worker.embedding_scores" title="stillface.features.audio.workers.pyannote_worker.embedding_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">embedding_scores</span></code></a>(...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.pyannote_worker.speech_scores" title="stillface.features.audio.workers.pyannote_worker.speech_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">speech_scores</span></code></a>(...)</p></td>
+<td><p>Speech probability from aggregated per-frame activities.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.pyannote_worker.embedding_scores" title="stillface.features.audio.workers.pyannote_worker.embedding_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">embedding_scores</span></code></a>(...)</p></td>
 <td><p>L2-normalised embeddings per segment.</p></td>
 </tr>
 </tbody>
@@ -387,20 +390,40 @@ segment, used to tell the mother from other women by similarity to her enrolled 
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.workers.pyannote_worker.max_over_speakers">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.pyannote_worker.</span></span><span class="sig-name descname"><span class="pre">max_over_speakers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/pyannote_worker.html#max_over_speakers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.pyannote_worker.max_over_speakers" title="Link to this definition">¶</a></dt>
+<dd><p>Speech activity of each chunk frame: the maximum over the local speakers.</p>
+<p>The segmentation model is permutation-invariant (its speaker channels mean nothing
+across chunks), so pyannote only aggregates overlapping chunks after this hook has
+reduced them to one speaker-free channel, as its own voice activity pipeline does.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scores</strong> – Chunk outputs, shape <code class="docutils literal notranslate"><span class="pre">(chunks,</span> <span class="pre">frames,</span> <span class="pre">speakers)</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Shape <code class="docutils literal notranslate"><span class="pre">(chunks,</span> <span class="pre">frames,</span> <span class="pre">1)</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="stillface.features.audio.workers.pyannote_worker.speech_scores">
 <span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.pyannote_worker.</span></span><span class="sig-name descname"><span class="pre">speech_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../models/index.html#stillface.features.audio.models.FrameScores" title="stillface.features.audio.models.FrameScores"><span class="pre">stillface.features.audio.models.FrameScores</span></a></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/pyannote_worker.html#speech_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.pyannote_worker.speech_scores" title="Link to this definition">¶</a></dt>
-<dd><p>Speech probability from per-frame local speaker activities.</p>
+<dd><p>Speech probability from aggregated per-frame activities.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>start</strong> – Start of the first frame.</p></li>
 <li><p><strong>step</strong> – Frame step.</p></li>
 <li><p><strong>duration</strong> – Frame duration.</p></li>
-<li><p><strong>activity</strong> – Speaker activities, shape <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">speakers)</span></code>.</p></li>
+<li><p><strong>activity</strong> – Aggregated activities, shape <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> or <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">channels)</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">speech</span></code> = maximum activity, at the frame centres, clipped to <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the activities are still per chunk (3-D, not aggregated).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -522,6 +545,7 @@ segment, used to tell the mother from other women by similarity to her enrolled 
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.workers.pyannote_worker.REPO"><code class="docutils literal notranslate"><span class="pre">REPO</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.pyannote_worker.MIN_EMBEDDING_S"><code class="docutils literal notranslate"><span class="pre">MIN_EMBEDDING_S</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.pyannote_worker.max_over_speakers"><code class="docutils literal notranslate"><span class="pre">max_over_speakers()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.pyannote_worker.speech_scores"><code class="docutils literal notranslate"><span class="pre">speech_scores()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.pyannote_worker.embedding_scores"><code class="docutils literal notranslate"><span class="pre">embedding_scores()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.pyannote_worker.PyannoteWorker"><code class="docutils literal notranslate"><span class="pre">PyannoteWorker</span></code></a><ul>

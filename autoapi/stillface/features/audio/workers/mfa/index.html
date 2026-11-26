@@ -321,11 +321,12 @@
           <section id="module-stillface.features.audio.workers.mfa">
 <span id="stillface-features-audio-workers-mfa"></span><h1>stillface.features.audio.workers.mfa<a class="headerlink" href="#module-stillface.features.audio.workers.mfa" title="Link to this heading">¶</a></h1>
 <p>Montreal Forced Aligner worker: word and phone timing of the mother (environment <code class="docutils literal notranslate"><span class="pre">mfa</span></code>).</p>
-<p>For each mother utterance (segment label = its verbatim text) the clip and its transcript
-are aligned with the Hungarian MFA dictionary and acoustic model (<code class="docutils literal notranslate"><span class="pre">hungarian_cv</span></code> 2.0, XPF
-phones). The per-utterance TextGrids are shifted to phase time and merged into one phase
-TextGrid with <code class="docutils literal notranslate"><span class="pre">words</span></code> and <code class="docutils literal notranslate"><span class="pre">phones</span></code> tiers. Words MFA could not align (<code class="docutils literal notranslate"><span class="pre">spn</span></code> phones or
-<code class="docutils literal notranslate"><span class="pre">&lt;unk&gt;</span></code>) are reported as out-of-vocabulary, never dropped.</p>
+<p>The whole phase is aligned as one file: the WAV and an input TextGrid with one interval per
+mother utterance (label = its verbatim text), with the Hungarian MFA dictionary and acoustic
+model (<code class="docutils literal notranslate"><span class="pre">hungarian_cv</span></code> 2.0, XPF phones). MFA returns <code class="docutils literal notranslate"><span class="pre">words</span></code> and <code class="docutils literal notranslate"><span class="pre">phones</span></code> tiers in phase
+time (JSON output). One file per phase is MFA’s long-recording mode; a corpus of many short
+utterance files made MFA 3.4 pair alignments with the wrong files. Words MFA could not align
+(<code class="docutils literal notranslate"><span class="pre">spn</span></code> phones or <code class="docutils literal notranslate"><span class="pre">&lt;unk&gt;</span></code>) are reported as out-of-vocabulary, never dropped.</p>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -333,6 +334,9 @@ TextGrid with <code class="docutils literal notranslate"><span class="pre">words
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.UNKNOWN" title="stillface.features.audio.workers.mfa.UNKNOWN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UNKNOWN</span></code></a></p></td>
 <td><p>Labels MFA gives to words or phones it could not align.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.TIER" title="stillface.features.audio.workers.mfa.TIER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TIER</span></code></a></p></td>
+<td><p>Speaker tier of the input TextGrid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -355,8 +359,20 @@ TextGrid with <code class="docutils literal notranslate"><span class="pre">words
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.merge_alignments" title="stillface.features.audio.workers.mfa.merge_alignments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_alignments</span></code></a>(→ tuple[dict[str, ...)</p></td>
-<td><p>Phase-level tiers and out-of-vocabulary words from per-utterance alignments.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.input_textgrid" title="stillface.features.audio.workers.mfa.input_textgrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_textgrid</span></code></a>(→ str)</p></td>
+<td><p>MFA input TextGrid of a phase: one interval per utterance, labelled with its text.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.parse_alignment_json" title="stillface.features.audio.workers.mfa.parse_alignment_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_alignment_json</span></code></a>(→ dict[str, ...)</p></td>
+<td><p>Tiers of an MFA JSON alignment.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.phase_alignment" title="stillface.features.audio.workers.mfa.phase_alignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase_alignment</span></code></a>(→ tuple[dict[str, ...)</p></td>
+<td><p>Kept word and phone tiers and the out-of-vocabulary words of a phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.activated_env" title="stillface.features.audio.workers.mfa.activated_env"><code class="xref py py-obj docutils literal notranslate"><span class="pre">activated_env</span></code></a>(→ dict[str, str])</p></td>
+<td><p>Environment variables of an activated conda / pixi environment.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.run_command" title="stillface.features.audio.workers.mfa.run_command"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_command</span></code></a>(→ str)</p></td>
+<td><p>Run a command and return its standard output.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.mfa.to_scores" title="stillface.features.audio.workers.mfa.to_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_scores</span></code></a>(→ dict[str, ...)</p></td>
 <td><p>Tiers as segment groups (label = word or phone, value = duration).</p></td>
@@ -373,20 +389,98 @@ TextGrid with <code class="docutils literal notranslate"><span class="pre">words
 <dd><p>Labels MFA gives to words or phones it could not align.</p>
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.features.audio.workers.mfa.TIER">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.mfa.</span></span><span class="sig-name descname"><span class="pre">TIER</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mother'</span></span><a class="headerlink" href="#stillface.features.audio.workers.mfa.TIER" title="Link to this definition">¶</a></dt>
+<dd><p>Speaker tier of the input TextGrid.</p>
+</dd></dl>
+
 <dl class="py function">
-<dt class="sig sig-object py" id="stillface.features.audio.workers.mfa.merge_alignments">
-<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.mfa.</span></span><span class="sig-name descname"><span class="pre">merge_alignments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utterances</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../models/index.html#stillface.features.audio.models.Segment" title="stillface.features.audio.models.Segment"><span class="pre">stillface.features.audio.models.Segment</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../textgrid/index.html#stillface.features.audio.textgrid.Interval" title="stillface.features.audio.textgrid.Interval"><span class="pre">stillface.features.audio.textgrid.Interval</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../textgrid/index.html#stillface.features.audio.textgrid.Interval" title="stillface.features.audio.textgrid.Interval"><span class="pre">stillface.features.audio.textgrid.Interval</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/mfa.html#merge_alignments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.mfa.merge_alignments" title="Link to this definition">¶</a></dt>
-<dd><p>Phase-level tiers and out-of-vocabulary words from per-utterance alignments.</p>
+<dt class="sig sig-object py" id="stillface.features.audio.workers.mfa.input_textgrid">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.mfa.</span></span><span class="sig-name descname"><span class="pre">input_textgrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utterances</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../models/index.html#stillface.features.audio.models.Segment" title="stillface.features.audio.models.Segment"><span class="pre">stillface.features.audio.models.Segment</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/mfa.html#input_textgrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.mfa.input_textgrid" title="Link to this definition">¶</a></dt>
+<dd><p>MFA input TextGrid of a phase: one interval per utterance, labelled with its text.</p>
+<p>Padded mother intervals may overlap; an utterance then starts where the previous ends.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>utterances</strong> – Each mother segment with its utterance-local TextGrid tiers.</p></li>
+<li><p><strong>utterances</strong> – Mother utterances in phase time (label = text).</p></li>
 <li><p><strong>duration_s</strong> – Phase duration.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">({&quot;words&quot;:</span> <span class="pre">...,</span> <span class="pre">&quot;phones&quot;:</span> <span class="pre">...},</span> <span class="pre">oov)</span></code> with silences removed and times in phase
-time; <code class="docutils literal notranslate"><span class="pre">oov</span></code> lists the transcript words MFA could not align, in order.</p>
+<dd class="field-even"><p>TextGrid content with the <a class="reference internal" href="#stillface.features.audio.workers.mfa.TIER" title="stillface.features.audio.workers.mfa.TIER"><code class="xref py py-data docutils literal notranslate"><span class="pre">TIER</span></code></a> tier.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.workers.mfa.parse_alignment_json">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.mfa.</span></span><span class="sig-name descname"><span class="pre">parse_alignment_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../textgrid/index.html#stillface.features.audio.textgrid.Interval" title="stillface.features.audio.textgrid.Interval"><span class="pre">stillface.features.audio.textgrid.Interval</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/mfa.html#parse_alignment_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.mfa.parse_alignment_json" title="Link to this definition">¶</a></dt>
+<dd><p>Tiers of an MFA JSON alignment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> – <code class="docutils literal notranslate"><span class="pre">--output_format</span> <span class="pre">json</span></code> file content.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tier name mapped to its intervals, in file order.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.workers.mfa.phase_alignment">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.mfa.</span></span><span class="sig-name descname"><span class="pre">phase_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utterances</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../models/index.html#stillface.features.audio.models.Segment" title="stillface.features.audio.models.Segment"><span class="pre">stillface.features.audio.models.Segment</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../textgrid/index.html#stillface.features.audio.textgrid.Interval" title="stillface.features.audio.textgrid.Interval"><span class="pre">stillface.features.audio.textgrid.Interval</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../textgrid/index.html#stillface.features.audio.textgrid.Interval" title="stillface.features.audio.textgrid.Interval"><span class="pre">stillface.features.audio.textgrid.Interval</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/mfa.html#phase_alignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.mfa.phase_alignment" title="Link to this definition">¶</a></dt>
+<dd><p>Kept word and phone tiers and the out-of-vocabulary words of a phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>utterances</strong> – The aligned utterances (label = text).</p></li>
+<li><p><strong>tiers</strong> – MFA’s tiers in phase time.</p></li>
+<li><p><strong>duration_s</strong> – Phase duration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">({&quot;words&quot;:</span> <span class="pre">...,</span> <span class="pre">&quot;phones&quot;:</span> <span class="pre">...},</span> <span class="pre">oov)</span></code> without silences; <code class="docutils literal notranslate"><span class="pre">oov</span></code> lists, per
+utterance in order, the transcript words MFA could not align.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.workers.mfa.activated_env">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.mfa.</span></span><span class="sig-name descname"><span class="pre">activated_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bin_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/mfa.html#activated_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.mfa.activated_env" title="Link to this definition">¶</a></dt>
+<dd><p>Environment variables of an activated conda / pixi environment.</p>
+<p>MFA calls its third-party tools (OpenFst, Kaldi) by name, so the environment’s <code class="docutils literal notranslate"><span class="pre">bin</span></code>
+must lead the <code class="docutils literal notranslate"><span class="pre">PATH</span></code> even when the worker runs without activation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bin_dir</strong> – The environment’s <code class="docutils literal notranslate"><span class="pre">bin</span></code> folder.</p></li>
+<li><p><strong>base</strong> – Inherited environment.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A copy of <code class="docutils literal notranslate"><span class="pre">base</span></code> with <code class="docutils literal notranslate"><span class="pre">bin_dir</span></code> first on the <code class="docutils literal notranslate"><span class="pre">PATH</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.workers.mfa.run_command">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.mfa.</span></span><span class="sig-name descname"><span class="pre">run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/mfa.html#run_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.mfa.run_command" title="Link to this definition">¶</a></dt>
+<dd><p>Run a command and return its standard output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – Command and arguments.</p></li>
+<li><p><strong>env</strong> – Extra environment variables on top of the current ones.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Standard output.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – With the end of the standard error when the command fails.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -417,8 +511,8 @@ time; <code class="docutils literal notranslate"><span class="pre">oov</span></c
 
 <dl class="py method">
 <dt class="sig sig-object py" id="stillface.features.audio.workers.mfa.MfaWorker.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../models/index.html#stillface.features.audio.models.InferenceRequest" title="stillface.features.audio.models.InferenceRequest"><span class="pre">stillface.features.audio.models.InferenceRequest</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../models/index.html#stillface.features.audio.models.Segment" title="stillface.features.audio.models.Segment"><span class="pre">stillface.features.audio.models.Segment</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../textgrid/index.html#stillface.features.audio.textgrid.Interval" title="stillface.features.audio.textgrid.Interval"><span class="pre">stillface.features.audio.textgrid.Interval</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/mfa.html#MfaWorker.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.mfa.MfaWorker.forward" title="Link to this definition">¶</a></dt>
-<dd><p>Align every utterance of the request with one MFA run.</p>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../models/index.html#stillface.features.audio.models.InferenceRequest" title="stillface.features.audio.models.InferenceRequest"><span class="pre">stillface.features.audio.models.InferenceRequest</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../textgrid/index.html#stillface.features.audio.textgrid.Interval" title="stillface.features.audio.textgrid.Interval"><span class="pre">stillface.features.audio.textgrid.Interval</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/mfa.html#MfaWorker.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.mfa.MfaWorker.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Align every utterance of the request in one MFA run over the whole phase.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -501,7 +595,12 @@ time; <code class="docutils literal notranslate"><span class="pre">oov</span></c
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.workers.mfa.UNKNOWN"><code class="docutils literal notranslate"><span class="pre">UNKNOWN</span></code></a></li>
-<li><a class="reference internal" href="#stillface.features.audio.workers.mfa.merge_alignments"><code class="docutils literal notranslate"><span class="pre">merge_alignments()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.mfa.TIER"><code class="docutils literal notranslate"><span class="pre">TIER</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.mfa.input_textgrid"><code class="docutils literal notranslate"><span class="pre">input_textgrid()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.mfa.parse_alignment_json"><code class="docutils literal notranslate"><span class="pre">parse_alignment_json()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.mfa.phase_alignment"><code class="docutils literal notranslate"><span class="pre">phase_alignment()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.mfa.activated_env"><code class="docutils literal notranslate"><span class="pre">activated_env()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.mfa.run_command"><code class="docutils literal notranslate"><span class="pre">run_command()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.mfa.to_scores"><code class="docutils literal notranslate"><span class="pre">to_scores()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.mfa.MfaWorker"><code class="docutils literal notranslate"><span class="pre">MfaWorker</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.workers.mfa.MfaWorker.load"><code class="docutils literal notranslate"><span class="pre">MfaWorker.load()</span></code></a></li>

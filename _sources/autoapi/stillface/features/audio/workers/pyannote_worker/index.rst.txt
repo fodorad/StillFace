@@ -41,6 +41,7 @@ Functions
 
 .. autoapisummary::
 
+   stillface.features.audio.workers.pyannote_worker.max_over_speakers
    stillface.features.audio.workers.pyannote_worker.speech_scores
    stillface.features.audio.workers.pyannote_worker.embedding_scores
 
@@ -62,16 +63,31 @@ Module Contents
 
    Shorter segments get a NaN embedding.
 
+.. py:function:: max_over_speakers(scores: numpy.ndarray) -> numpy.ndarray
+
+   Speech activity of each chunk frame: the maximum over the local speakers.
+
+   The segmentation model is permutation-invariant (its speaker channels mean nothing
+   across chunks), so pyannote only aggregates overlapping chunks after this hook has
+   reduced them to one speaker-free channel, as its own voice activity pipeline does.
+
+   :param scores: Chunk outputs, shape ``(chunks, frames, speakers)``.
+
+   :returns: Shape ``(chunks, frames, 1)``.
+
+
 .. py:function:: speech_scores(start: float, step: float, duration: float, activity: numpy.ndarray) -> stillface.features.audio.models.FrameScores
 
-   Speech probability from per-frame local speaker activities.
+   Speech probability from aggregated per-frame activities.
 
    :param start: Start of the first frame.
    :param step: Frame step.
    :param duration: Frame duration.
-   :param activity: Speaker activities, shape ``(n, speakers)``.
+   :param activity: Aggregated activities, shape ``(n,)`` or ``(n, channels)``.
 
    :returns: ``speech`` = maximum activity, at the frame centres, clipped to ``[0, 1]``.
+
+   :raises ValueError: If the activities are still per chunk (3-D, not aggregated).
 
 
 .. py:function:: embedding_scores(segments: tuple[stillface.features.audio.models.Segment, ...], vectors: list[numpy.ndarray | None]) -> stillface.features.audio.models.SegmentScores

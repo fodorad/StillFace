@@ -314,22 +314,25 @@
           <h1>Source code for stillface.features.audio.workers.mfa</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Montreal Forced Aligner worker: word and phone timing of the mother (environment ``mfa``).</span>
 
-<span class="sd">For each mother utterance (segment label = its verbatim text) the clip and its transcript</span>
-<span class="sd">are aligned with the Hungarian MFA dictionary and acoustic model (``hungarian_cv`` 2.0, XPF</span>
-<span class="sd">phones). The per-utterance TextGrids are shifted to phase time and merged into one phase</span>
-<span class="sd">TextGrid with ``words`` and ``phones`` tiers. Words MFA could not align (``spn`` phones or</span>
-<span class="sd">``&lt;unk&gt;``) are reported as out-of-vocabulary, never dropped.</span>
+<span class="sd">The whole phase is aligned as one file: the WAV and an input TextGrid with one interval per</span>
+<span class="sd">mother utterance (label = its verbatim text), with the Hungarian MFA dictionary and acoustic</span>
+<span class="sd">model (``hungarian_cv`` 2.0, XPF phones). MFA returns ``words`` and ``phones`` tiers in phase</span>
+<span class="sd">time (JSON output). One file per phase is MFA's long-recording mode; a corpus of many short</span>
+<span class="sd">utterance files made MFA 3.4 pair alignments with the wrong files. Words MFA could not align</span>
+<span class="sd">(``spn`` phones or ``&lt;unk&gt;``) are reported as out-of-vocabulary, never dropped.</span>
 <span class="sd">"""</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_wav</span><span class="p">,</span> <span class="n">write_wav</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.models</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">InferenceRequest</span><span class="p">,</span>
     <span class="n">InferenceResult</span><span class="p">,</span>
@@ -339,8 +342,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.textgrid</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">EMPTY_LABELS</span><span class="p">,</span>
     <span class="n">Interval</span><span class="p">,</span>
-    <span class="n">parse_textgrid</span><span class="p">,</span>
-    <span class="n">shift</span><span class="p">,</span>
     <span class="n">write_textgrid</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">stillface.features.audio.workers.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">serve</span>
@@ -349,33 +350,128 @@
 <span class="sd">"""Labels MFA gives to words or phones it could not align."""</span>
 
 
-<div class="viewcode-block" id="merge_alignments">
-<a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/mfa/index.html#stillface.features.audio.workers.mfa.merge_alignments">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">merge_alignments</span><span class="p">(</span>
-    <span class="n">utterances</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Segment</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Interval</span><span class="p">]]]],</span> <span class="n">duration_s</span><span class="p">:</span> <span class="nb">float</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Interval</span><span class="p">]],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">"""Phase-level tiers and out-of-vocabulary words from per-utterance alignments.</span>
+<span class="n">TIER</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"mother"</span>
+<span class="sd">"""Speaker tier of the input TextGrid."""</span>
+
+
+<div class="viewcode-block" id="input_textgrid">
+<a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/mfa/index.html#stillface.features.audio.workers.mfa.input_textgrid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">input_textgrid</span><span class="p">(</span><span class="n">utterances</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Segment</span><span class="p">],</span> <span class="n">duration_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""MFA input TextGrid of a phase: one interval per utterance, labelled with its text.</span>
+
+<span class="sd">    Padded mother intervals may overlap; an utterance then starts where the previous ends.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        utterances: Each mother segment with its utterance-local TextGrid tiers.</span>
+<span class="sd">        utterances: Mother utterances in phase time (label = text).</span>
 <span class="sd">        duration_s: Phase duration.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        ``({"words": ..., "phones": ...}, oov)`` with silences removed and times in phase</span>
-<span class="sd">        time; ``oov`` lists the transcript words MFA could not align, in order.</span>
+<span class="sd">        TextGrid content with the :data:`TIER` tier.</span>
 <span class="sd">    """</span>
-    <span class="n">tiers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Interval</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"words"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"phones"</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">intervals</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Interval</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">utterances</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">start_s</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">start_s</span><span class="p">,</span> <span class="n">intervals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">end_s</span> <span class="k">if</span> <span class="n">intervals</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">end_s</span><span class="p">,</span> <span class="n">duration_s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="n">start</span><span class="p">:</span>
+            <span class="n">intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Interval</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">label</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">write_textgrid</span><span class="p">({</span><span class="n">TIER</span><span class="p">:</span> <span class="n">intervals</span><span class="p">},</span> <span class="n">duration_s</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_alignment_json">
+<a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/mfa/index.html#stillface.features.audio.workers.mfa.parse_alignment_json">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_alignment_json</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Interval</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Tiers of an MFA JSON alignment.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: ``--output_format json`` file content.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tier name mapped to its intervals, in file order.</span>
+<span class="sd">    """</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">:</span> <span class="p">[</span><span class="n">Interval</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">))</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">tier</span><span class="p">[</span><span class="s2">"entries"</span><span class="p">]]</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">tier</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tiers"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="phase_alignment">
+<a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/mfa/index.html#stillface.features.audio.workers.mfa.phase_alignment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">phase_alignment</span><span class="p">(</span>
+    <span class="n">utterances</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Segment</span><span class="p">],</span> <span class="n">tiers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Interval</span><span class="p">]],</span> <span class="n">duration_s</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Interval</span><span class="p">]],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Kept word and phone tiers and the out-of-vocabulary words of a phase.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        utterances: The aligned utterances (label = text).</span>
+<span class="sd">        tiers: MFA's tiers in phase time.</span>
+<span class="sd">        duration_s: Phase duration.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``({"words": ..., "phones": ...}, oov)`` without silences; ``oov`` lists, per</span>
+<span class="sd">        utterance in order, the transcript words MFA could not align.</span>
+<span class="sd">    """</span>
+    <span class="n">kept</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tiers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">EMPTY_LABELS</span> <span class="ow">and</span> <span class="n">i</span><span class="o">.</span><span class="n">start_s</span> <span class="o">&lt;</span> <span class="n">duration_s</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"words"</span><span class="p">,</span> <span class="s2">"phones"</span><span class="p">)</span>
+    <span class="p">}</span>
     <span class="n">oov</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">segment</span><span class="p">,</span> <span class="n">grid</span> <span class="ow">in</span> <span class="n">utterances</span><span class="p">:</span>
-        <span class="n">expected</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-        <span class="n">aligned</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"words"</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">EMPTY_LABELS</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">tiers</span><span class="p">:</span>
-            <span class="n">kept</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">EMPTY_LABELS</span><span class="p">]</span>
-            <span class="n">tiers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">shift</span><span class="p">(</span><span class="n">kept</span><span class="p">,</span> <span class="n">segment</span><span class="o">.</span><span class="n">start_s</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">start_s</span> <span class="o">&lt;</span> <span class="n">duration_s</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">label</span> <span class="ow">in</span> <span class="n">UNKNOWN</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">aligned</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">aligned</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">expected</span><span class="p">):</span>
-            <span class="n">known</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">aligned</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">UNKNOWN</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">utterances</span><span class="p">:</span>
+        <span class="n">aligned</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">kept</span><span class="p">[</span><span class="s2">"words"</span><span class="p">]</span> <span class="k">if</span> <span class="n">u</span><span class="o">.</span><span class="n">start_s</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">start_s</span> <span class="o">+</span> <span class="n">w</span><span class="o">.</span><span class="n">end_s</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">&lt;</span> <span class="n">u</span><span class="o">.</span><span class="n">end_s</span><span class="p">]</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">label</span> <span class="ow">in</span> <span class="n">UNKNOWN</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">aligned</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">aligned</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">expected</span><span class="p">):</span>
+            <span class="n">known</span> <span class="o">=</span> <span class="p">{</span><span class="n">w</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">aligned</span> <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">UNKNOWN</span><span class="p">}</span>
             <span class="n">oov</span> <span class="o">+=</span> <span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">expected</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">tiers</span><span class="p">,</span> <span class="n">oov</span></div>
+    <span class="k">return</span> <span class="n">kept</span><span class="p">,</span> <span class="n">oov</span></div>
+
+
+
+<div class="viewcode-block" id="activated_env">
+<a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/mfa/index.html#stillface.features.audio.workers.mfa.activated_env">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">activated_env</span><span class="p">(</span><span class="n">bin_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Environment variables of an activated conda / pixi environment.</span>
+
+<span class="sd">    MFA calls its third-party tools (OpenFst, Kaldi) by name, so the environment's ``bin``</span>
+<span class="sd">    must lead the ``PATH`` even when the worker runs without activation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bin_dir: The environment's ``bin`` folder.</span>
+<span class="sd">        base: Inherited environment.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A copy of ``base`` with ``bin_dir`` first on the ``PATH``.</span>
+<span class="sd">    """</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"PATH"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">base</span><span class="p">,</span> <span class="s2">"PATH"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">bin_dir</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="si">}{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">path</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">bin_dir</span><span class="p">)}</span></div>
+
+
+
+<div class="viewcode-block" id="run_command">
+<a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/mfa/index.html#stillface.features.audio.workers.mfa.run_command">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_command</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">env</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Run a command and return its standard output.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        args: Command and arguments.</span>
+<span class="sd">        env: Extra environment variables on top of the current ones.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Standard output.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: With the end of the standard error when the command fails.</span>
+<span class="sd">    """</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">),</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="p">{</span><span class="o">**</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="o">**</span><span class="n">env</span><span class="p">})</span>
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">tail</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">stderr</span> <span class="ow">or</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="o">-</span><span class="mi">1500</span><span class="p">:]</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">tail</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span></div>
 
 
 
@@ -410,55 +506,46 @@
 <span class="w">        </span><span class="sd">"""Check the MFA command and download the Hungarian models if needed."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"dictionary"</span><span class="p">,</span> <span class="s2">"hungarian_cv"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">acoustic</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"acoustic_model"</span><span class="p">,</span> <span class="s2">"hungarian_cv"</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mfa</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">)</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="s2">"mfa"</span><span class="p">))</span>
+        <span class="n">bin_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mfa</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">bin_dir</span> <span class="o">/</span> <span class="s2">"mfa"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">activated_env</span><span class="p">(</span><span class="n">bin_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">"dictionary"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span><span class="p">),</span> <span class="p">(</span><span class="s2">"acoustic"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">acoustic</span><span class="p">)):</span>
-            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mfa</span><span class="p">,</span> <span class="s2">"model"</span><span class="p">,</span> <span class="s2">"download"</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">name</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span>
-            <span class="p">)</span>
-        <span class="n">version</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">mfa</span><span class="p">,</span> <span class="s2">"version"</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">"device"</span><span class="p">:</span> <span class="s2">"cpu"</span><span class="p">,</span> <span class="s2">"mfa"</span><span class="p">:</span> <span class="n">version</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s2">"dictionary"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span><span class="p">}</span></div>
+            <span class="n">run_command</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">mfa</span><span class="p">,</span> <span class="s2">"model"</span><span class="p">,</span> <span class="s2">"download"</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">name</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+        <span class="n">version</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">mfa</span><span class="p">,</span> <span class="s2">"version"</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"device"</span><span class="p">:</span> <span class="s2">"cpu"</span><span class="p">,</span> <span class="s2">"mfa"</span><span class="p">:</span> <span class="n">version</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s2">"dictionary"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="MfaWorker.forward">
 <a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/mfa/index.html#stillface.features.audio.workers.mfa.MfaWorker.forward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">InferenceRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Segment</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Interval</span><span class="p">]]]]:</span>
-<span class="w">        </span><span class="sd">"""Align every utterance of the request with one MFA run."""</span>
-        <span class="n">samples</span><span class="p">,</span> <span class="n">rate</span> <span class="o">=</span> <span class="n">read_wav</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">wav</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">InferenceRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Interval</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Align every utterance of the request in one MFA run over the whole phase."""</span>
         <span class="n">utterances</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">segments</span> <span class="ow">or</span> <span class="p">()</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">utterances</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
         <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
-            <span class="n">corpus</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"corpus"</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"out"</span>
+            <span class="c1"># A unique corpus name: MFA keeps a database per corpus name.</span>
+            <span class="n">corpus</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"stillface_</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"out"</span>
             <span class="n">corpus</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">utterances</span><span class="p">):</span>
-                <span class="n">write_wav</span><span class="p">(</span>
-                    <span class="n">corpus</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"u</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.wav"</span><span class="p">,</span>
-                    <span class="n">samples</span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">start_s</span> <span class="o">*</span> <span class="n">rate</span><span class="p">)</span> <span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">end_s</span> <span class="o">*</span> <span class="n">rate</span><span class="p">)],</span>
-                    <span class="n">rate</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="p">(</span><span class="n">corpus</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"u</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.lab"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">utterances</span><span class="p">:</span>
-                <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-                    <span class="p">[</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">mfa</span><span class="p">,</span>
-                        <span class="s2">"align"</span><span class="p">,</span>
-                        <span class="nb">str</span><span class="p">(</span><span class="n">corpus</span><span class="p">),</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">acoustic</span><span class="p">,</span>
-                        <span class="nb">str</span><span class="p">(</span><span class="n">out</span><span class="p">),</span>
-                        <span class="s2">"--clean"</span><span class="p">,</span>
-                        <span class="s2">"--quiet"</span><span class="p">,</span>
-                    <span class="p">],</span>
-                    <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="k">return</span> <span class="p">[</span>
-                <span class="p">(</span>
-                    <span class="n">s</span><span class="p">,</span>
-                    <span class="n">parse_textgrid</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="n">grid</span> <span class="o">:=</span> <span class="n">out</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"u</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.TextGrid"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
-                    <span class="k">else</span> <span class="p">{},</span>
-                <span class="p">)</span>
-                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">utterances</span><span class="p">)</span>
-            <span class="p">]</span></div>
+            <span class="p">(</span><span class="n">corpus</span> <span class="o">/</span> <span class="s2">"phase.wav"</span><span class="p">)</span><span class="o">.</span><span class="n">symlink_to</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">wav</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+            <span class="p">(</span><span class="n">corpus</span> <span class="o">/</span> <span class="s2">"phase.TextGrid"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">input_textgrid</span><span class="p">(</span><span class="n">utterances</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">duration_s</span><span class="p">))</span>
+            <span class="n">run_command</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mfa</span><span class="p">,</span>
+                    <span class="s2">"align"</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">corpus</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">acoustic</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">out</span><span class="p">),</span>
+                    <span class="s2">"--clean"</span><span class="p">,</span>
+                    <span class="s2">"--quiet"</span><span class="p">,</span>
+                    <span class="s2">"--output_format"</span><span class="p">,</span>
+                    <span class="s2">"json"</span><span class="p">,</span>
+                <span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="s2">"phase.json"</span>
+            <span class="k">return</span> <span class="n">parse_alignment_json</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="p">{}</span></div>
 
 
 <div class="viewcode-block" id="MfaWorker.infer">
@@ -472,7 +559,8 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            ``words`` / ``phones`` groups, ``TextGrid`` artefact and ``oov`` in meta.</span>
 <span class="sd">        """</span>
-        <span class="n">tiers</span><span class="p">,</span> <span class="n">oov</span> <span class="o">=</span> <span class="n">merge_alignments</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">request</span><span class="p">),</span> <span class="n">request</span><span class="o">.</span><span class="n">duration_s</span><span class="p">)</span>
+        <span class="n">utterances</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">segments</span> <span class="ow">or</span> <span class="p">()</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="n">tiers</span><span class="p">,</span> <span class="n">oov</span> <span class="o">=</span> <span class="n">phase_alignment</span><span class="p">(</span><span class="n">utterances</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">request</span><span class="p">),</span> <span class="n">request</span><span class="o">.</span><span class="n">duration_s</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">InferenceResult</span><span class="p">(</span>
             <span class="n">request</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
             <span class="n">segments</span><span class="o">=</span><span class="n">to_scores</span><span class="p">(</span><span class="n">tiers</span><span class="p">),</span>

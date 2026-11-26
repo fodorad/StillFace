@@ -334,7 +334,10 @@ is copied into each run record and its hash into every provenance sidecar.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.DEFAULT_CONFIG_PATH" title="stillface.features.audio.config.DEFAULT_CONFIG_PATH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_CONFIG_PATH</span></code></a></p></td>
 <td><p>Config file shipped with the package.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.DEFAULT_THRESHOLDS" title="stillface.features.audio.config.DEFAULT_THRESHOLDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_THRESHOLDS</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.RUN_CONTROL" title="stillface.features.audio.config.RUN_CONTROL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RUN_CONTROL</span></code></a></p></td>
+<td><p>Model settings that steer the run but never change its outputs (left out of digests).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.DEFAULT_THRESHOLDS" title="stillface.features.audio.config.DEFAULT_THRESHOLDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_THRESHOLDS</span></code></a></p></td>
 <td><p>Fusion thresholds used when the config file names none (same as the shipped file).</p></td>
 </tr>
 </tbody>
@@ -547,6 +550,12 @@ before <code class="docutils literal notranslate"><span class="pre">window_1</sp
 
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.features.audio.config.RUN_CONTROL">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">RUN_CONTROL</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">frozenset</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#stillface.features.audio.config.RUN_CONTROL" title="Link to this definition">¶</a></dt>
+<dd><p>Model settings that steer the run but never change its outputs (left out of digests).</p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">ModelConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#ModelConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.ModelConfig" title="Link to this definition">¶</a></dt>
@@ -626,6 +635,14 @@ e.g. until its outputs are verified.</p>
 <code class="docutils literal notranslate"><span class="pre">vtc:&lt;labels&gt;</span></code> (VTC segments with these classes, e.g. <code class="docutils literal notranslate"><span class="pre">vtc:FEM,MAL</span></code>) or
 <code class="docutils literal notranslate"><span class="pre">roles:&lt;roles&gt;</span></code> (role segments, e.g. <code class="docutils literal notranslate"><span class="pre">roles:mother,baby</span></code>) or <code class="docutils literal notranslate"><span class="pre">asr:&lt;track&gt;</span></code>
 (one segment per transcribed utterance of a gated track, for the aligner).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.ModelConfig.batch_requests">
+<span class="sig-name descname"><span class="pre">batch_requests</span></span><a class="headerlink" href="#stillface.features.audio.config.ModelConfig.batch_requests" title="Link to this definition">¶</a></dt>
+<dd><p>Most requests sent to one worker run; each batch is saved before
+the next starts, so a crash or timeout loses at most one batch. Run control
+only: it is left out of <a class="reference internal" href="#stillface.features.audio.config.ModelConfig.digest" title="stillface.features.audio.config.ModelConfig.digest"><code class="xref py py-attr docutils literal notranslate"><span class="pre">digest</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1014,6 +1031,7 @@ the derived baby arousal: <code class="docutils literal notranslate"><span class
 <li><a class="reference internal" href="#stillface.features.audio.config.RolesConfig.tau_low"><code class="docutils literal notranslate"><span class="pre">RolesConfig.tau_low</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#stillface.features.audio.config.RUN_CONTROL"><code class="docutils literal notranslate"><span class="pre">RUN_CONTROL</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig"><code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.env"><code class="docutils literal notranslate"><span class="pre">ModelConfig.env</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.module"><code class="docutils literal notranslate"><span class="pre">ModelConfig.module</span></code></a></li>
@@ -1027,6 +1045,7 @@ the derived baby arousal: <code class="docutils literal notranslate"><span class
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.input"><code class="docutils literal notranslate"><span class="pre">ModelConfig.input</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.enabled"><code class="docutils literal notranslate"><span class="pre">ModelConfig.enabled</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.segment_source"><code class="docutils literal notranslate"><span class="pre">ModelConfig.segment_source</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.batch_requests"><code class="docutils literal notranslate"><span class="pre">ModelConfig.batch_requests</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.ModelConfig.digest"><code class="docutils literal notranslate"><span class="pre">ModelConfig.digest</span></code></a></li>
 </ul>
 </li>

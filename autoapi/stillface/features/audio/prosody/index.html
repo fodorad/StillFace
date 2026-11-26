@@ -347,6 +347,9 @@ prosodic synchrony. Both libraries come with the optional <code class="docutils 
 <tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.prosody.HNR_UNVOICED" title="stillface.features.audio.prosody.HNR_UNVOICED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HNR_UNVOICED</span></code></a></p></td>
 <td><p>Praat marks unvoiced HNR frames with -200 dB; values at or below this are NaN.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.prosody.INTENSITY_SILENT" title="stillface.features.audio.prosody.INTENSITY_SILENT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">INTENSITY_SILENT</span></code></a></p></td>
+<td><p>Praat gives digital silence -300 dB; values at or below this are NaN (no measurement).</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -370,7 +373,7 @@ prosodic synchrony. Both libraries come with the optional <code class="docutils 
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py data">
 <dt class="sig sig-object py" id="stillface.features.audio.prosody.PROSODY_VERSION">
-<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.prosody.</span></span><span class="sig-name descname"><span class="pre">PROSODY_VERSION</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1'</span></span><a class="headerlink" href="#stillface.features.audio.prosody.PROSODY_VERSION" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.prosody.</span></span><span class="sig-name descname"><span class="pre">PROSODY_VERSION</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2'</span></span><a class="headerlink" href="#stillface.features.audio.prosody.PROSODY_VERSION" title="Link to this definition">¶</a></dt>
 <dd><p>Version of the prosody adapters’ output layout.</p>
 </dd></dl>
 
@@ -384,6 +387,12 @@ prosodic synchrony. Both libraries come with the optional <code class="docutils 
 <dt class="sig sig-object py" id="stillface.features.audio.prosody.HNR_UNVOICED">
 <span class="sig-prename descclassname"><span class="pre">stillface.features.audio.prosody.</span></span><span class="sig-name descname"><span class="pre">HNR_UNVOICED</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-199.0</span></span><a class="headerlink" href="#stillface.features.audio.prosody.HNR_UNVOICED" title="Link to this definition">¶</a></dt>
 <dd><p>Praat marks unvoiced HNR frames with -200 dB; values at or below this are NaN.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.features.audio.prosody.INTENSITY_SILENT">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.prosody.</span></span><span class="sig-name descname"><span class="pre">INTENSITY_SILENT</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-299.0</span></span><a class="headerlink" href="#stillface.features.audio.prosody.INTENSITY_SILENT" title="Link to this definition">¶</a></dt>
+<dd><p>Praat gives digital silence -300 dB; values at or below this are NaN (no measurement).</p>
 </dd></dl>
 
 <dl class="py class">
@@ -539,6 +548,7 @@ prosodic synchrony. Both libraries come with the optional <code class="docutils 
 <li><a class="reference internal" href="#stillface.features.audio.prosody.PROSODY_VERSION"><code class="docutils literal notranslate"><span class="pre">PROSODY_VERSION</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.prosody.DEFAULTS"><code class="docutils literal notranslate"><span class="pre">DEFAULTS</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.prosody.HNR_UNVOICED"><code class="docutils literal notranslate"><span class="pre">HNR_UNVOICED</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.prosody.INTENSITY_SILENT"><code class="docutils literal notranslate"><span class="pre">INTENSITY_SILENT</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.prosody.ProsodyAdapter"><code class="docutils literal notranslate"><span class="pre">ProsodyAdapter</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.prosody.ProsodyAdapter.name"><code class="docutils literal notranslate"><span class="pre">ProsodyAdapter.name</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.prosody.ProsodyAdapter.model"><code class="docutils literal notranslate"><span class="pre">ProsodyAdapter.model</span></code></a></li>

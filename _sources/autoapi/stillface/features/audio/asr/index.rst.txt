@@ -37,6 +37,7 @@ Functions
    stillface.features.audio.asr.gated_request
    stillface.features.audio.asr.gated_intervals
    stillface.features.audio.asr.inside
+   stillface.features.audio.asr.is_event_tag
    stillface.features.audio.asr.utterances
    stillface.features.audio.asr.utterance_request
    stillface.features.audio.asr.builder_for
@@ -101,9 +102,21 @@ Module Contents
    :returns: True if ``start <= time_s < end`` for one of them.
 
 
+.. py:function:: is_event_tag(word: str) -> bool
+
+   Whether a transcript token is a non-lexical event tag such as ``[laughter]``.
+
+   :param word: Token.
+
+   :returns: True for ``[...]`` tokens.
+
+
 .. py:function:: utterances(words: collections.abc.Sequence[stillface.features.audio.models.Segment], intervals: collections.abc.Sequence[tuple[float, float]]) -> list[stillface.features.audio.models.Segment]
 
-   Group words into one utterance per kept interval.
+   Group words into one utterance per kept interval, for the aligner.
+
+   Event tags (``[laughter]``) stay in the transcript but are left out here: they have no
+   pronunciation, and an utterance with nothing else to align breaks MFA's export.
 
    :param words: Word segments (label = word), phase time.
    :param intervals: Padded mother intervals.

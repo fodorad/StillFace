@@ -30,6 +30,7 @@ Attributes
    stillface.features.audio.prosody.PROSODY_VERSION
    stillface.features.audio.prosody.DEFAULTS
    stillface.features.audio.prosody.HNR_UNVOICED
+   stillface.features.audio.prosody.INTENSITY_SILENT
 
 
 Classes
@@ -46,7 +47,7 @@ Module Contents
 
 .. py:data:: PROSODY_VERSION
    :type:  str
-   :value: '1'
+   :value: '2'
 
 
    Version of the prosody adapters' output layout.
@@ -62,6 +63,13 @@ Module Contents
 
 
    Praat marks unvoiced HNR frames with -200 dB; values at or below this are NaN.
+
+.. py:data:: INTENSITY_SILENT
+   :type:  float
+   :value: -299.0
+
+
+   Praat gives digital silence -300 dB; values at or below this are NaN (no measurement).
 
 .. py:class:: ProsodyAdapter
 

@@ -427,6 +427,10 @@
 
 
 
+<span class="n">RUN_CONTROL</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"batch_requests"</span><span class="p">})</span>
+<span class="sd">"""Model settings that steer the run but never change its outputs (left out of digests)."""</span>
+
+
 <div class="viewcode-block" id="ModelConfig">
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.ModelConfig">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -451,6 +455,9 @@
 <span class="sd">            ``vtc:&lt;labels&gt;`` (VTC segments with these classes, e.g. ``vtc:FEM,MAL``) or</span>
 <span class="sd">            ``roles:&lt;roles&gt;`` (role segments, e.g. ``roles:mother,baby``) or ``asr:&lt;track&gt;``</span>
 <span class="sd">            (one segment per transcribed utterance of a gated track, for the aligner).</span>
+<span class="sd">        batch_requests: Most requests sent to one worker run; each batch is saved before</span>
+<span class="sd">            the next starts, so a crash or timeout loses at most one batch. Run control</span>
+<span class="sd">            only: it is left out of :attr:`digest`.</span>
 <span class="sd">    """</span>
 
     <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
@@ -465,6 +472,7 @@
     <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"wav"</span>
     <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">segment_source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">batch_requests</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Validate the input kind and the segment source."""</span>
@@ -480,7 +488,8 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">digest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Short SHA-256 of these settings; a change recomputes only this model's outputs."""</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">RUN_CONTROL</span><span class="p">}</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">16</span><span class="p">]</span></div>
 
 

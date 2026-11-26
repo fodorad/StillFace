@@ -19,6 +19,7 @@ Attributes
 
    stillface.features.audio.config.CONFIG_VERSION
    stillface.features.audio.config.DEFAULT_CONFIG_PATH
+   stillface.features.audio.config.RUN_CONTROL
    stillface.features.audio.config.DEFAULT_THRESHOLDS
 
 
@@ -158,6 +159,11 @@ Module Contents
       Cosine similarity at or below which it is another woman.
 
 
+.. py:data:: RUN_CONTROL
+   :type:  frozenset[str]
+
+   Model settings that steer the run but never change its outputs (left out of digests).
+
 .. py:class:: ModelConfig
 
    How one model is run.
@@ -214,6 +220,12 @@ Module Contents
       ``vtc:<labels>`` (VTC segments with these classes, e.g. ``vtc:FEM,MAL``) or
       ``roles:<roles>`` (role segments, e.g. ``roles:mother,baby``) or ``asr:<track>``
       (one segment per transcribed utterance of a gated track, for the aligner).
+
+   .. attribute:: batch_requests
+
+      Most requests sent to one worker run; each batch is saved before
+      the next starts, so a crash or timeout loses at most one batch. Run control
+      only: it is left out of :attr:`digest`.
 
 
    .. py:property:: digest
