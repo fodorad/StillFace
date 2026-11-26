@@ -23,6 +23,7 @@ Attributes
 
    stillface.features.audio.workers.mfa.UNKNOWN
    stillface.features.audio.workers.mfa.TIER
+   stillface.features.audio.workers.mfa.WIDE_BEAM
 
 
 Classes
@@ -42,6 +43,7 @@ Functions
    stillface.features.audio.workers.mfa.parse_alignment_json
    stillface.features.audio.workers.mfa.normalise_word
    stillface.features.audio.workers.mfa.phase_alignment
+   stillface.features.audio.workers.mfa.retry_arguments
    stillface.features.audio.workers.mfa.activated_env
    stillface.features.audio.workers.mfa.run_command
    stillface.features.audio.workers.mfa.to_scores
@@ -102,6 +104,22 @@ Module Contents
 
    :returns: ``({"words": ..., "phones": ...}, oov)`` without silences; ``oov`` lists, per
              utterance in order, the transcript words MFA could not align.
+
+
+.. py:data:: WIDE_BEAM
+   :type:  tuple[str, ...]
+   :value: ('--beam', '100', '--retry_beam', '400')
+
+
+   MFA's advice when no utterance aligns at the default beam (10 / 40).
+
+.. py:function:: retry_arguments(message: str) -> list[str] | None
+
+   Extra ``mfa align`` arguments for a retry after a failed alignment.
+
+   :param message: The failure message.
+
+   :returns: A wider beam after ``NoAlignmentsError``; None for other failures.
 
 
 .. py:function:: activated_env(bin_dir: pathlib.Path, base: collections.abc.Mapping[str, str]) -> dict[str, str]

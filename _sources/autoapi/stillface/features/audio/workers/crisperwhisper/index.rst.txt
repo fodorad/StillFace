@@ -21,6 +21,7 @@ Attributes
 .. autoapisummary::
 
    stillface.features.audio.workers.crisperwhisper.MODES
+   stillface.features.audio.workers.crisperwhisper.MIN_RETRY_TOKENS
 
 
 Classes
@@ -36,6 +37,7 @@ Functions
 
 .. autoapisummary::
 
+   stillface.features.audio.workers.crisperwhisper.retry_token_budget
    stillface.features.audio.workers.crisperwhisper.selected_modes
    stillface.features.audio.workers.crisperwhisper.word_scores
    stillface.features.audio.workers.crisperwhisper.postprocess
@@ -50,6 +52,26 @@ Module Contents
 
 
    Transcription modes run for every request.
+
+.. py:data:: MIN_RETRY_TOKENS
+   :type:  int
+   :value: 32
+
+
+   Smallest token budget worth a retry after a too-long continuation prompt.
+
+.. py:function:: retry_token_budget(message: str) -> int | None
+
+   New ``max_new_tokens`` after Whisper rejected a too-long decoder prompt.
+
+   In long-form "continuation" decoding the previous chunk's text is the prompt of the next;
+   in dense speech prompt + ``max_new_tokens`` can exceed the decoder's positions.
+
+   :param message: The ValueError message from transformers' generate.
+
+   :returns: ``max_target_positions - prompt length - 1``; None for another error or when fewer
+             than :data:`MIN_RETRY_TOKENS` tokens would remain.
+
 
 .. py:function:: selected_modes(options: dict[str, Any]) -> tuple[str, ...]
 

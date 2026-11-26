@@ -336,6 +336,9 @@ The transcripts stay local: they may contain names.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.MODES" title="stillface.features.audio.workers.crisperwhisper.MODES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MODES</span></code></a></p></td>
 <td><p>Transcription modes run for every request.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.MIN_RETRY_TOKENS" title="stillface.features.audio.workers.crisperwhisper.MIN_RETRY_TOKENS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MIN_RETRY_TOKENS</span></code></a></p></td>
+<td><p>Smallest token budget worth a retry after a too-long continuation prompt.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -357,13 +360,16 @@ The transcripts stay local: they may contain names.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.selected_modes" title="stillface.features.audio.workers.crisperwhisper.selected_modes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selected_modes</span></code></a>(→ tuple[str, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.retry_token_budget" title="stillface.features.audio.workers.crisperwhisper.retry_token_budget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retry_token_budget</span></code></a>(→ int | None)</p></td>
+<td><p>New <code class="docutils literal notranslate"><span class="pre">max_new_tokens</span></code> after Whisper rejected a too-long decoder prompt.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.selected_modes" title="stillface.features.audio.workers.crisperwhisper.selected_modes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selected_modes</span></code></a>(→ tuple[str, ...])</p></td>
 <td><p>Transcription modes to run.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.word_scores" title="stillface.features.audio.workers.crisperwhisper.word_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">word_scores</span></code></a>(...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.word_scores" title="stillface.features.audio.workers.crisperwhisper.word_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">word_scores</span></code></a>(...)</p></td>
 <td><p>Words as scored segments, clipped to the clip.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.postprocess" title="stillface.features.audio.workers.crisperwhisper.postprocess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess</span></code></a>(...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.postprocess" title="stillface.features.audio.workers.crisperwhisper.postprocess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess</span></code></a>(...)</p></td>
 <td><p>Result groups and the transcript artefact of one request.</p></td>
 </tr>
 </tbody>
@@ -376,6 +382,29 @@ The transcripts stay local: they may contain names.</p>
 <dt class="sig sig-object py" id="stillface.features.audio.workers.crisperwhisper.MODES">
 <span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.crisperwhisper.</span></span><span class="sig-name descname"><span class="pre">MODES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('verbatim',</span> <span class="pre">'intended')</span></span><a class="headerlink" href="#stillface.features.audio.workers.crisperwhisper.MODES" title="Link to this definition">¶</a></dt>
 <dd><p>Transcription modes run for every request.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.features.audio.workers.crisperwhisper.MIN_RETRY_TOKENS">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.crisperwhisper.</span></span><span class="sig-name descname"><span class="pre">MIN_RETRY_TOKENS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></span><a class="headerlink" href="#stillface.features.audio.workers.crisperwhisper.MIN_RETRY_TOKENS" title="Link to this definition">¶</a></dt>
+<dd><p>Smallest token budget worth a retry after a too-long continuation prompt.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.workers.crisperwhisper.retry_token_budget">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.crisperwhisper.</span></span><span class="sig-name descname"><span class="pre">retry_token_budget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/crisperwhisper.html#retry_token_budget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.crisperwhisper.retry_token_budget" title="Link to this definition">¶</a></dt>
+<dd><p>New <code class="docutils literal notranslate"><span class="pre">max_new_tokens</span></code> after Whisper rejected a too-long decoder prompt.</p>
+<p>In long-form “continuation” decoding the previous chunk’s text is the prompt of the next;
+in dense speech prompt + <code class="docutils literal notranslate"><span class="pre">max_new_tokens</span></code> can exceed the decoder’s positions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> – The ValueError message from transformers’ generate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">max_target_positions</span> <span class="pre">-</span> <span class="pre">prompt</span> <span class="pre">length</span> <span class="pre">-</span> <span class="pre">1</span></code>; None for another error or when fewer
+than <a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.MIN_RETRY_TOKENS" title="stillface.features.audio.workers.crisperwhisper.MIN_RETRY_TOKENS"><code class="xref py py-data docutils literal notranslate"><span class="pre">MIN_RETRY_TOKENS</span></code></a> tokens would remain.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -527,6 +556,8 @@ The transcripts stay local: they may contain names.</p>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.MODES"><code class="docutils literal notranslate"><span class="pre">MODES</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.MIN_RETRY_TOKENS"><code class="docutils literal notranslate"><span class="pre">MIN_RETRY_TOKENS</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.retry_token_budget"><code class="docutils literal notranslate"><span class="pre">retry_token_budget()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.selected_modes"><code class="docutils literal notranslate"><span class="pre">selected_modes()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.word_scores"><code class="docutils literal notranslate"><span class="pre">word_scores()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.crisperwhisper.postprocess"><code class="docutils literal notranslate"><span class="pre">postprocess()</span></code></a></li>

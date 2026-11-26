@@ -324,6 +324,7 @@
 <span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
@@ -339,6 +340,34 @@
 
 <span class="n">MODES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"verbatim"</span><span class="p">,</span> <span class="s2">"intended"</span><span class="p">)</span>
 <span class="sd">"""Transcription modes run for every request."""</span>
+
+
+<span class="n">MIN_RETRY_TOKENS</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="sd">"""Smallest token budget worth a retry after a too-long continuation prompt."""</span>
+
+
+<div class="viewcode-block" id="retry_token_budget">
+<a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/crisperwhisper/index.html#stillface.features.audio.workers.crisperwhisper.retry_token_budget">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">retry_token_budget</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""New ``max_new_tokens`` after Whisper rejected a too-long decoder prompt.</span>
+
+<span class="sd">    In long-form "continuation" decoding the previous chunk's text is the prompt of the next;</span>
+<span class="sd">    in dense speech prompt + ``max_new_tokens`` can exceed the decoder's positions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        message: The ValueError message from transformers' generate.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``max_target_positions - prompt length - 1``; None for another error or when fewer</span>
+<span class="sd">        than :data:`MIN_RETRY_TOKENS` tokens would remain.</span>
+<span class="sd">    """</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">"previous tokens, is (\d+)"</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">"max_target_positions` of the Whisper model: (\d+)"</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">prompt</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">limit</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">budget</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">limit</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">prompt</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">budget</span> <span class="k">if</span> <span class="n">budget</span> <span class="o">&gt;=</span> <span class="n">MIN_RETRY_TOKENS</span> <span class="k">else</span> <span class="kc">None</span></div>
+
 
 
 <div class="viewcode-block" id="selected_modes">
@@ -458,9 +487,21 @@
 <span class="w">        </span><span class="sd">"""Both transcripts of a WAV."""</span>
         <span class="n">texts</span><span class="p">,</span> <span class="n">words</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span>
-                <span class="n">wav</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">language</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">word_confidence</span><span class="o">=</span><span class="kc">True</span>
-            <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span>
+                    <span class="n">wav</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">language</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">word_confidence</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="n">budget</span> <span class="o">=</span> <span class="n">retry_token_budget</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">budget</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span>
+                    <span class="n">wav</span><span class="p">,</span>
+                    <span class="n">language</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">language</span><span class="p">,</span>
+                    <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+                    <span class="n">word_confidence</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">max_new_tokens</span><span class="o">=</span><span class="n">budget</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="n">texts</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span>
             <span class="n">words</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">w</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">word</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">probability</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">words</span> <span class="ow">or</span> <span class="p">[]]</span>
         <span class="k">return</span> <span class="n">texts</span><span class="p">,</span> <span class="n">words</span></div>

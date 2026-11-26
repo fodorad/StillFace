@@ -447,6 +447,25 @@
 
 
 
+<span class="n">WIDE_BEAM</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"--beam"</span><span class="p">,</span> <span class="s2">"100"</span><span class="p">,</span> <span class="s2">"--retry_beam"</span><span class="p">,</span> <span class="s2">"400"</span><span class="p">)</span>
+<span class="sd">"""MFA's advice when no utterance aligns at the default beam (10 / 40)."""</span>
+
+
+<div class="viewcode-block" id="retry_arguments">
+<a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/mfa/index.html#stillface.features.audio.workers.mfa.retry_arguments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">retry_arguments</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Extra ``mfa align`` arguments for a retry after a failed alignment.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        message: The failure message.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A wider beam after ``NoAlignmentsError``; None for other failures.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">WIDE_BEAM</span><span class="p">)</span> <span class="k">if</span> <span class="s2">"NoAlignmentsError"</span> <span class="ow">in</span> <span class="n">message</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+
 <div class="viewcode-block" id="activated_env">
 <a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/mfa/index.html#stillface.features.audio.workers.mfa.activated_env">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">activated_env</span><span class="p">(</span><span class="n">bin_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
@@ -546,21 +565,25 @@
             <span class="n">corpus</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
             <span class="p">(</span><span class="n">corpus</span> <span class="o">/</span> <span class="s2">"phase.wav"</span><span class="p">)</span><span class="o">.</span><span class="n">symlink_to</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">wav</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
             <span class="p">(</span><span class="n">corpus</span> <span class="o">/</span> <span class="s2">"phase.TextGrid"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">input_textgrid</span><span class="p">(</span><span class="n">utterances</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">duration_s</span><span class="p">))</span>
-            <span class="n">run_command</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">mfa</span><span class="p">,</span>
-                    <span class="s2">"align"</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="n">corpus</span><span class="p">),</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">acoustic</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="n">out</span><span class="p">),</span>
-                    <span class="s2">"--clean"</span><span class="p">,</span>
-                    <span class="s2">"--quiet"</span><span class="p">,</span>
-                    <span class="s2">"--output_format"</span><span class="p">,</span>
-                    <span class="s2">"json"</span><span class="p">,</span>
-                <span class="p">],</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mfa</span><span class="p">,</span>
+                <span class="s2">"align"</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">corpus</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">acoustic</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">out</span><span class="p">),</span>
+                <span class="s2">"--clean"</span><span class="p">,</span>
+                <span class="s2">"--quiet"</span><span class="p">,</span>
+                <span class="s2">"--output_format"</span><span class="p">,</span>
+                <span class="s2">"json"</span><span class="p">,</span>
+            <span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">run_command</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="n">extra</span> <span class="o">=</span> <span class="n">retry_arguments</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">extra</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span>
+                <span class="n">run_command</span><span class="p">([</span><span class="o">*</span><span class="n">command</span><span class="p">,</span> <span class="o">*</span><span class="n">extra</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="s2">"phase.json"</span>
             <span class="k">return</span> <span class="n">parse_alignment_json</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="p">{}</span></div>
 
