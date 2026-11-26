@@ -98,6 +98,11 @@ Module Contents
 
       Duration of the first video stream, None if there is none.
 
+   .. attribute:: video_fps
+
+      Frame rate of the first video stream, None if there is none or it is
+      not stated.
+
 
 .. py:function:: probe_audio(path: pathlib.Path) -> AudioStreamInfo | None
 

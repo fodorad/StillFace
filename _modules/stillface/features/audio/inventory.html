@@ -385,6 +385,7 @@
 <span class="sd">        audio_s: Audio stream duration.</span>
 <span class="sd">        video_s: Video stream duration, NaN if none.</span>
 <span class="sd">        duration_diff_s: ``|audio_s - video_s|``, NaN if no video.</span>
+<span class="sd">        video_fps: Video frame rate of the chosen clip, NaN if none (Annie event frames).</span>
 <span class="sd">        rms_dbfs: See :class:`LevelStats`.</span>
 <span class="sd">        peak_dbfs: See :class:`LevelStats`.</span>
 <span class="sd">        clipped_share: See :class:`LevelStats`.</span>
@@ -406,6 +407,7 @@
     <span class="n">audio_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
     <span class="n">video_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
     <span class="n">duration_diff_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">video_fps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
     <span class="n">rms_dbfs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
     <span class="n">peak_dbfs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
     <span class="n">clipped_share</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">nan</span>
@@ -565,6 +567,7 @@
         <span class="n">audio_s</span><span class="o">=</span><span class="n">info</span><span class="o">.</span><span class="n">duration_s</span><span class="p">,</span>
         <span class="n">video_s</span><span class="o">=</span><span class="n">video</span><span class="p">,</span>
         <span class="n">duration_diff_s</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">duration_s</span> <span class="o">-</span> <span class="n">video</span><span class="p">),</span>
+        <span class="n">video_fps</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">video_fps</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">info</span><span class="o">.</span><span class="n">video_fps</span><span class="p">,</span>
         <span class="n">rms_dbfs</span><span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">rms_dbfs</span><span class="p">,</span>
         <span class="n">peak_dbfs</span><span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">peak_dbfs</span><span class="p">,</span>
         <span class="n">clipped_share</span><span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">clipped_share</span><span class="p">,</span>

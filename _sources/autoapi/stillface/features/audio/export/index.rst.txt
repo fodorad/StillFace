@@ -65,7 +65,7 @@ Module Contents
    Annie video id of a phase clip (``<sid>_<camera>_<phase>``).
 
 
-.. py:function:: band_events(band: stillface.features.audio.lanes.Band, track: str, label: str, rate_hz: float) -> list[dict]
+.. py:function:: band_events(band: stillface.features.audio.lanes.Band, track: str, label: str, rate_hz: float, fps: float = TARGET_FPS) -> list[dict]
 
    Runs of a band as Annie event records.
 
@@ -73,21 +73,23 @@ Module Contents
    :param track: Annie track.
    :param label: Event label.
    :param rate_hz: Grid rate.
+   :param fps: Frame rate of the Annie video.
 
-   :returns: Event records with frames at :data:`~stillface.constants.TARGET_FPS`.
+   :returns: Event records with frames at ``fps``.
 
 
-.. py:function:: annie_event(event: stillface.features.audio.lanes.Event, track: str) -> dict
+.. py:function:: annie_event(event: stillface.features.audio.lanes.Event, track: str, fps: float = TARGET_FPS) -> dict
 
    One event in Annie's export record layout.
 
    :param event: Event.
    :param track: Annie track.
+   :param fps: Frame rate of the Annie video.
 
    :returns: Record with frames and seconds, label, type and the provenance as attributes.
 
 
-.. py:function:: build_annie_tree(session: str, phase: str, camera: str, events: collections.abc.Sequence[stillface.features.audio.lanes.Event], table: stillface.features.audio.lanes.LaneTable) -> dict
+.. py:function:: build_annie_tree(session: str, phase: str, camera: str, events: collections.abc.Sequence[stillface.features.audio.lanes.Event], table: stillface.features.audio.lanes.LaneTable, fps: float = TARGET_FPS) -> dict
 
    Annie export tree of one phase.
 
@@ -96,6 +98,7 @@ Module Contents
    :param camera: Camera whose clip the audio came from (the Annie video).
    :param events: Role and fusion events.
    :param table: Fusion lane table (its exported bands become events).
+   :param fps: Frame rate of the Annie video (the clip the audio came from).
 
    :returns: ``{video_id: {"fps", "tracks", "meta"}}``.
 

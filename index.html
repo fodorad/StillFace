@@ -390,11 +390,13 @@ environment variables or the <code class="docutils literal notranslate"><span cl
 <section id="dataset-statistics">
 <h2>Dataset statistics<a class="headerlink" href="#dataset-statistics" title="Link to this heading">¶</a></h2>
 <p>Computed from <code class="docutils literal notranslate"><span class="pre">metadata_database.xlsx</span></code> and the processed phase clips (<code class="docutils literal notranslate"><span class="pre">Sessions/&lt;id&gt;/processed/</span></code>),
-which are the only video inputs of the analysis. All processed clips are 1920x1080 at 60 fps.</p>
+which are the only video inputs of the analysis. All processed clips are 1920x1080 at 60 fps, except
+the five early window-only sessions (606117, 697115, 747417, 555623, 656417), whose clips keep the
+camcorders’ 50 fps.</p>
 <ul class="simple">
-<li><p><strong>Sessions:</strong> 78 recorded, 70 marked for analysis (<code class="docutils literal notranslate"><span class="pre">Analysis</span> <span class="pre">=</span> <span class="pre">y</span></code>).</p></li>
-<li><p><strong>Setup versions (analysed):</strong> v4: 57, v3: 5, v2: 8.</p></li>
-<li><p><strong>Excluded from analysis:</strong> 646022 (v4), 566015 (v4), 635928 (v2), 555623 (v2), 656417 (v2), 747417 (v1), 606117 (v1), 697115 (v1).</p></li>
+<li><p><strong>Sessions:</strong> 78 recorded, 75 marked for analysis (<code class="docutils literal notranslate"><span class="pre">Analysis</span> <span class="pre">=</span> <span class="pre">y</span></code>).</p></li>
+<li><p><strong>Setup versions (analysed):</strong> v4: 57, v3: 5, v2: 10, v1: 3.</p></li>
+<li><p><strong>Excluded from analysis:</strong> 646022 (v4), 566015 (v4), 635928 (v2).</p></li>
 </ul>
 <p><strong>Camera availability</strong> (analysed sessions; a camera counts if it has at least one processed phase clip):</p>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -418,9 +420,17 @@ which are the only video inputs of the analysis. All processed clips are 1920x10
 <td><p>3</p></td>
 <td><p>114754, 656531, 717115</p></td>
 </tr>
-<tr class="row-odd"><td><p>baby + window</p></td>
+<tr class="row-odd"><td><p>window_1 + window_2</p></td>
+<td><p>3</p></td>
+<td><p>606117, 697115, 747417 (two window camcorders: window_1 mostly the mother, window_2 mostly the baby)</p></td>
+</tr>
+<tr class="row-even"><td><p>baby + window</p></td>
 <td><p>2</p></td>
 <td><p>585803, 595514</p></td>
+</tr>
+<tr class="row-odd"><td><p>window</p></td>
+<td><p>2</p></td>
+<td><p>555623, 656417</p></td>
 </tr>
 <tr class="row-even"><td><p>baby + window + door</p></td>
 <td><p>1</p></td>
@@ -433,8 +443,10 @@ which are the only video inputs of the analysis. All processed clips are 1920x10
 </tbody>
 </table>
 </div>
-<p><strong>Incomplete phase sets</strong> (camera present but fewer than 4 phase clips): 706922 window (3/4), 596613 window (3/4), 596613 door (3/4), 596025 baby (3/4), 646012 door (2/4), 505629 baby (1/4), 585803 baby (3/4), 114754 mother (3/4), 114754 baby (3/4).</p>
-<p><strong>Native camcorder frame rate</strong> (from the original camcorder files, where available; processed clips are all 60 fps):</p>
+<p><strong>Incomplete phase sets</strong> (camera present but fewer than 4 phase clips): 706922 window (3/4), 596613 window (3/4), 596613 door (3/4), 596025 baby (3/4), 646012 door (2/4), 505629 baby (1/4), 585803 baby (3/4), 114754 mother (3/4), 114754 baby (3/4), 656417 window (3/4), 606117 window_1 (3/4),
+606117 window_2 (3/4).</p>
+<p><strong>Native camcorder frame rate</strong> (from the original camcorder files, where available; processed clips are 60 fps, the early
+window-only sessions 50 fps):</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -445,12 +457,16 @@ which are the only video inputs of the analysis. All processed clips are 1920x10
 </thead>
 <tbody>
 <tr class="row-even"><td><p>window</p></td>
-<td><p>50</p></td>
+<td><p>52</p></td>
 <td><p>15: 525222, 555820, 575716, 594801, 595813, 596613, 616205, 646302, 657006, 666921, 686527, 696707, 697426, 717729, 757314</p></td>
 </tr>
 <tr class="row-odd"><td><p>door</p></td>
 <td><p>33</p></td>
 <td><p>18: 484603, 535124, 586228, 596426, 605317, 616022, 616211, 625527, 625710, 636023, 646012, 656024, 656520, 666712, 674703, 677022, 736920, 819104</p></td>
+</tr>
+<tr class="row-even"><td><p>window_1 / window_2</p></td>
+<td><p>4: 606117 window_1, 697115 window_2, 747417 both</p></td>
+<td><p>2: 606117 window_2, 697115 window_1</p></td>
 </tr>
 </tbody>
 </table>
@@ -861,8 +877,8 @@ head-pose direction or with human labels.</p>
 </section>
 <section id="audio">
 <h3>4. Audio<a class="headerlink" href="#audio" title="Link to this heading">¶</a></h3>
-<p>One microphone per session (the baby-cam phone next to the mother’s head, a side camcorder
-as fallback) is prepared as a 16 kHz mono WAV per phase. Every model runs in its own
+<p>One microphone per session (the baby-cam phone next to the mother’s head; a side camcorder
+as fallback, in early two-camcorder sessions the baby-facing window_2 first) is prepared as a 16 kHz mono WAV per phase. Every model runs in its own
 environment behind one adapter interface and keeps its raw output with a provenance record
 (weights revision, settings, input hash):</p>
 <div class="table-wrapper colwidths-auto docutils container">

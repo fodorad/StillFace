@@ -327,6 +327,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#stillface.constants.CAMERAS" title="stillface.constants.CAMERAS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CAMERAS</span></code></a></p></td>
 <td><p>Camera names, in the order used for the 2x2 session grid.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.constants.SPLIT_WINDOW_CAMERAS" title="stillface.constants.SPLIT_WINDOW_CAMERAS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SPLIT_WINDOW_CAMERAS</span></code></a></p></td>
+<td><p>Two window camcorders some early sessions used instead of one, both from about the</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.constants.CLIP_CAMERAS" title="stillface.constants.CLIP_CAMERAS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CLIP_CAMERAS</span></code></a></p></td>
+<td><p>Every camera name a phase clip can carry.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.constants.PHASES" title="stillface.constants.PHASES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PHASES</span></code></a></p></td>
 <td><p>Experiment phases in chronological order.</p></td>
 </tr>
@@ -343,6 +349,20 @@
 <dt class="sig sig-object py" id="stillface.constants.CAMERAS">
 <span class="sig-prename descclassname"><span class="pre">stillface.constants.</span></span><span class="sig-name descname"><span class="pre">CAMERAS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mother',</span> <span class="pre">'baby',</span> <span class="pre">'window',</span> <span class="pre">'door')</span></span><a class="headerlink" href="#stillface.constants.CAMERAS" title="Link to this definition">¶</a></dt>
 <dd><p>Camera names, in the order used for the 2x2 session grid.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.constants.SPLIT_WINDOW_CAMERAS">
+<span class="sig-prename descclassname"><span class="pre">stillface.constants.</span></span><span class="sig-name descname"><span class="pre">SPLIT_WINDOW_CAMERAS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('window_1',</span> <span class="pre">'window_2')</span></span><a class="headerlink" href="#stillface.constants.SPLIT_WINDOW_CAMERAS" title="Link to this definition">¶</a></dt>
+<dd><p>Two window camcorders some early sessions used instead of one, both from about the
+usual window viewpoint: <code class="docutils literal notranslate"><span class="pre">window_1</span></code> mostly framed the mother, <code class="docutils literal notranslate"><span class="pre">window_2</span></code> mostly the baby.
+Only the audio source selection uses them; they are not part of the session grid.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stillface.constants.CLIP_CAMERAS">
+<span class="sig-prename descclassname"><span class="pre">stillface.constants.</span></span><span class="sig-name descname"><span class="pre">CLIP_CAMERAS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mother',</span> <span class="pre">'baby',</span> <span class="pre">'window',</span> <span class="pre">'door',</span> <span class="pre">'window_1',</span> <span class="pre">'window_2')</span></span><a class="headerlink" href="#stillface.constants.CLIP_CAMERAS" title="Link to this definition">¶</a></dt>
+<dd><p>Every camera name a phase clip can carry.</p>
 </dd></dl>
 
 <dl class="py data">
@@ -419,6 +439,8 @@
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#stillface.constants.CAMERAS"><code class="docutils literal notranslate"><span class="pre">CAMERAS</span></code></a></li>
+<li><a class="reference internal" href="#stillface.constants.SPLIT_WINDOW_CAMERAS"><code class="docutils literal notranslate"><span class="pre">SPLIT_WINDOW_CAMERAS</span></code></a></li>
+<li><a class="reference internal" href="#stillface.constants.CLIP_CAMERAS"><code class="docutils literal notranslate"><span class="pre">CLIP_CAMERAS</span></code></a></li>
 <li><a class="reference internal" href="#stillface.constants.PHASES"><code class="docutils literal notranslate"><span class="pre">PHASES</span></code></a></li>
 <li><a class="reference internal" href="#stillface.constants.TARGET_FPS"><code class="docutils literal notranslate"><span class="pre">TARGET_FPS</span></code></a></li>
 </ul>

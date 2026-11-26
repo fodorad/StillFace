@@ -357,14 +357,27 @@
 <span class="sd">        channels: Number of channels.</span>
 <span class="sd">        duration_s: Audio stream duration in seconds.</span>
 <span class="sd">        video_duration_s: Duration of the first video stream, None if there is none.</span>
+<span class="sd">        video_fps: Frame rate of the first video stream, None if there is none or it is</span>
+<span class="sd">            not stated.</span>
 <span class="sd">    """</span>
 
     <span class="n">codec</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">sample_rate</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">channels</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">duration_s</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">video_duration_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span></div>
+    <span class="n">video_duration_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">video_fps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_frame_rate</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Frame rate of a video stream from its ``r_frame_rate`` fraction (e.g. ``50/1``)."""</span>
+    <span class="n">numerator</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">denominator</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"r_frame_rate"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">numerator</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">denominator</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">ZeroDivisionError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">rate</span> <span class="k">if</span> <span class="n">rate</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_stream_duration</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">fallback</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -409,6 +422,7 @@
         <span class="n">channels</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"channels"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
         <span class="n">duration_s</span><span class="o">=</span><span class="n">_stream_duration</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">container</span><span class="p">),</span>
         <span class="n">video_duration_s</span><span class="o">=</span><span class="n">_stream_duration</span><span class="p">(</span><span class="n">video</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">container</span><span class="p">)</span> <span class="k">if</span> <span class="n">video</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">video_fps</span><span class="o">=</span><span class="n">_frame_rate</span><span class="p">(</span><span class="n">video</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">video</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 

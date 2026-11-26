@@ -322,7 +322,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CAMERAS</span><span class="p">,</span> <span class="n">PHASES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stillface.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CAMERAS</span><span class="p">,</span> <span class="n">CLIP_CAMERAS</span><span class="p">,</span> <span class="n">PHASES</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -388,7 +388,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            session_id: Session identifier.</span>
-<span class="sd">            camera: One of :data:`stillface.constants.CAMERAS`.</span>
+<span class="sd">            camera: One of :data:`stillface.constants.CLIP_CAMERAS`.</span>
 <span class="sd">            phase: One of :data:`stillface.constants.PHASES`.</span>
 
 <span class="sd">        Returns:</span>
@@ -397,8 +397,8 @@
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: If ``camera`` or ``phase`` is unknown.</span>
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="n">camera</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CAMERAS</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown camera </span><span class="si">{</span><span class="n">camera</span><span class="si">!r}</span><span class="s2">, expected one of </span><span class="si">{</span><span class="n">CAMERAS</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">camera</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CLIP_CAMERAS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown camera </span><span class="si">{</span><span class="n">camera</span><span class="si">!r}</span><span class="s2">, expected one of </span><span class="si">{</span><span class="n">CLIP_CAMERAS</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">phase</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PHASES</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown phase </span><span class="si">{</span><span class="n">phase</span><span class="si">!r}</span><span class="s2">, expected one of </span><span class="si">{</span><span class="n">PHASES</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dir</span> <span class="o">/</span> <span class="s2">"Sessions"</span> <span class="o">/</span> <span class="n">session_id</span> <span class="o">/</span> <span class="s2">"processed"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">camera</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.mp4"</span></div>

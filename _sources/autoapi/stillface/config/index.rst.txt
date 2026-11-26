@@ -103,7 +103,7 @@ Module Contents
       These per-camera, per-phase clips are the input of every feature extractor.
 
       :param session_id: Session identifier.
-      :param camera: One of :data:`stillface.constants.CAMERAS`.
+      :param camera: One of :data:`stillface.constants.CLIP_CAMERAS`.
       :param phase: One of :data:`stillface.constants.PHASES`.
 
       :returns: Path of ``<camera>_<phase>.mp4``; the file may not exist.

@@ -151,6 +151,10 @@ Module Contents
 
       ``|audio_s - video_s|``, NaN if no video.
 
+   .. attribute:: video_fps
+
+      Video frame rate of the chosen clip, NaN if none (Annie event frames).
+
    .. attribute:: rms_dbfs
 
       See :class:`LevelStats`.

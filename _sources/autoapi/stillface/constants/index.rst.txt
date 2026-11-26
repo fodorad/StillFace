@@ -15,6 +15,8 @@ Attributes
 .. autoapisummary::
 
    stillface.constants.CAMERAS
+   stillface.constants.SPLIT_WINDOW_CAMERAS
+   stillface.constants.CLIP_CAMERAS
    stillface.constants.PHASES
    stillface.constants.TARGET_FPS
 
@@ -28,6 +30,22 @@ Module Contents
 
 
    Camera names, in the order used for the 2x2 session grid.
+
+.. py:data:: SPLIT_WINDOW_CAMERAS
+   :type:  tuple[str, ...]
+   :value: ('window_1', 'window_2')
+
+
+   Two window camcorders some early sessions used instead of one, both from about the
+   usual window viewpoint: ``window_1`` mostly framed the mother, ``window_2`` mostly the baby.
+   Only the audio source selection uses them; they are not part of the session grid.
+
+.. py:data:: CLIP_CAMERAS
+   :type:  tuple[str, ...]
+   :value: ('mother', 'baby', 'window', 'door', 'window_1', 'window_2')
+
+
+   Every camera name a phase clip can carry.
 
 .. py:data:: PHASES
    :type:  tuple[str, ...]

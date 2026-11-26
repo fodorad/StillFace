@@ -74,6 +74,8 @@ Module Contents
 
       Camera clips tried in order; the first with a decodable audio stream wins.
       The baby-cam phone lies next to the mother's head and hears both partners.
+      Early sessions with two window camcorders try the baby-facing ``window_2``
+      before ``window_1``.
 
 
 .. py:class:: ScopeConfig
