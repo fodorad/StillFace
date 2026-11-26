@@ -213,10 +213,12 @@
 </li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="../../index.html">stillface.features</a><input aria-label="Toggle navigation of stillface.features" checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">stillface.features.audio</a><input aria-label="Toggle navigation of stillface.features.audio" checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="../affect/index.html">stillface.features.audio.affect</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../asr/index.html">stillface.features.audio.asr</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../cli/index.html">stillface.features.audio.cli</a></li>
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">stillface.features.audio.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../decisions/index.html">stillface.features.audio.decisions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../export/index.html">stillface.features.audio.export</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../fusion/index.html">stillface.features.audio.fusion</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../gating/index.html">stillface.features.audio.gating</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../infer/index.html">stillface.features.audio.infer</a></li>
@@ -374,7 +376,10 @@ is copied into each run record and its hash into every provenance sidecar.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.GatingConfig" title="stillface.features.audio.config.GatingConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GatingConfig</span></code></a></p></td>
 <td><p>Mother-only and baby-only tracks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AudioConfig</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.config.AffectConfig" title="stillface.features.audio.config.AffectConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AffectConfig</span></code></a></p></td>
+<td><p>Affect lanes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.config.AudioConfig" title="stillface.features.audio.config.AudioConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AudioConfig</span></code></a></p></td>
 <td><p>Audio pipeline configuration.</p></td>
 </tr>
 </tbody>
@@ -780,6 +785,32 @@ word onsets and offsets survive.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="stillface.features.audio.config.AffectConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">AffectConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#AffectConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.AffectConfig" title="Link to this definition">¶</a></dt>
+<dd><p>Affect lanes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.AffectConfig.baby_valence_weights">
+<span class="sig-name descname"><span class="pre">baby_valence_weights</span></span><a class="headerlink" href="#stillface.features.audio.config.AffectConfig.baby_valence_weights" title="Link to this definition">¶</a></dt>
+<dd><p>Weight of each baby type probability in the derived valence
+(<code class="docutils literal notranslate"><span class="pre">valence</span> <span class="pre">=</span> <span class="pre">sum(weight</span> <span class="pre">*</span> <span class="pre">p(type))</span></code>, clipped to <code class="docutils literal notranslate"><span class="pre">[-1,</span> <span class="pre">1]</span></code>).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.AffectConfig.baby_arousal_features">
+<span class="sig-name descname"><span class="pre">baby_arousal_features</span></span><a class="headerlink" href="#stillface.features.audio.config.AffectConfig.baby_arousal_features" title="Link to this definition">¶</a></dt>
+<dd><p>Features averaged (after within-session min-max scaling) into
+the derived baby arousal: <code class="docutils literal notranslate"><span class="pre">intensity</span></code>, <code class="docutils literal notranslate"><span class="pre">f0</span></code> and <code class="docutils literal notranslate"><span class="pre">cry</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.AffectConfig.min_agreement_frames">
+<span class="sig-name descname"><span class="pre">min_agreement_frames</span></span><a class="headerlink" href="#stillface.features.audio.config.AffectConfig.min_agreement_frames" title="Link to this definition">¶</a></dt>
+<dd><p>Fewest shared frames needed for a model agreement value.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">stillface.features.audio.config.</span></span><span class="sig-name descname"><span class="pre">AudioConfig</span></span><a class="reference internal" href="../../../../../_modules/stillface/features/audio/config.html#AudioConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.config.AudioConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Audio pipeline configuration.</p>
@@ -835,6 +866,12 @@ word onsets and offsets survive.</p>
 <dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig.gating">
 <span class="sig-name descname"><span class="pre">gating</span></span><a class="headerlink" href="#stillface.features.audio.config.AudioConfig.gating" title="Link to this definition">¶</a></dt>
 <dd><p>Gated track settings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stillface.features.audio.config.AudioConfig.affect">
+<span class="sig-name descname"><span class="pre">affect</span></span><a class="headerlink" href="#stillface.features.audio.config.AudioConfig.affect" title="Link to this definition">¶</a></dt>
+<dd><p>Affect lane settings.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1006,6 +1043,12 @@ word onsets and offsets survive.</p>
 <li><a class="reference internal" href="#stillface.features.audio.config.GatingConfig.pad_s"><code class="docutils literal notranslate"><span class="pre">GatingConfig.pad_s</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#stillface.features.audio.config.AffectConfig"><code class="docutils literal notranslate"><span class="pre">AffectConfig</span></code></a><ul>
+<li><a class="reference internal" href="#stillface.features.audio.config.AffectConfig.baby_valence_weights"><code class="docutils literal notranslate"><span class="pre">AffectConfig.baby_valence_weights</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.AffectConfig.baby_arousal_features"><code class="docutils literal notranslate"><span class="pre">AffectConfig.baby_arousal_features</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.AffectConfig.min_agreement_frames"><code class="docutils literal notranslate"><span class="pre">AffectConfig.min_agreement_frames</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig"><code class="docutils literal notranslate"><span class="pre">AudioConfig</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.version"><code class="docutils literal notranslate"><span class="pre">AudioConfig.version</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.source"><code class="docutils literal notranslate"><span class="pre">AudioConfig.source</span></code></a></li>
@@ -1016,6 +1059,7 @@ word onsets and offsets survive.</p>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.roles"><code class="docutils literal notranslate"><span class="pre">AudioConfig.roles</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.fusion"><code class="docutils literal notranslate"><span class="pre">AudioConfig.fusion</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.gating"><code class="docutils literal notranslate"><span class="pre">AudioConfig.gating</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.affect"><code class="docutils literal notranslate"><span class="pre">AudioConfig.affect</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.config.AudioConfig.digest"><code class="docutils literal notranslate"><span class="pre">AudioConfig.digest</span></code></a></li>
 </ul>
 </li>

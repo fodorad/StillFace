@@ -38,6 +38,7 @@ Classes
    stillface.features.audio.config.ContextConfig
    stillface.features.audio.config.FusionConfig
    stillface.features.audio.config.GatingConfig
+   stillface.features.audio.config.AffectConfig
    stillface.features.audio.config.AudioConfig
 
 
@@ -332,6 +333,25 @@ Module Contents
       word onsets and offsets survive.
 
 
+.. py:class:: AffectConfig
+
+   Affect lanes.
+
+   .. attribute:: baby_valence_weights
+
+      Weight of each baby type probability in the derived valence
+      (``valence = sum(weight * p(type))``, clipped to ``[-1, 1]``).
+
+   .. attribute:: baby_arousal_features
+
+      Features averaged (after within-session min-max scaling) into
+      the derived baby arousal: ``intensity``, ``f0`` and ``cry``.
+
+   .. attribute:: min_agreement_frames
+
+      Fewest shared frames needed for a model agreement value.
+
+
 .. py:class:: AudioConfig
 
    Audio pipeline configuration.
@@ -371,6 +391,10 @@ Module Contents
    .. attribute:: gating
 
       Gated track settings.
+
+   .. attribute:: affect
+
+      Affect lane settings.
 
 
    .. py:property:: digest

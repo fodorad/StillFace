@@ -1,0 +1,132 @@
+stillface.features.audio.affect
+===============================
+
+.. py:module:: stillface.features.audio.affect
+
+.. autoapi-nested-parse::
+
+   Affect lanes: arousal and valence of the mother and the baby.
+
+   Mother (adult speech models, acceptable for her):
+
+   - audEERING MSP-dim arousal (``[0, 1]``) and valence (rescaled to ``[-1, 1]``);
+   - the emotion2vec+ cross-check, derived from its categories:
+     ``valence = p(happy) - (p(sad) + p(angry) + p(fearful) + p(disgusted))`` and
+     ``arousal = 1 - p(neutral)``;
+   - per session, the Spearman agreement of the two models on each dimension. Low agreement
+     means the session's maternal affect estimates should not be trusted.
+
+   Baby (no released infant valence / arousal model exists):
+
+   - derived valence ``= sum(weight * p(type))`` with the configured weights
+     (default ``-1 p(cry) - 0.5 p(fuss) + 1 p(laugh)``), clipped to ``[-1, 1]``;
+   - derived arousal = mean of the within-session min-max scaled loudness, F0 and p(cry);
+   - audEERING on baby windows, written as a separate lane marked *experimental*.
+
+   Every lane is NaN outside the segments of its role. Window scores are spread over the grid
+   bins their window covers (the mean of overlapping windows).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   stillface.features.audio.affect.logger
+   stillface.features.audio.affect.NEGATIVE_E2V
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   stillface.features.audio.affect.window_lane
+   stillface.features.audio.affect.e2v_dimensions
+   stillface.features.audio.affect.spearman
+   stillface.features.audio.affect.baby_valence
+   stillface.features.audio.affect.minmax
+   stillface.features.audio.affect.run_affect
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: NEGATIVE_E2V
+   :type:  tuple[str, ...]
+   :value: ('sad', 'angry', 'fearful', 'disgusted')
+
+
+   emotion2vec+ categories counted as negative valence.
+
+.. py:function:: window_lane(scores: stillface.features.audio.models.SegmentScores, name: str, role: str, times: numpy.ndarray) -> numpy.ndarray
+
+   Mean of the windows of one role covering each grid bin.
+
+   :param scores: Window scores (segments = windows with their role).
+   :param name: Score column.
+   :param role: Role whose windows are used.
+   :param times: Grid times.
+
+   :returns: Values on the grid, NaN where no window of the role covers a bin.
+
+
+.. py:function:: e2v_dimensions(scores: stillface.features.audio.models.SegmentScores, role: str, times: numpy.ndarray) -> tuple[numpy.ndarray, numpy.ndarray]
+
+   Valence and arousal derived from emotion2vec+ categories, on the grid.
+
+   :param scores: emotion2vec+ window scores.
+   :param role: Role whose windows are used.
+   :param times: Grid times.
+
+   :returns: ``(valence in [-1, 1], arousal in [0, 1])``.
+
+
+.. py:function:: spearman(a: numpy.ndarray, b: numpy.ndarray, min_frames: int) -> float
+
+   Spearman correlation over the frames where both values exist.
+
+   :param a: First lane values.
+   :param b: Second lane values.
+   :param min_frames: Fewest shared frames for a value.
+
+   :returns: The correlation, NaN with too few frames or a constant lane.
+
+
+.. py:function:: baby_valence(p: dict[str, numpy.ndarray], weights: dict[str, float]) -> numpy.ndarray
+
+   Derived baby valence.
+
+   :param p: Type name mapped to its probability lane (NaN outside baby segments).
+   :param weights: Type name mapped to its weight.
+
+   :returns: ``sum(weight * p)`` clipped to ``[-1, 1]``; NaN where no type probability exists.
+
+   :raises ValueError: If none of the weighted types has a lane.
+
+
+.. py:function:: minmax(values: numpy.ndarray) -> numpy.ndarray
+
+   Scale to ``[0, 1]`` by the finite minimum and maximum.
+
+   :param values: Values (the whole session, all phases).
+
+   :returns: Scaled values; NaN stays NaN, a constant becomes 0.5.
+
+
+.. py:function:: run_affect(paths: stillface.config.DatasetPaths, session: str, config: stillface.features.audio.config.AudioConfig, phases: collections.abc.Sequence[str] = PHASES) -> dict
+
+   Write ``affect/<phase>.csv`` (+ legend) and ``affect/summary.json`` of a session.
+
+   :param paths: Dataset locations.
+   :param session: Session identifier.
+   :param config: Audio configuration.
+   :param phases: Phases to process (those with fusion lanes).
+
+   :returns: per-dimension agreement of the mother models and flags.
+   :rtype: The session summary
+
+

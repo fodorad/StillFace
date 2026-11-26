@@ -212,10 +212,12 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/index.html">stillface.features</a><input aria-label="Toggle navigation of stillface.features" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/index.html">stillface.features.audio</a><input aria-label="Toggle navigation of stillface.features.audio" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/affect/index.html">stillface.features.audio.affect</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/asr/index.html">stillface.features.audio.asr</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/cli/index.html">stillface.features.audio.cli</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/config/index.html">stillface.features.audio.config</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/decisions/index.html">stillface.features.audio.decisions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/export/index.html">stillface.features.audio.export</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/fusion/index.html">stillface.features.audio.fusion</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/gating/index.html">stillface.features.audio.gating</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../autoapi/stillface/features/audio/infer/index.html">stillface.features.audio.infer</a></li>
@@ -608,6 +610,28 @@
 
 
 
+<div class="viewcode-block" id="AffectConfig">
+<a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.AffectConfig">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AffectConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Affect lanes.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        baby_valence_weights: Weight of each baby type probability in the derived valence</span>
+<span class="sd">            (``valence = sum(weight * p(type))``, clipped to ``[-1, 1]``).</span>
+<span class="sd">        baby_arousal_features: Features averaged (after within-session min-max scaling) into</span>
+<span class="sd">            the derived baby arousal: ``intensity``, ``f0`` and ``cry``.</span>
+<span class="sd">        min_agreement_frames: Fewest shared frames needed for a model agreement value.</span>
+<span class="sd">    """</span>
+
+    <span class="n">baby_valence_weights</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">"cry"</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="s2">"fuss"</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="s2">"laugh"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">baby_arousal_features</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"intensity"</span><span class="p">,</span> <span class="s2">"f0"</span><span class="p">,</span> <span class="s2">"cry"</span><span class="p">)</span>
+    <span class="n">min_agreement_frames</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span></div>
+
+
+
 <div class="viewcode-block" id="AudioConfig">
 <a class="viewcode-back" href="../../../../autoapi/stillface/features/audio/config/index.html#stillface.features.audio.config.AudioConfig">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -624,6 +648,7 @@
 <span class="sd">        roles: Role assignment settings.</span>
 <span class="sd">        fusion: Fusion rules and thresholds.</span>
 <span class="sd">        gating: Gated track settings.</span>
+<span class="sd">        affect: Affect lane settings.</span>
 <span class="sd">    """</span>
 
     <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">CONFIG_VERSION</span>
@@ -635,6 +660,7 @@
     <span class="n">roles</span><span class="p">:</span> <span class="n">RolesConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">RolesConfig</span><span class="p">)</span>
     <span class="n">fusion</span><span class="p">:</span> <span class="n">FusionConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">FusionConfig</span><span class="p">)</span>
     <span class="n">gating</span><span class="p">:</span> <span class="n">GatingConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">GatingConfig</span><span class="p">)</span>
+    <span class="n">affect</span><span class="p">:</span> <span class="n">AffectConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">AffectConfig</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">digest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
