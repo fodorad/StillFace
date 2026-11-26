@@ -121,6 +121,8 @@ class AddresseeWorker:
         self.config = load_config(train_config=config_path)
         self.config.model_id = self.model_path
         self.config.train.batch_size = int(options.get("batch", "16"))
+        # The package's data loader sets a multiprocessing context, which needs >= 1 worker.
+        self.workers = max(1, int(options.get("workers", "1")))
         self.model = HubertFinetune(self.config)
         self.model.eval()
         self.device = torch_device(options.get("device", "cpu"))
@@ -156,7 +158,7 @@ class AddresseeWorker:
             inference=True,
             optional_df=pd.DataFrame(rows),
             config=self.config,
-            n_workers=0,
+            n_workers=self.workers,
         )
         predictions = self.trainer.predict(self.model, datamodule=data, ckpt_path=self.model_path)
         return np.concatenate([np.asarray(p.detach().cpu()) for p in predictions or []])
