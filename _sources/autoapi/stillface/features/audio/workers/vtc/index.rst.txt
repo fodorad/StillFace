@@ -41,6 +41,7 @@ Functions
 
    stillface.features.audio.workers.vtc.parse_rttm
    stillface.features.audio.workers.vtc.postprocess
+   stillface.features.audio.workers.vtc.load_probs
 
 
 Module Contents
@@ -88,6 +89,20 @@ Module Contents
              class over the frames it covers.
 
    :raises ValueError: If a class is missing or the arrays differ in length.
+
+
+.. py:function:: load_probs(path: pathlib.Path) -> Any
+
+   Load VTC's saved probabilities with the weights-only loader.
+
+   VTC pickles its class names as ``tomlkit`` string objects. Exactly the ``tomlkit``
+   types the file needs are allowed; any other non-tensor type is refused.
+
+   :param path: ``<uri>-probs_dict_t.pt`` written by VTC.
+
+   :returns: Class name mapped to its probability tensor.
+
+   :raises ValueError: If the file needs a type outside ``tomlkit``.
 
 
 .. py:class:: VtcWorker

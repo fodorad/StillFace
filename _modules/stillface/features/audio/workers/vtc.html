@@ -407,6 +407,38 @@
 
 
 
+<div class="viewcode-block" id="load_probs">
+<a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/vtc/index.html#stillface.features.audio.workers.vtc.load_probs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_probs</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Load VTC's saved probabilities with the weights-only loader.</span>
+
+<span class="sd">    VTC pickles its class names as ``tomlkit`` string objects. Exactly the ``tomlkit``</span>
+<span class="sd">    types the file needs are allowed; any other non-tensor type is refused.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path: ``&lt;uri&gt;-probs_dict_t.pt`` written by VTC.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Class name mapped to its probability tensor.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the file needs a type outside ``tomlkit``.</span>
+<span class="sd">    """</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+    <span class="n">allowed</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">torch</span><span class="o">.</span><span class="n">serialization</span><span class="o">.</span><span class="n">get_unsafe_globals_in_checkpoint</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)):</span>
+        <span class="n">module</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">module</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"tomlkit"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unexpected type </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> in the VTC probabilities"</span><span class="p">)</span>
+        <span class="n">allowed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">),</span> <span class="n">attr</span><span class="p">))</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">serialization</span><span class="o">.</span><span class="n">safe_globals</span><span class="p">(</span><span class="n">allowed</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">weights_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="VtcWorker">
 <a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/vtc/index.html#stillface.features.audio.workers.vtc.VtcWorker">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VtcWorker</span><span class="p">:</span>
@@ -436,8 +468,6 @@
 <a class="viewcode-back" href="../../../../../autoapi/stillface/features/audio/workers/vtc/index.html#stillface.features.audio.workers.vtc.VtcWorker.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wav</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Run VTC on one WAV: probabilities, merged RTTM and the thresholds used."""</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
-
         <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
             <span class="n">wavs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"wavs"</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"out"</span>
             <span class="n">wavs</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
@@ -451,8 +481,8 @@
                 <span class="n">save_probs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">high_precision</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">high_precision</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">saved</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">out</span> <span class="o">/</span> <span class="s2">"probs"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">URI</span><span class="si">}</span><span class="s2">-probs_dict_t.pt"</span><span class="p">)</span>
-            <span class="n">probs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">saved</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="n">saved</span> <span class="o">=</span> <span class="n">load_probs</span><span class="p">(</span><span class="n">out</span> <span class="o">/</span> <span class="s2">"probs"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">URI</span><span class="si">}</span><span class="s2">-probs_dict_t.pt"</span><span class="p">)</span>
+            <span class="n">probs</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">saved</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
             <span class="n">rttm</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="s2">"rttm"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">URI</span><span class="si">}</span><span class="s2">.rttm"</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">rttm</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span> <span class="k">if</span> <span class="n">rttm</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">""</span>
             <span class="n">name</span> <span class="o">=</span> <span class="s2">"hp.toml"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">high_precision</span> <span class="k">else</span> <span class="s2">"f1.toml"</span>

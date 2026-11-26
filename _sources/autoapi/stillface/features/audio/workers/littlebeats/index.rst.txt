@@ -8,8 +8,8 @@ stillface.features.audio.workers.littlebeats
    LittleBeats worker: speaker and vocalisation types per window (environment ``littlebeats``).
 
    wav2vec 2.0 pre-trained on 4300 h of LittleBeats and LENA home recordings and fine-tuned
-   with three heads (Li et al. 2023, SpeechBrain recipe ``wav2vec_LittleBeats``) on 2 s
-   windows:
+   with three heads (Li et al. 2023, SpeechBrain recipe ``wav2vec_LittleBeats``, the
+   weighted-layer-average variant ``hparams_LL_4300_WA_aug_on_sp``) on 2 s windows:
 
    - speaker: ``SIL`` silence, ``CHN`` target child, ``FAN`` female adult, ``MAN`` male adult,
      ``CXN`` other child;
@@ -118,6 +118,10 @@ Module Contents
    .. py:method:: forward(windows: numpy.ndarray) -> tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
 
       Logits of the three heads for a batch of equal-length windows.
+
+      As in the recipe's weighted-average model (``train_WA_*``): every transformer layer
+      is mean-pooled over time, each task mixes the 12 layers with its own learned
+      weights, then its DNN block and output layer follow.
 
 
 

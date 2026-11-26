@@ -320,8 +320,8 @@
 <span id="stillface-features-audio-workers-littlebeats"></span><h1>stillface.features.audio.workers.littlebeats<a class="headerlink" href="#module-stillface.features.audio.workers.littlebeats" title="Link to this heading">¶</a></h1>
 <p>LittleBeats worker: speaker and vocalisation types per window (environment <code class="docutils literal notranslate"><span class="pre">littlebeats</span></code>).</p>
 <p>wav2vec 2.0 pre-trained on 4300 h of LittleBeats and LENA home recordings and fine-tuned
-with three heads (Li et al. 2023, SpeechBrain recipe <code class="docutils literal notranslate"><span class="pre">wav2vec_LittleBeats</span></code>) on 2 s
-windows:</p>
+with three heads (Li et al. 2023, SpeechBrain recipe <code class="docutils literal notranslate"><span class="pre">wav2vec_LittleBeats</span></code>, the
+weighted-layer-average variant <code class="docutils literal notranslate"><span class="pre">hparams_LL_4300_WA_aug_on_sp</span></code>) on 2 s windows:</p>
 <ul class="simple">
 <li><p>speaker: <code class="docutils literal notranslate"><span class="pre">SIL</span></code> silence, <code class="docutils literal notranslate"><span class="pre">CHN</span></code> target child, <code class="docutils literal notranslate"><span class="pre">FAN</span></code> female adult, <code class="docutils literal notranslate"><span class="pre">MAN</span></code> male adult,
 <code class="docutils literal notranslate"><span class="pre">CXN</span></code> other child;</p></li>
@@ -449,6 +449,9 @@ infant / an adult vocalises.</p>
 <dt class="sig sig-object py" id="stillface.features.audio.workers.littlebeats.LittleBeatsWorker.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/littlebeats.html#LittleBeatsWorker.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.littlebeats.LittleBeatsWorker.forward" title="Link to this definition">¶</a></dt>
 <dd><p>Logits of the three heads for a batch of equal-length windows.</p>
+<p>As in the recipe’s weighted-average model (<code class="docutils literal notranslate"><span class="pre">train_WA_*</span></code>): every transformer layer
+is mean-pooled over time, each task mixes the 12 layers with its own learned
+weights, then its DNN block and output layer follow.</p>
 </dd></dl>
 
 <dl class="py method">

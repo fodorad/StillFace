@@ -366,6 +366,9 @@ tell the mother from a female experimenter; the roles stage does that with voice
 <tr class="row-even"><td><p><a class="reference internal" href="#stillface.features.audio.workers.vtc.postprocess" title="stillface.features.audio.workers.vtc.postprocess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess</span></code></a>(...)</p></td>
 <td><p>Frame scores and scored segments from VTC's outputs.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#stillface.features.audio.workers.vtc.load_probs" title="stillface.features.audio.workers.vtc.load_probs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_probs</span></code></a>(→ Any)</p></td>
+<td><p>Load VTC's saved probabilities with the weights-only loader.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -422,6 +425,25 @@ class over the frames it covers.</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If a class is missing or the arrays differ in length.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stillface.features.audio.workers.vtc.load_probs">
+<span class="sig-prename descclassname"><span class="pre">stillface.features.audio.workers.vtc.</span></span><span class="sig-name descname"><span class="pre">load_probs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../../../../_modules/stillface/features/audio/workers/vtc.html#load_probs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stillface.features.audio.workers.vtc.load_probs" title="Link to this definition">¶</a></dt>
+<dd><p>Load VTC’s saved probabilities with the weights-only loader.</p>
+<p>VTC pickles its class names as <code class="docutils literal notranslate"><span class="pre">tomlkit</span></code> string objects. Exactly the <code class="docutils literal notranslate"><span class="pre">tomlkit</span></code>
+types the file needs are allowed; any other non-tensor type is refused.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – <code class="docutils literal notranslate"><span class="pre">&lt;uri&gt;-probs_dict_t.pt</span></code> written by VTC.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Class name mapped to its probability tensor.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the file needs a type outside <code class="docutils literal notranslate"><span class="pre">tomlkit</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -526,6 +548,7 @@ class over the frames it covers.</p>
 <li><a class="reference internal" href="#stillface.features.audio.workers.vtc.URI"><code class="docutils literal notranslate"><span class="pre">URI</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.vtc.parse_rttm"><code class="docutils literal notranslate"><span class="pre">parse_rttm()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.vtc.postprocess"><code class="docutils literal notranslate"><span class="pre">postprocess()</span></code></a></li>
+<li><a class="reference internal" href="#stillface.features.audio.workers.vtc.load_probs"><code class="docutils literal notranslate"><span class="pre">load_probs()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.vtc.VtcWorker"><code class="docutils literal notranslate"><span class="pre">VtcWorker</span></code></a><ul>
 <li><a class="reference internal" href="#stillface.features.audio.workers.vtc.VtcWorker.load"><code class="docutils literal notranslate"><span class="pre">VtcWorker.load()</span></code></a></li>
 <li><a class="reference internal" href="#stillface.features.audio.workers.vtc.VtcWorker.forward"><code class="docutils literal notranslate"><span class="pre">VtcWorker.forward()</span></code></a></li>
