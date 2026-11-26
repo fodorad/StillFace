@@ -23,9 +23,11 @@ class TestMedia(unittest.TestCase):
         self.assertEqual((info.codec, info.sample_rate, info.channels), ("aac", 48000, 2))
         self.assertAlmostEqual(info.duration_s, 1.0, delta=0.05)
         self.assertAlmostEqual(info.video_duration_s, 1.0, delta=0.15)
+        self.assertEqual(info.video_fps, 10.0)
 
     def test_probe_without_audio_and_broken(self):
         self.assertIsNone(probe_audio(make_video(self.dir / "v.mp4", seconds=0.5, audio=False)))
+        self.assertIsNone(probe_audio(make_audio(self.dir / "a.m4a", seconds=0.3)).video_fps)
         bad = self.dir / "bad.mp4"
         bad.write_bytes(b"not a video")
         with self.assertRaises(MediaError):

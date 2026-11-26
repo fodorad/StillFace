@@ -85,6 +85,7 @@ class TestInventory(unittest.TestCase):
         self.assertEqual((ok.status, ok.camera, ok.codec, ok.channels), ("ok", "baby", "aac", 1))
         self.assertTrue(ok.in_scope)
         self.assertLess(ok.duration_diff_s, 0.2)
+        self.assertEqual(ok.video_fps, 10.0)
         fb = rows[("2", "play")]
         self.assertEqual((fb.status, fb.camera), ("fallback", "window"))
         self.assertIn("baby: clip missing", fb.reason)
@@ -93,6 +94,19 @@ class TestInventory(unittest.TestCase):
         self.assertEqual(rows[("2", "stillface")].status, "no_audio_stream")
         self.assertEqual(rows[("2", "reunion")].status, "decode_error")
         self.assertEqual(rows[("2", "baseline")].status, "missing")
+
+    def test_split_window_session_prefers_the_baby_facing_window_2(self):
+        p = self.paths
+        make_audio(p.phase_clip("3", "window_1", "play"), seconds=0.3, video=True)
+        make_audio(p.phase_clip("3", "window_2", "play"), seconds=0.3, video=True)
+        make_audio(p.phase_clip("3", "window_1", "reunion"), seconds=0.3, video=True)
+        meta = pd.DataFrame({"ID": [3], "Analysis": ["y"]})
+        rows = {(r.phase): r for r in build_inventory(p, AudioConfig(), meta)}
+        play, reunion = rows["play"], rows["reunion"]
+        self.assertEqual((play.status, play.camera), ("fallback", "window_2"))
+        self.assertEqual(play.candidates, "window_2;window_1")
+        self.assertIn("baby: clip missing", play.reason)
+        self.assertEqual((reunion.status, reunion.camera), ("fallback", "window_1"))
 
     def test_round_trip_and_bad_header(self):
         make_audio(self.paths.phase_clip("1", "baby", "play"), seconds=0.3, video=True)

@@ -68,6 +68,7 @@ class InventoryRow:
         audio_s: Audio stream duration.
         video_s: Video stream duration, NaN if none.
         duration_diff_s: ``|audio_s - video_s|``, NaN if no video.
+        video_fps: Video frame rate of the chosen clip, NaN if none (Annie event frames).
         rms_dbfs: See :class:`LevelStats`.
         peak_dbfs: See :class:`LevelStats`.
         clipped_share: See :class:`LevelStats`.
@@ -89,6 +90,7 @@ class InventoryRow:
     audio_s: float = math.nan
     video_s: float = math.nan
     duration_diff_s: float = math.nan
+    video_fps: float = math.nan
     rms_dbfs: float = math.nan
     peak_dbfs: float = math.nan
     clipped_share: float = math.nan
@@ -235,6 +237,7 @@ def _measured(
         audio_s=info.duration_s,
         video_s=video,
         duration_diff_s=abs(info.duration_s - video),
+        video_fps=math.nan if info.video_fps is None else info.video_fps,
         rms_dbfs=stats.rms_dbfs,
         peak_dbfs=stats.peak_dbfs,
         clipped_share=stats.clipped_share,

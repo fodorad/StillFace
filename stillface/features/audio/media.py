@@ -40,6 +40,8 @@ class AudioStreamInfo:
         channels: Number of channels.
         duration_s: Audio stream duration in seconds.
         video_duration_s: Duration of the first video stream, None if there is none.
+        video_fps: Frame rate of the first video stream, None if there is none or it is
+            not stated.
     """
 
     codec: str
@@ -47,6 +49,17 @@ class AudioStreamInfo:
     channels: int
     duration_s: float
     video_duration_s: float | None
+    video_fps: float | None = None
+
+
+def _frame_rate(stream: dict) -> float | None:
+    """Frame rate of a video stream from its ``r_frame_rate`` fraction (e.g. ``50/1``)."""
+    numerator, _, denominator = str(stream.get("r_frame_rate", "")).partition("/")
+    try:
+        rate = float(numerator) / float(denominator or 1)
+    except (ValueError, ZeroDivisionError):
+        return None
+    return rate if rate > 0 else None
 
 
 def _stream_duration(stream: dict, fallback: float) -> float:
@@ -89,6 +102,7 @@ def probe_audio(path: Path) -> AudioStreamInfo | None:
         channels=int(stream.get("channels", 0)),
         duration_s=_stream_duration(stream, container),
         video_duration_s=_stream_duration(video[0], container) if video else None,
+        video_fps=_frame_rate(video[0]) if video else None,
     )
 
 
